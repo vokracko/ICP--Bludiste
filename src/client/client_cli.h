@@ -11,6 +11,7 @@ class Client_cli : public Client
 {
 	public:
 	void print_map();
+	void print_games();
 	Client_cli();
 	~Client_cli();
 };
