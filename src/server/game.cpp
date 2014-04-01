@@ -2,34 +2,45 @@
 
 /**
  * Pošle zprávu o změně stavu hry vše klientům kromě toho, který tuto zprávu vytvořil
- * \fn void Game::send(Client * exclude, std::string message)
- * \param exclude odkaz na klienta, který zprávu vytvořil
+ * \fn void Game::send(Player * exclude, std::string message)
+ * \param exclude odkaz na hráče, který zprávu vytvořil
  * \param message obsah zprávy
  */
-void Game::send(Client * exclude, std::string message)
+void Game::send(Player * exclude, std::string message)
 {
-	for(auto c: clients)
+	for(std::vector<Player*>::iterator it = players->begin(); it != players->end(); ++it)
 	{
-		if(c == exclude) continue;
+		if((*it) == exclude) continue;
 
-		c->send(message);
+		(*it)->send(message);
 	}
 }
 
 
 /**
- * Připojí klienta do hry
- * \fn bool Game::add_client(Client * c)
- * \param c odkaz na klienta
+ * Připojí hráče do hry
+ * \fn bool Game::add_Player(Player * c)
+ * \param c odkaz na hráče
  * \return výsledek operace
  */
-bool Game::add_client(Client * c)
+bool Game::add_player(Player * p)
 {
-	if(this->clients.size() < 4)
+	if(players->size() < 4)
 	{
-		this->clients->push_back(c);
+		players->push_back(p);
 		return true;
 	}
 
 	return false;
 }
+
+std::string Game::to_string()
+{
+	std::string message;
+
+	message.append(players->size() + " ");
+	return message;
+	//TODO informace o mapě
+}
+
+//TODO mazat klienty

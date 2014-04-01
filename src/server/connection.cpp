@@ -18,12 +18,11 @@ void Connection::handle_write()
  * Zahájení spojení
  * \fn void Connection::start()
  */
-void Connection::start()
+void Connection::write(std::string message)
 {
-	std::string str = "co je to za shit\r\n";
 	boost::asio::async_write(
 		socket,
-		boost::asio::buffer(str),
-		boost::bind(&Connection::handle_write, shared_from_this())
+		boost::asio::buffer(message),
+		boost::bind(&Connection::handle_write, this)
 	);
 }

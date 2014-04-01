@@ -8,17 +8,14 @@
 #define _H_CONNECTION
 
 #include <boost/bind.hpp>
-#include <boost/shared_ptr.hpp>
-#include <boost/enable_shared_from_this.hpp>
 #include <boost/asio.hpp>
 
-class Connection: public boost::enable_shared_from_this<Connection>
+class Connection
 {
 	private:
 
 	public:
 		boost::asio::ip::tcp::socket socket;
-		typedef boost::shared_ptr<Connection> pointer;
 
 	private:
 		Connection(boost::asio::io_service & ios);
@@ -26,12 +23,13 @@ class Connection: public boost::enable_shared_from_this<Connection>
 
 	public:
 
-		void start();
-		// boost::asio::ip::tcp::socket get_socket();
+		void write(std::string message);
+		// boost::asio::ip::tcp::socket get_socket(); TODO
 
-		static pointer create(boost::asio::io_service & ios)
+		static Connection * create(boost::asio::io_service & ios)
 		{
-			return pointer(new Connection(ios));
+			Connection * pointer =new Connection(ios);
+			return pointer;
 		}
 };
 

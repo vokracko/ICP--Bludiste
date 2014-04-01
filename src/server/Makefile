@@ -1,7 +1,9 @@
-FLAGS=-std=c++11
+FLAGS=-std=c++11 -g3
 
-bin: server.o client.o connection.o bludiste2014-server.o
-	g++ $(FLAGS) *.o -o bludiste2014-server -lboost_system
+all: clean bin
+
+bin: server.o player.o game.o connection.o bludiste2014-server.o
+	g++ $(FLAGS) *.o -o bludiste2014-server -lboost_system -lpthread
 
 %.o: %.cpp
 	g++ $(FLAGS) -c $< -o $@

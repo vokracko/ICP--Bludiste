@@ -4,18 +4,28 @@
  * \author Lukáš Vokráčko (xvokra00)
  */
 
-#ifndef _H_GAME
-#define _H_GAME
+#pragma once
 
 #include <string>
-#include "client.h"
+#include <vector>
+#include "player.h"
 
+class Player;
 class Game
 {
-	std::queue<Client *> clients;
+	private:
+		//TODO map
+		//TODO map->heigh, width
+		std::vector<Player*> * players;
 
-	void send(Client * exclude);
-	bool add_client(Client * c);
+	public:
+
+
+	private:
+
+	public:
+		void send(Player * exclude, std::string message);
+		bool add_player(Player * p);
+		std::string to_string();
+
 };
-
-#endif
