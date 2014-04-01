@@ -6,6 +6,8 @@
 *Barvu daného klienta<br/>
 *Časovou prodlevu mezi tahy<br/>
 *Pozici hráče ve hře
+*počet navštívených polí a počet kroků
+*čas strávený ve hře
 *\author Michal Veselý (xvesel63)
 */
 
@@ -34,14 +36,18 @@ protected:
 	int pos_x,pos_y;
 	int width,height;
 	int map[50][50];
+	int time_in_game;
+	int steps;
+	int visit_boxes;
+	std::string games;
 	double timeout;	
 public:
 	explicit Client(QObject *parent=0);
 	~Client();
 	void send_move();
 	void accept_state_map();
-	void show_games();
 	void connect_socket(char * host);
-	void create_game(int width, int height, double timeout);
-	void join_game();
+	void create_game(double timeout,int map_type);
+	void join_game(int game_id);
+	void get_games();
 };

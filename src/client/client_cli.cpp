@@ -13,14 +13,21 @@
 */
 void Client_cli::print_map()
 {
-	for (int i=0; i < width; i++)
+	for (int i=0; i < height; i++)
 	{
-		for (int j=0; j < height; j++)
+		for (int j=0; j < width; j++)
 		{
 			std::cout<<map[i][j];
 		}
 		std::cout<<std::endl;
 	}
 }
+
+void Client_cli::print_games()
+{
+	this->get_games();
+	std::cout<<games<<std::endl<<std::endl;
+}
+
 Client_cli::Client_cli(){;}
 Client_cli::~Client_cli(){;}
