@@ -8,8 +8,6 @@
 
 #include <boost/asio.hpp>
 #include <boost/bind.hpp>
-#include <boost/shared_ptr.hpp>
-#include <boost/enable_shared_from_this.hpp>
 #include <thread>
 #include <vector>
 #include "connection.h"
@@ -19,7 +17,7 @@
 //TODO uchovávat hráče
 
 class Game;
-class Server: public boost::enable_shared_from_this<Server>
+class Server
 {
 	public:
 		static boost::asio::io_service * ios;
@@ -27,18 +25,20 @@ class Server: public boost::enable_shared_from_this<Server>
 
 	private:
 		boost::asio::ip::tcp::acceptor acceptor;
-		std::vector<Game *> * games;
+		std::vector<Game *> games;
+		std::vector<Player *> orphans;
+		Connection * last_connection;
 
 	public:
+		~Server();
+		static Server * get_instance();
 		static void create(boost::asio::io_service * ios);
-		static boost::shared_ptr<Server> get_instance();
+		static void kill(int sig);
 
 		void listen();
 
 		std::string get_games_string();
-		std::vector<Game *> * get_games();
-
-		~Server();
+		void stop();
 
 	private:
 		void accept_player(Connection * conn, const boost::system::error_code& e);

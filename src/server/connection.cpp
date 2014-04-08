@@ -2,10 +2,21 @@
 
 Connection::Connection(boost::asio::io_service & ios): socket(ios)
 {
+
 }
 
-void Connection::handle_write()
+Connection::~Connection()
 {
+	std::cout << "killing conn" << std::endl;
+	socket.close();
+}
+
+void Connection::handle_read(std::string * message)
+{
+	*message = "x";
+	//odblokovat semafor
+
+
 }
 
 // boost::asio::ip::tcp::socket Connection::get_socket()
@@ -20,9 +31,12 @@ void Connection::handle_write()
  */
 void Connection::write(std::string message)
 {
-	boost::asio::async_write(
-		socket,
-		boost::asio::buffer(message),
-		boost::bind(&Connection::handle_write, this)
-	);
+	//TODO předělat na frontu
+	// boost::asio::async_write(socket, boost::asio::buffer(message));
+}
+
+void Connection::read(std::string * target)
+{
+	//TODO aktivovat semafor;
+	// boost::asio::asio_read_some();
 }

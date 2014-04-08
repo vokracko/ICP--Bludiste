@@ -1,16 +1,21 @@
 #include "server.h"
 
+void stopRun(int sig)
+{
+	std::cout << "stoprun" << std::endl;
+}
+
 int main()
 {
-	boost::asio::io_service * ios = new boost::asio::io_service;
-	boost::shared_ptr<Server> server;
+	signal(SIGINT, Server::kill);
+	boost::shared_ptr<boost::asio::io_service> ios(new boost::asio::io_service());
+	Server * server;
 
-	Server::create(ios);
+	Server::create(ios.get());
 	server = Server::get_instance();
 
 	server->listen();
-	ios->run();
+	ios.get()->run();
 
-	server.reset();
-	delete ios;
+	// delete server;
 }

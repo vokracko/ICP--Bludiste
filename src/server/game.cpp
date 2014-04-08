@@ -1,5 +1,11 @@
 #include "game.h"
 
+Game::~Game()
+{
+	std::cout << "game~players"<<std::endl;
+	players->clear();
+}
+
 /**
  * Pošle zprávu o změně stavu hry vše klientům kromě toho, který tuto zprávu vytvořil
  * \fn void Game::send(Player * exclude, std::string message)

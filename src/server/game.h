@@ -24,6 +24,7 @@ class Game
 	private:
 
 	public:
+		~Game();
 		void send(Player * exclude, std::string message);
 		bool add_player(Player * p);
 		std::string to_string();

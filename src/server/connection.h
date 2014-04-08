@@ -18,19 +18,13 @@ class Connection
 		boost::asio::ip::tcp::socket socket;
 
 	private:
-		Connection(boost::asio::io_service & ios);
-		void handle_write();
+		void handle_read(std::string * message);
 
 	public:
-
+		Connection(boost::asio::io_service & ios);
+		~Connection();
 		void write(std::string message);
-		// boost::asio::ip::tcp::socket get_socket(); TODO
-
-		static Connection * create(boost::asio::io_service & ios)
-		{
-			Connection * pointer =new Connection(ios);
-			return pointer;
-		}
+		void read(std::string * target);
 };
 
 

@@ -11,8 +11,8 @@ class Player
 {
 	private:
 		int id;
-		Connection*conn;
-
+		Connection * conn = nullptr;
+		std::thread thread;
 	public:
 
 	private:
@@ -20,8 +20,10 @@ class Player
 	public:
 		Player(Connection * conn);
 		~Player();
+		bool connect();
 		void work();
 		void send(std::string message);
+		void receive();
 		void send_games();
 };
 
