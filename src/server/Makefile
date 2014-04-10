@@ -2,7 +2,8 @@ FLAGS=-std=c++11 -g3
 
 all: clean bin
 
-bin: server.o player.o game.o connection.o bludiste2014-server.o
+# TODO přidat mapu
+bin:  connection.o player.o server.o  game.o bludiste2014-server.o
 	g++ $(FLAGS) *.o -o bludiste2014-server -lboost_system -lpthread
 
 %.o: %.cpp

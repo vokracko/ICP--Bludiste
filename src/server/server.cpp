@@ -9,6 +9,7 @@ boost::asio::io_service * Server::ios;
 void Server::listen()
 {
 	Connection * conn = new Connection(acceptor.get_io_service());
+	// boost::asio::ip::tcp::socket socket = conn->get_socket();
 	last_connection = conn;
 
 	acceptor.async_accept(
@@ -27,8 +28,6 @@ void Server::accept_player(Connection * conn, const boost::system::error_code& e
 {
 	if(!e)
 	{
-
-		std::cout << "Přijaté spojení" << std::endl;
 		Player * player = new Player(conn);
 		orphans.push_back(player);
 
@@ -38,8 +37,6 @@ void Server::accept_player(Connection * conn, const boost::system::error_code& e
 	{
 		std::cout << "Chyba při spojení" << std::endl;
 	}
-
-	//TODO nějak uchovávat hráče
 }
 
 std::string Server::get_games_string()
@@ -54,6 +51,72 @@ std::string Server::get_games_string()
 	return message;
 }
 
+Game * Server::assing(int game_id, Player * player)
+{
+	// return nullptr; //TODO až bude hotovo tak odstranit
+	Game * game_pointer = nullptr;
+
+	for(std::vector<Game *>::iterator it = games.begin(); it != games.end(); ++it)
+	{
+		if((*it)->get_id() == game_id)
+		{
+			game_pointer = *it;
+			break;
+		}
+	}
+
+	if(game_pointer == nullptr) return false;
+
+	if(game_pointer->add_player(player))
+	{
+		remove_orphan(player);
+		return game_pointer;
+	}
+
+	return nullptr;
+}
+
+int Server::new_game(std::string & game_settings)
+{
+	size_t pos;
+	int map_id;
+	float timeout;
+
+	std::cout << "new_game" << std::endl;
+	try
+	{
+		timeout = std::stof(game_settings, &pos);
+		game_settings.substr(pos+1);
+		map_id = std::stoi(game_settings);
+	}
+	catch(std::exception & e) // nevalidní data
+	{
+		return 0;
+	}
+
+
+	games.push_back(new Game(timeout, map_id));
+
+	return games.back()->get_id();
+}
+
+void Server::remove_orphan(Player * p)
+{
+	for(std::vector<Player *>::iterator it = orphans.begin(); it != orphans.end(); ++it)
+	{
+		if(*it == p)
+		{
+			orphans.erase(it);
+			break;
+		}
+	}
+}
+
+void Server::add_orphan(Player * p)
+{
+	orphans.push_back(p);
+}
+
 Server * Server::get_instance()
 {
 
@@ -64,14 +127,6 @@ Server * Server::get_instance()
 void Server::create(boost::asio::io_service * ios)
 {
 	Server::ios = ios;
-
-	std::cout << sizeof(Server) << std::endl;
-	std::cout << sizeof(Player) << std::endl;
-	std::cout << sizeof(Game) << std::endl;
-	std::cout << sizeof(Connection) << std::endl;
-	std::cout << sizeof(boost::asio::io_service) << std::endl;
-	std::cout << sizeof(games) << std::endl;
-	std::cout << sizeof(orphans) << std::endl;
 }
 
 void Server::kill(int sig)
@@ -81,16 +136,6 @@ void Server::kill(int sig)
 
 void Server::stop()
 {
-	std::cout << sizeof(Server) << std::endl;
-	std::cout << sizeof(Player) << std::endl;
-	std::cout << sizeof(Game) << std::endl;
-	std::cout << sizeof(Connection) << std::endl;
-	std::cout << sizeof(boost::asio::io_service) << std::endl;
-	std::cout << sizeof(games) << std::endl;
-	std::cout << sizeof(orphans) << std::endl;
-
-	std::cout << orphans.size() << std::endl;
-
 	Server::ios->stop();
 	acceptor.close();
 
@@ -107,11 +152,20 @@ void Server::stop()
 	orphans.clear();
 	games.clear();
 
-	std::cout << orphans.size() << std::endl;
-
 	delete last_connection;
 }
 
+int Server::get_player_id()
+{
+	static int id = 0;
+	return ++id;
+}
+
+int Server::get_game_id()
+{
+	static int id = 0;
+	return ++id;
+}
 
 Server::Server(boost::asio::io_service & ios): acceptor(ios, boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), PORT))
 {

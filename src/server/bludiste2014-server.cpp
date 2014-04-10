@@ -1,10 +1,5 @@
 #include "server.h"
 
-void stopRun(int sig)
-{
-	std::cout << "stoprun" << std::endl;
-}
-
 int main()
 {
 	signal(SIGINT, Server::kill);
@@ -16,6 +11,4 @@ int main()
 
 	server->listen();
 	ios.get()->run();
-
-	// delete server;
 }

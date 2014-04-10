@@ -17,6 +17,7 @@
 //TODO uchovávat hráče
 
 class Game;
+class Player;
 class Server
 {
 	public:
@@ -35,12 +36,19 @@ class Server
 		static void create(boost::asio::io_service * ios);
 		static void kill(int sig);
 
+
+		int get_player_id();
+		int get_game_id();
 		void listen();
 
 		std::string get_games_string();
 		void stop();
+		Game * assing(int game_id, Player * player);
+		int new_game(std::string & game_settings);
+		void add_orphan(Player * p);
 
 	private:
-		void accept_player(Connection * conn, const boost::system::error_code& e);
 		Server(boost::asio::io_service & ios);
+		void accept_player(Connection * conn, const boost::system::error_code& e);
+		void remove_orphan(Player * p);
 };

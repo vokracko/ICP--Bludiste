@@ -1,0 +1,10 @@
+
+Čtení inputu z pro připojení ke hře/pro vytvoření nové hry => atributy nové hry oddělené "-" místo mezery aby se nemusely řešit problémy s cin >>
+Posílání "quit" při ctrl+c nebo normálním ukončení
+Čtení typů map, následuje po seznamu rozehraných her
+	0: hra0
+	1: hra1
+
+	Mapy:
+	1) první
+	2) druhá

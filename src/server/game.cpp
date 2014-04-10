@@ -1,5 +1,12 @@
 #include "game.h"
 
+Game::Game(float timeout, int map)
+{
+	id = Server::get_instance()->get_game_id();
+	this->timeout = timeout;
+	// this->map = Server::get_instance()->get_map(map);
+}
+
 Game::~Game()
 {
 	std::cout << "game~players"<<std::endl;
@@ -18,7 +25,7 @@ void Game::send(Player * exclude, std::string message)
 	{
 		if((*it) == exclude) continue;
 
-		(*it)->send(message);
+		(*it)->send(&message);
 	}
 }
 
@@ -34,6 +41,7 @@ bool Game::add_player(Player * p)
 	if(players->size() < 4)
 	{
 		players->push_back(p);
+		//TODO posílat mapu
 		return true;
 	}
 
@@ -50,3 +58,8 @@ std::string Game::to_string()
 }
 
 //TODO mazat klienty
+
+int Game::get_id()
+{
+	return id;
+}
