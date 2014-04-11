@@ -15,15 +15,16 @@ int main (int argc, char * argv[])
 	QCoreApplication a(argc, argv);
 	Client_cli client;
 
-	std::string host,game_type;
+	std::string host,game_type = "";
 	int repeat=0;
 	try
 	{
 		// ziskani serveru na pripojeni
 		std::cout<<"Na jaky server se chcete pripojit? "<<std::endl;
+		// host="localhost";
 		std::cin>>host;
 		std::cout<<std::endl;
-		client.connect_socket(const_cast<char *>(host.c_str())); 	
+		client.connect_socket(const_cast<char *>(host.c_str()));
 
 		// vypis her
 		std::cout<<"Jsou vam k dispozici tyto mapy:" <<std::endl<<std::endl;
@@ -35,48 +36,47 @@ int main (int argc, char * argv[])
 
 		// vyber mezi join a create
 		std::cout<<"Přejete se připojit k některé z těchto her, nebo si založit vlastní?"<<std::endl;
-		
+
 		int map_number,join,game_number;
 		float timeout;
-		
+
 		// vybere mezi join a create game
 		do
 		{
 			join=0;
 			std::cout<<"Pro vytvoření hry ......... 1"<<std::endl;
 			std::cout<<"Pro připojení se ke hře ... 2"<<std::endl;
-			std::getline(std::cin,game_type);
-			join=std::stoi(game_type);
+			std::cin >> game_type;
+			join = std::stoi(game_type);
+			break;
 		} while (join!=1 && join!=2);
-		
+
 		// zalozeni nove hry
 		if (join==1)
 		{
-			do 
+			do
 			{
-				repeat=0;
 				std::cout<<"Zadejte timeout hry"<<std::endl;
-				std::getline(std::cin,game_type);
+				std::cin >> game_type;
 				timeout=std::stof(game_type);
-			} while (repeat!=1);
+			} while (timeout < 0.5 || timeout > 5);
 
-			do 
+			do
 			{
-				repeat=0;
-				std::cout<<"Zadejte cislo mapy "<<repeat<<std::endl;
-				std::getline(std::cin,game_type);
+				std::cout<<"Zadejte cislo mapy "<<std::endl;
+				std::cin >> game_type;
 				map_number=std::stoi(game_type);
-			} while (repeat!=1);
+			} while (map_number < 1);
 			printf("%f %d\n",timeout,map_number);
 			client.create_game(timeout,map_number);
 		}
 		else
 		{
-			do 
+			do
 			{
 				repeat=0;
 				std::cout<<"Zadejte cislo hry"<<std::endl;
-				std::getline(std::cin,game_type);
+				std::cin >> game_type;
 				game_number=std::stoi(game_type);
 			} while (repeat!=1);
 			client.join_game(game_number);
@@ -85,8 +85,8 @@ int main (int argc, char * argv[])
 		// hrani
 		int konec;
 		std::string move="stop";
-		konec=client.accept_state_map();
-		do 
+		// konec=client.accept_state_map();
+		do
 		{
 			std::cout<<"Jaký chceš provést tah? (go, right, left, stop, take, open)"<<std::endl;
 			std::cin>>move;
@@ -96,16 +96,16 @@ int main (int argc, char * argv[])
 
 	}
 
-	
 
-	
-	
-	
+
+
+
+
 
 	catch (Errors & e)
 	{
 		std::cerr<<e.get_message()<<std::endl;
-		exit(1);	
+		exit(1);
 	}
 
 	return 0;

@@ -1,5 +1,5 @@
 /**
-*\file client.cpp 
+*\file client.cpp
 * Soubor obsahující implementaci metod třídy Client
 *\author Michal Veselý (xvesel63)
 */
@@ -29,9 +29,9 @@ int Client::connect_socket(const char * host)
 	{
 		return 1;
 	}
-	else 
+	else
 	{
-		throw Errors(Errors::SOCKET_CONNECT);	
+		throw Errors(Errors::SOCKET_CONNECT);
 	}
 	return 0;
 }
@@ -64,7 +64,7 @@ int Client::get_games()
 	{
 		read_from_socket(this->client_socket,this->games);
 	}
-	else 
+	else
 	{
 		throw Errors(Errors::SOCKET_READ);
 		return 0;
@@ -88,7 +88,7 @@ int Client::show_maps()
 		read_from_socket(this->client_socket,this->maps);
 		return 1;
 	}
-	else 
+	else
 	{
 		throw Errors(Errors::SOCKET_READ);
 		return 0;
@@ -106,7 +106,7 @@ int Client::join_game(int game_id)
 {
 	// zaslani zadosti o pripojeni do hry game_id
 	client_socket->write((std::to_string(game_id)+"\r\n").c_str());
-	if (!(client_socket->waitForBytesWritten(5000))) 
+	if (!(client_socket->waitForBytesWritten(5000)))
 	{
 		throw Errors(Errors::WRITE_SOCKET);
 		return 0;
@@ -117,13 +117,13 @@ int Client::join_game(int game_id)
 
 	if (client_socket->waitForReadyRead(5000)) read_from_socket(client_socket,game_info);
 	else
-	{ 
+	{
 		throw Errors(Errors::SOCKET_READ);
 		return 0;
 	}
 
 	// pokud se nepodarilo hru vytvorit, server posle invalid
-	if (game_info.compare("invalid")==0) 
+	if (game_info.compare("invalid")==0)
 	{
 		throw Errors(Errors::NOT_JOINED);
 		return 0;
@@ -131,11 +131,13 @@ int Client::join_game(int game_id)
 
 	// naskladani dat tam kam patri
 	sscanf(game_info.c_str(),"%d%d%d%d%d%lf",&(this->width),&(this->height),&(this->color),&(this->pos_x),&(this->pos_y),&(this->timeout));
-	
+
 	// nacteni mapy
 	for (int i=0; i<this->height;i++)
 		for (int j=0; j<this->width; i++)
+		{
 			sscanf(game_info.c_str(),"%c",&(this->map[i][j]));
+		}
 	return 1;
 }
 
@@ -146,12 +148,12 @@ int Client::join_game(int game_id)
 *\param width Šířka v počtech hracích políček (omezeno na 20-50).
 * V případě nedodržení limitu velikosti dojde k vyvolání vyjímky
 *\param height Výška programu, stejný limit i reakce na jeho nedodržení jako u width
-*\param timeout Časový interval, ve kterém dochází ke změnám ve hře  
+*\param timeout Časový interval, ve kterém dochází ke změnám ve hře
 *\return True (různé od 0) pokud se podařilo vytvořit hru, jinak False
-*/	
+*/
 int Client::create_game(double timeout, int map_type)
 {
-	if (timeout > 5 || timeout < 0.5) 
+	if (timeout > 5 || timeout < 0.5)
 	{
 		throw Errors(Errors::TIMEOUT); // spatnej timeout, musi byt <0.5,5>
 		return 0;
@@ -162,7 +164,7 @@ int Client::create_game(double timeout, int map_type)
 	// timeout typ_mapy
 
 	client_socket->write((std::to_string(this->timeout)+" "+std::to_string(map_type)+"\r\n").c_str());
-	if (!(client_socket->waitForBytesWritten(5000))) 
+	if (!(client_socket->waitForBytesWritten(5000)))
 	{
 		throw Errors(Errors::WRITE_SOCKET);
 		return 0;
@@ -173,30 +175,31 @@ int Client::create_game(double timeout, int map_type)
 
 	if (client_socket->waitForReadyRead(5000)) read_from_socket(client_socket,game_info);
 	else
-	{ 
+	{
 		throw Errors(Errors::SOCKET_READ);
 		return 0;
 	}
 
 	// pokud se nepodarilo hru vytvorit, server posle invalid
-	if (game_info.compare("invalid")==0) 
+	if (game_info.compare("invalid")==0)
 	{
 		throw Errors(Errors::GAME_NOT_CREATED);
 		return 0;
 	}
-
 	// naskladani dat tam kam patri
-	//sscanf(game_info.c_str(),"%d %d %d %d %d",&(this->width),&(this->height),&(this->color),&(this->pos_x),&(this->pos_y));
-	sscanf(game_info.c_str(),"%d %d",&(this->width),&(this->height));
+	sscanf(game_info.c_str(),"%d %d %d %d %d",&(this->width),&(this->height),&(this->color),&(this->pos_x),&(this->pos_y));
+	// sscanf(game_info.c_str(),"%d %d",&(this->width),&(this->height));
 	// nacteni mapy
-	/*
+
 	for (int i=0; i<this->height;i++)
-		for (int j=0; j<this->width; i++)
-			sscanf(game_info.c_str(),"%c",&(this->map[i][j]));
-*/
+		for (int j=0; j<this->width; j++)
+		{
+			sscanf((game_info.c_str()),"%c",&(this->map[i][j]));
+		}
+
 	return 1;
 }
-	
+
 /**
 \fn void Client::send_move(std::string command)
 * Pošle serveru informaci o aktuálním tahu hráče
