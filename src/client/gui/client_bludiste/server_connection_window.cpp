@@ -1,8 +1,6 @@
 #include "server_connection_window.h"
 #include "ui_server_connection_window.h"
 #include "./../../errors.h"
-#include "game_setup.h"
-
 
 server_connection_window::server_connection_window(QWidget *parent) :
     QMainWindow(parent),
@@ -33,8 +31,8 @@ void server_connection_window::on_server_connect_button_clicked()
         game_setup_w->show();
         this->close();
         game_setup_w->fullfill_client_reference(this->client);
-        //game_setup_w->ui->maps_list->addItem("ap");
-
+        game_setup_w->get_maps();
+        game_setup_w->show_available_games();
     }
 }
 

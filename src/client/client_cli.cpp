@@ -26,7 +26,13 @@ void Client_cli::print_map()
 void Client_cli::print_games()
 {
 	this->get_games();
-	std::cout<<games<<std::endl<<std::endl;
+	std::cout<<this->games<<std::endl<<std::endl;
+}
+
+void Client_cli::print_maps()
+{
+	this->show_maps();
+	std::cout<<this->maps<<std::endl<<std::endl;
 }
 
 Client_cli::Client_cli(){;}

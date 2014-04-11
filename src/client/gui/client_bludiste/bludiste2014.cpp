@@ -1,6 +1,13 @@
+/*
+*\file errors.h
+* Obsahuje implementaci hlavičky třídy Errors
+*\author Michal Veselý (xvesel63)
+*/
+
+
 #include "game_setup.h"
 #include "server_connection_window.h"
-
+#include "game_window.h"
 #include <QApplication>
 
 int main(int argc, char *argv[])

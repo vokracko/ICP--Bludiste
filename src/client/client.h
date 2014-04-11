@@ -48,11 +48,11 @@ public:
 public:
 	explicit Client(QObject *parent=0);
 	~Client();
-	void send_move(std::string command);
+	int send_move(std::string command);
 	int accept_state_map();
 	int connect_socket(const char * host);
-	void create_game(double timeout,int map_type);
-	void join_game(int game_id);
-	void get_games();
-	void show_maps();
+	int create_game(double timeout,int map_type);
+	int join_game(int game_id);
+	int get_games();
+	int show_maps();
 };

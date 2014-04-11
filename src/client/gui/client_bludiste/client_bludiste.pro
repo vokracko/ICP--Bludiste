@@ -20,7 +20,8 @@ TEMPLATE = app
 SOURCES +=\
         game_setup.cpp \
     bludiste2014.cpp \
-    server_connection_window.cpp
+    server_connection_window.cpp \
+    game_window.cpp
 
 SOURCES+=
 ./../../bludiste2014-cli.cpp
@@ -30,10 +31,12 @@ SOURCES+=./../../errors.cpp
 
 
 HEADERS  += game_setup.h \
-    server_connection_window.h
+    server_connection_window.h \
+    game_window.h
 HEADER  +=./../../errors.h
 HEADER  +=./../../client.h
 HEADER  +=./../../client_gui.h
 
 FORMS    += game_setup.ui \
-    server_connection_window.ui
+    server_connection_window.ui \
+    game_window.ui

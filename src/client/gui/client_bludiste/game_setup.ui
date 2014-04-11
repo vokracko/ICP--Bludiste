@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>507</width>
-    <height>678</height>
+    <height>672</height>
    </rect>
   </property>
   <property name="palette">
@@ -297,8 +297,8 @@
    <widget class="QLabel" name="label">
     <property name="geometry">
      <rect>
-      <x>40</x>
-      <y>10</y>
+      <x>170</x>
+      <y>40</y>
       <width>161</width>
       <height>21</height>
      </rect>
@@ -318,7 +318,7 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>300</y>
+      <y>320</y>
       <width>161</width>
       <height>27</height>
      </rect>
@@ -473,7 +473,7 @@
     <property name="geometry">
      <rect>
       <x>290</x>
-      <y>300</y>
+      <y>320</y>
       <width>201</width>
       <height>27</height>
      </rect>
@@ -486,9 +486,9 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>40</y>
+      <y>70</y>
       <width>481</width>
-      <height>251</height>
+      <height>241</height>
      </rect>
     </property>
     <property name="palette">
@@ -533,9 +533,9 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>390</y>
+      <y>380</y>
       <width>481</width>
-      <height>191</height>
+      <height>161</height>
      </rect>
     </property>
     <property name="palette">
@@ -576,17 +576,77 @@
      </palette>
     </property>
    </widget>
-   <widget class="QPushButton" name="show_games_button">
+   <widget class="QLabel" name="when_error_label">
     <property name="geometry">
      <rect>
-      <x>368</x>
-      <y>590</y>
-      <width>121</width>
-      <height>27</height>
+      <x>10</x>
+      <y>10</y>
+      <width>481</width>
+      <height>20</height>
      </rect>
     </property>
+    <property name="font">
+     <font>
+      <pointsize>13</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color: red</string>
+    </property>
     <property name="text">
-     <string>zobrazit mapy</string>
+     <string/>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_3">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>560</y>
+      <width>281</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>13</pointsize>
+     </font>
+    </property>
+    <property name="text">
+     <string>Zvol si timeout v rozmezí 0.5 - 5 sec</string>
+    </property>
+   </widget>
+   <widget class="QDoubleSpinBox" name="timeout_edit">
+    <property name="geometry">
+     <rect>
+      <x>300</x>
+      <y>556</y>
+      <width>62</width>
+      <height>24</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>13</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color: black</string>
+    </property>
+    <property name="minimum">
+     <double>0.500000000000000</double>
+    </property>
+    <property name="maximum">
+     <double>5.000000000000000</double>
+    </property>
+    <property name="singleStep">
+     <double>0.500000000000000</double>
+    </property>
+    <property name="value">
+     <double>2.000000000000000</double>
     </property>
    </widget>
   </widget>

@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include "./../../client_gui.h"
+#include "game_setup.h"
 
 namespace Ui {
 class server_connection_window;
