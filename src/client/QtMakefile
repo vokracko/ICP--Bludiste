@@ -1,12 +1,23 @@
+QT+=network
+QT+=widgets
+
 SOURCES+=bludiste2014-cli.cpp
 SOURCES+=client.cpp
 SOURCES+=client_cli.cpp
 SOURCES+=errors.cpp
 
+
 HEADER+=errors.h
 HEADER+=client.h
 HEADER+=client_cli.h
+
+
+
 TARGET=bludiste2014-cli
-QT+=network
+
+
+
 
 QMAKE_CXXFLAGS += -std=c++11
+
+CONFIG+=qt

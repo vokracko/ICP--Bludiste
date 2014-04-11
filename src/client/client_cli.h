@@ -1,3 +1,4 @@
+#pragma once
 /**
 *\file client_cli.h 
 * Soubor obsahující implementaci hlavičky třídy Client_cli<br/>

@@ -1,3 +1,4 @@
+#pragma once
 /**
 *\file errors.h
 * Obsahuje implementaci hlavičky třídy Errors

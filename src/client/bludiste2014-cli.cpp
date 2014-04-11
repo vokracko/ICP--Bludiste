@@ -50,6 +50,18 @@ int main (int argc, char * argv[])
 			else repeat=1;
 		} while (repeat);
 
+		// hrani
+		int konec;
+		std::string move="stop";
+		konec=client.accept_state_map();
+		do 
+		{
+			std::cout<<"Jaký chceš provést tah? (go, right, left, stop, take, open)"<<std::endl;
+			std::cin>>move;
+			client.send_move(move);
+			konec=client.accept_state_map();
+		} while (!konec);
+
 	}
 
 	

@@ -1,3 +1,5 @@
+#pragma once
+
 /**
 *\file client.h
 *Hlavičkový soubor pro třídu Client <br/>
@@ -31,23 +33,26 @@
 class Client: public QObject
 {
 	QTcpSocket * client_socket;
-protected:
+
+public:
 	int color; 
 	int pos_x,pos_y;
 	int width,height;
-	int map[50][50];
+	char map[50][50];
 	int time_in_game;
 	int steps;
 	int visit_boxes;
 	std::string games;
+	std::string maps;
 	double timeout;	
 public:
 	explicit Client(QObject *parent=0);
 	~Client();
-	void send_move();
-	void accept_state_map();
-	void connect_socket(char * host);
+	void send_move(std::string command);
+	int accept_state_map();
+	int connect_socket(const char * host);
 	void create_game(double timeout,int map_type);
 	void join_game(int game_id);
 	void get_games();
+	void show_maps();
 };
