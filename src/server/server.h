@@ -4,6 +4,8 @@
  * \author Lukáš Vokráčko (xvokra00)
 */
 
+class Server;
+
 #pragma once
 
 #include <boost/asio.hpp>
@@ -14,19 +16,15 @@
 #include "game.h"
 #include "player.h"
 
-//TODO uchovávat hráče
-
-class Game;
-class Player;
 class Server
 {
 	public:
 		static boost::asio::io_service * ios;
 		static const int PORT = 1234;
 
+		std::vector<Game *> games;
 	private:
 		boost::asio::ip::tcp::acceptor acceptor;
-		std::vector<Game *> games;
 		std::vector<Player *> orphans;
 		Connection * last_connection;
 
@@ -43,7 +41,7 @@ class Server
 
 		std::string get_games_string();
 		void stop();
-		Game * assing(int game_id, Player * player);
+		Game * assign(int game_id, Player * player);
 		int new_game(std::string & game_settings);
 		void add_orphan(Player * p);
 

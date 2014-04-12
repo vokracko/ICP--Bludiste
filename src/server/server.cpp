@@ -44,16 +44,22 @@ std::string Server::get_games_string()
 	std::vector<Game *> games = Server::get_instance()->games;
 	std::string message;
 
-	for(std::vector<Game*>::iterator it = games.begin(); it != games.end(); ++it)
+	if(games.size())
 	{
-		message.append((*it)->to_string() + "\r\n");
+		for(std::vector<Game*>::iterator it = games.begin(); it != games.end(); ++it)
+		{
+			message.append((*it)->to_string() + "\r\n");
+		}
+	}
+	else
+	{
+		message = "0\r\n";
 	}
 	return message;
 }
 
-Game * Server::assing(int game_id, Player * player)
+Game * Server::assign(int game_id, Player * player)
 {
-	// return nullptr; //TODO až bude hotovo tak odstranit
 	Game * game_pointer = nullptr;
 
 	for(std::vector<Game *>::iterator it = games.begin(); it != games.end(); ++it)
@@ -82,7 +88,6 @@ int Server::new_game(std::string & game_settings)
 	int map_id;
 	float timeout;
 
-	std::cout << "new_game" << std::endl;
 	try
 	{
 		timeout = std::stof(game_settings, &pos);
@@ -93,6 +98,8 @@ int Server::new_game(std::string & game_settings)
 	{
 		return 0;
 	}
+
+	if(!Map::exists(map_id)) return 0;
 
 
 	games.push_back(new Game(timeout, map_id));
@@ -131,6 +138,13 @@ void Server::create(boost::asio::io_service * ios)
 
 void Server::kill(int sig)
 {
+	std::vector<Game *> games = Server::get_instance()->games;
+	for(std::vector<Game *>::iterator it = games.begin(); it != games.end(); ++it)
+	{
+		(*it)->stop();
+	}
+
+
 	Server::get_instance()->stop();
 }
 
