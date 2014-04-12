@@ -4,8 +4,9 @@
  * \author Lukáš Vokráčko (xvokra00)
  */
 
-#ifndef _H_CONNECTION
-#define _H_CONNECTION
+class Connection;
+
+#pragma once
 
 #include <boost/bind.hpp>
 #include <boost/asio.hpp>
@@ -23,10 +24,7 @@ class Connection
 
 	public:
 		boost::asio::ip::tcp::socket socket;
-		static const int SYNC = 1;
-		static const int ASYNC = 2;
-		//TODO předělat všechno static na enumy
-
+		enum {SYNC, ASYNC};
 
 	private:
 		void handle_receive();
@@ -41,6 +39,3 @@ class Connection
 		void sync_receive(std::string * target);
 		// boost::asio::ip::tcp::socket get_socket();
 };
-
-
-#endif
