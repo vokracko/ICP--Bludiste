@@ -1,3 +1,5 @@
+class Player;
+
 #pragma once
 
 #include <boost/asio/ip/address_v4.hpp>
@@ -7,20 +9,27 @@
 #include "server.h"
 #include "game.h"
 #include "connection.h"
+#include "position.h"
 
-class Game;
 class Player
 {
 	private:
 		int id;
+		int color;
 		Connection * conn = nullptr;
 		std::thread thread;
 		std::string read_message;
-		Game * game;
+		Game * game = nullptr;
+		Position position;
 
 	public:
 
 	private:
+		void send_games();
+		void send_map_list();
+		void send_map(bool firt_time = false);
+		void send_invalid();
+		void send_play();
 
 	public:
 		Player(Connection * conn);
@@ -29,8 +38,10 @@ class Player
 		void work();
 		void send(std::string * message, int mode = Connection::ASYNC);
 		void receive(std::string * target, int mode = Connection::ASYNC);
-		void send_games();
-		void send_invalid();
-		void send_play();
+		int get_color();
+		void set_color(int color);
+		void set_position(Position pos);
+		void send_quit();
+
 };
 
