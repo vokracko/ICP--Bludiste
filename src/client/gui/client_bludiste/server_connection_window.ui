@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- Grafické rozhraní okna pro přípojení k serveru. Vygenerováno automaticky QT Creatorem.
+    Autor: Michal Veselý (xvesel63)-->
+
 <ui version="4.0">
  <class>server_connection_window</class>
  <widget class="QMainWindow" name="server_connection_window">
@@ -290,7 +293,6 @@
     </rect>
    </property>
   </widget>
-  <widget class="QStatusBar" name="statusbar"/>
  </widget>
  <resources/>
  <connections/>

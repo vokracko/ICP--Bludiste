@@ -26,8 +26,8 @@ SOURCES +=\
 SOURCES+=
 ./../../bludiste2014-cli.cpp
 SOURCES+=./../../client.cpp
-SOURCES+=./../../client_gui.cpp
 SOURCES+=./../../errors.cpp
+SOURCES+=game_field.cpp
 
 
 HEADERS  += game_setup.h \
@@ -35,7 +35,7 @@ HEADERS  += game_setup.h \
     game_window.h
 HEADER  +=./../../errors.h
 HEADER  +=./../../client.h
-HEADER  +=./../../client_gui.h
+HEADER  +=game_field.h
 
 FORMS    += game_setup.ui \
     server_connection_window.ui \

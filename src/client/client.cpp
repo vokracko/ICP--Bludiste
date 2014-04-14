@@ -181,22 +181,30 @@ int Client::create_game(double timeout, int map_type)
 	}
 
 	// pokud se nepodarilo hru vytvorit, server posle invalid
-	if (game_info.compare("invalid")==0)
+	if (game_info.compare("invalid\n\r")==0)
 	{
 		throw Errors(Errors::GAME_NOT_CREATED);
 		return 0;
 	}
+	std::cout<<"size: "<<game_info.size()<<"\n\n";
 	// naskladani dat tam kam patri
 	sscanf(game_info.c_str(),"%d %d %d %d %d",&(this->width),&(this->height),&(this->color),&(this->pos_x),&(this->pos_y));
 	// sscanf(game_info.c_str(),"%d %d",&(this->width),&(this->height));
 	// nacteni mapy
-
+	game_info=game_info.substr(game_info.find("\n")+1,game_info.size());
+	std::cout<<this->height<<" x "<<width<<"\n";
+	std::cout<<game_info.size()<<"\n";
+	//std::cout<<game_info;
+	int index=0;
 	for (int i=0; i<this->height;i++)
+	{
 		for (int j=0; j<this->width; j++)
 		{
-			sscanf((game_info.c_str()),"%c",&(this->map[i][j]));
+			this->map[i][j]=game_info.at(index++);
+	    	std::cout<<map[i][j];
 		}
-
+		std::cout<<"\n";
+	}
 	return 1;
 }
 
@@ -208,6 +216,12 @@ int Client::create_game(double timeout, int map_type)
 */
 int Client::send_move(std::string command)
 {
+	if (command.compare("left")!=0 && command.compare("right")!=0 && command.compare("stop")!=0
+	    && command.compare("go")!=0 && command.compare("take")!=0 && command.compare("open")!=0) 
+	{
+		throw Errors(Errors::UNKNOWN_COMMAND);
+		return 0;
+	}
 	client_socket->write((command+"\r\n").c_str());
 	if (!(client_socket->waitForBytesWritten(5000)))
 	{
@@ -220,7 +234,7 @@ int Client::send_move(std::string command)
 /**
 *\fn void Client::accept_state_map()
 * Přečte ze socketu informace o aktuálním stavu hry a uloží je do atributu map
-*\return 1 pokud je konec hry, jinak nula
+*\return 1 pokud je konec hry, jinak 0
 */
 int Client::accept_state_map()
 {
@@ -242,3 +256,4 @@ int Client::accept_state_map()
 	// pokud konec neni vrati 0
 	return 0;
 }
+

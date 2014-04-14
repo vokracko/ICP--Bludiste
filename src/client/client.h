@@ -1,5 +1,3 @@
-#pragma once
-
 /**
 *\file client.h
 *Hlavičkový soubor pro třídu Client <br/>
@@ -7,11 +5,14 @@
 *Šířku a výšku hracího pole<br/>
 *Barvu daného klienta<br/>
 *Časovou prodlevu mezi tahy<br/>
-*Pozici hráče ve hře
-*počet navštívených polí a počet kroků
-*čas strávený ve hře
+*Pozici hráče ve hře <br/>
+*počet navštívených polí a počet kroků<br/>
+*čas strávený ve hře <br/>
 *\author Michal Veselý (xvesel63)
 */
+
+
+#pragma once
 
 #include <iostream>
 #include <QtCore>

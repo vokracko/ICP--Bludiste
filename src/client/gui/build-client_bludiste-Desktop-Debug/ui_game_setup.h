@@ -20,7 +20,6 @@
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QMenuBar>
 #include <QtWidgets/QPushButton>
-#include <QtWidgets/QStatusBar>
 #include <QtWidgets/QWidget>
 
 QT_BEGIN_NAMESPACE
@@ -40,7 +39,6 @@ public:
     QLabel *label_3;
     QDoubleSpinBox *timeout_edit;
     QMenuBar *menuBar;
-    QStatusBar *statusBar;
 
     void setupUi(QMainWindow *game_setup)
     {
@@ -183,9 +181,6 @@ public:
         menuBar->setObjectName(QStringLiteral("menuBar"));
         menuBar->setGeometry(QRect(0, 0, 507, 25));
         game_setup->setMenuBar(menuBar);
-        statusBar = new QStatusBar(game_setup);
-        statusBar->setObjectName(QStringLiteral("statusBar"));
-        game_setup->setStatusBar(statusBar);
 
         retranslateUi(game_setup);
 

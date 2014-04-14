@@ -1,3 +1,12 @@
+/**
+*\file game_setup.cpp
+
+* Implementuje metody třídy game_setup. Vygenerované pomocí QT Creator a přidáním implementace metod. <br/>
+*Umožňuje připojení se do existující hry a vytvoření nové hry. Po vytvoření či připojení vytváří
+* instanci třídy game_window pro samotné hraní hry. 
+*\author Michal Veselý (xvesel63)
+*/
+
 #include "game_setup.h"
 #include "ui_game_setup.h"
 
@@ -13,11 +22,21 @@ game_setup::~game_setup()
     delete ui;
 }
 
-void game_setup::fullfill_client_reference(Client_gui * client)
+/**
+*\fn void game_setup::fullfill_client_reference(Client * client)
+* Naplění reference na třídu Client, obsahující informace o hráči a metody pro komunikaci se serverem.
+*/
+void game_setup::fullfill_client_reference(Client * client)
 {
     this->client=client;
 }
 
+/**
+*\fn void game_setup::get_maps()
+* Volání metody show_maps() třídy Client, pro získání map k dispozici od serveru a jejich zobrazení do listu umístěném v okně
+* metodou insert_lines.<br/>
+* V případě chyby je vyvolána výjimka a vypsána chyba (nedojde k ukončení programu).
+*/
 void game_setup::get_maps()
 {
     try
@@ -33,6 +52,11 @@ void game_setup::get_maps()
     this->insert_lines(this->client->maps,this->ui->maps_list);
 }
 
+/**
+*\fn void game_setup::show_available_games()
+* Zavolá funkci get_games() třídy Client a zobrazí všechny rozehrané hry v okně.
+* V případě chyby je vyvolána výjimka a vypsána chyba (nedojde k ukončení programu).
+*/
 void game_setup::show_available_games()
 {
     try
@@ -48,6 +72,13 @@ void game_setup::show_available_games()
     this->insert_lines(this->client->games,this->ui->games_viewer);
 }
 
+
+/**
+*\fn void game_setup::insert_lines(std::string str,QListWidget * list)
+* Naparsuje textový řetězec str a zobrazí jednotlivé položky do komponenty instance třídy QListWidget.
+* \param str Textový řetězec obsahující informace oddělené novým řádkem.
+* \param list Odkaz na instanci třídy QListWidget jenž umožňuje výběr konkrétní položky.  
+*/
 void game_setup::insert_lines(std::string str,QListWidget * list)
 {
     std::deque <std::string> lines;
@@ -70,7 +101,10 @@ void game_setup::insert_lines(std::string str,QListWidget * list)
 }
 
 
-
+/**
+*\fn void game_setup::on_refresh_button_clicked()
+* Slot reagující na signál vyvolaný kliknutím na tlačítko aktualizovat. Vyvolá metodu get_games a dojde k zobrazení aktuálně rozehraných her.
+*/
 void game_setup::on_refresh_button_clicked()
 {
     try
@@ -87,7 +121,13 @@ void game_setup::on_refresh_button_clicked()
 }
 
 
-
+/**
+*\fn void game_setup::on_connect_game_button_clicked()
+* Slot reagující na signál vyvolaný kliknutím na tlačítko pro připojení ke hře. <br/>
+* Dojde k odeslání vybrané hry serveru s žádostí o připojení se ke hře. V případě neúspěchu je vypsáno chybové hlášení a dojde k vyvolání výjimky.
+* (Běh programu se neukončí).<br/>
+* V případě úspěchu se vytvoří hrací okno.
+*/
 void game_setup::on_connect_game_button_clicked()
 {
     int game_selected=-1;
@@ -112,7 +152,13 @@ void game_setup::on_connect_game_button_clicked()
     }
 }
 
-
+/**
+*\fn void game_setup::on_create_game_button_clicked()
+* Slot reagující na signál vyvolaný kliknutím na tlačítko pro vytvoření hry. <br/>
+* Dojde k odeslání vybrané mapy serveru s žádostí o vytvoření hry. V případě neúspěchu je vypsáno chybové hlášení a dojde k vyvolání výjimky.
+* (Běh programu se neukončí). <br/>
+* V případě úspěchu se vytvoří hrací okno.
+*/
 void game_setup::on_create_game_button_clicked()
 {
     int map_selected=-1;
@@ -141,7 +187,10 @@ void game_setup::on_create_game_button_clicked()
     }
 }
 
-
+/**
+*\fn void game_setup::create_game_window()
+* Vyvolá vytvoření hracího okna a naplnění reference na třídu Client.
+*/
 void game_setup::create_game_window()
 {
     game_window * game_window_w = new game_window;
