@@ -1,42 +1,45 @@
 #include "map.h"
 
 const std::string Map::path = "../../maps/";
-int Map::count = 0;
+std::map<int, std::string> Map::maplist;
 
 Map::Map(int map_id)
 {
-	boost::filesystem::path p(Map::path.c_str());
-	boost::filesystem::directory_iterator it(p), end;
-
 	std::ifstream file;
 	std::string line;
 	size_t pos;
-	int i = 1;
 
-	std::cout << "Vytvářím mapu ve hře" << std::endl;
-	for(; it != end; ++it, ++i)
+	std::cout << "map:id: " << map_id << std::endl;
+	std::cout << "map:name: " << Map::maplist[map_id] << std::endl;
+
+
+	file.open(Map::path + Map::maplist[map_id]);
+
+	std::getline(file, line);
+	height = std::stoi(line, &pos);
+	line = line.substr(pos+1);
+	width = std::stoi(line);
+
+	while(file.good() && !file.eof())
 	{
-		if(i == map_id)
-		{
-			file.open(Map::path + it->path().filename().string());
-
-			std::getline(file, line);
-			height = std::stoi(line, &pos);
-			line.substr(pos+1);
-			width = std::stoi(line);
-
-			while(file.good() && !file.eof())
-			{
-				std::getline(file, line);
-				map.push_back(line);
-			}
-
-			file.close();
-
-			break;
-		}
+		std::getline(file, line);
+		map.push_back(line);
 	}
 
+	file.close();
+
+}
+
+void Map::init()
+{
+	boost::filesystem::path p(Map::path.c_str());
+	boost::filesystem::directory_iterator it(p), end;
+	int i = 1;
+
+	for(; it != end; ++it, ++i)
+	{
+		Map::maplist.insert(std::pair<int, std::string>(i, it->path().filename().string()));
+	}
 }
 
 std::vector<std::string> * Map::get_map()
@@ -81,22 +84,18 @@ void Map::emplace_player(Player * p)
 
 std::string Map::list()
 {
-	int i = 1;
 	std::string list = "";
-	boost::filesystem::path p(Map::path.c_str());
-	boost::filesystem::directory_iterator it(p), end;
 
-	for(; it != end; ++it, ++i)
+	for(std::map<int, std::string>::iterator it = Map::maplist.begin(); it != Map::maplist.end(); ++it)
 	{
-		list.append(std::to_string(i) + ": " + it->path().filename().string() + "\r\n");
+		list.append(std::to_string(it->first) + ": " + it->second + "\r\n");
 	}
 
-	Map::count = i;
 
 	return list;
 }
 
 bool Map::exists(int map_id)
 {
-	return map_id >= 1 && map_id <= count;
+	return map_id >= 1 && map_id <= Map::maplist.size();
 }

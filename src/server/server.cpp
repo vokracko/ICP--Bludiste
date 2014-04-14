@@ -91,7 +91,7 @@ int Server::new_game(std::string & game_settings)
 	try
 	{
 		timeout = std::stof(game_settings, &pos);
-		game_settings.substr(pos+1);
+		game_settings = game_settings.substr(pos+1);
 		map_id = std::stoi(game_settings);
 	}
 	catch(std::exception & e) // nevalidní data
@@ -134,6 +134,7 @@ Server * Server::get_instance()
 void Server::create(boost::asio::io_service * ios)
 {
 	Server::ios = ios;
+	Map::init();
 }
 
 void Server::kill(int sig)

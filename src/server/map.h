@@ -6,6 +6,7 @@ class Map;
 #include <string>
 #include <fstream>
 #include <vector>
+#include <map>
 #include "player.h"
 
 class Map
@@ -30,8 +31,8 @@ class Map
 			NONE = 0
 		};
 
-		static int count;
 		static const std::string path;//TODO před odevzdání změnit složku do rootu
+		static std::map<int, std::string> maplist;
 		//TODO umístění hráčů náhodně
 		//TODO hlídač
 
@@ -49,6 +50,7 @@ class Map
 	public:
 		static bool exists(int map_id);
 		static std::string list();
+		static void init();
 
 		Map(int map_id);
 		void set_position();// block * b, x, y, look
