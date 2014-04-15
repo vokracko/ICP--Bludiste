@@ -13,7 +13,9 @@ class Game;
 #include <iostream>
 #include <chrono>
 #include "player.h"
+#include "position.h"
 #include "map.h"
+#include "box.h"
 
 class Game
 {
@@ -22,7 +24,6 @@ class Game
 		Map * map;
 
 		int id;
-		int map_id;
 		float timeout;
 		bool running;
 		bool colors[4] = {false};
@@ -33,8 +34,10 @@ class Game
 
 
 	private:
-		void turn_right(int player_id);
-		void turn_left(int player_id);
+		bool turn_right(Player * p);
+		bool turn_left(Player * p);
+		bool take(Player * p);
+		bool open(Player * p);
 
 	public:
 		Game(float timeout, int map_id);
@@ -45,7 +48,8 @@ class Game
 		std::string to_string();
 		bool is_running();
 		void remove_player(Player * p);
-		void set(int player_id, std::string * command);
+		void cmd(Player * p, std::string * command);
+		void set(Player * p, Position pos);
 		void remove_color(Player * p);
 		void set_color(Player * p);
 		Map * get_map();

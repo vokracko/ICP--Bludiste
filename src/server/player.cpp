@@ -13,6 +13,16 @@ Player::~Player()
 	thread.join();
 }
 
+bool Player::has_key()
+{
+	return own_key;
+}
+
+void Player::take_key()
+{
+	own_key = true;
+}
+
 void Player::work()
 {
 	std::string message;
@@ -21,12 +31,19 @@ void Player::work()
 	{
 		if(!init()) return;
 		send_map(true);
+		// usleep(2000000);
+		// game->get_map()->get_map()->at(0).at(0) = 'p';
+		// send_map();
+
+		// usleep(2000000);
+		// game->get_map()->get_map()->at(1).at(0) = 'm';
+		// send_map();
 
 
 		while(game->is_running() && message != "quit")
 		{
 			receive(&message, Connection::SYNC);
-			game->set(id, &message); // upraví políčka hry
+			game->cmd(this, &message); // upraví políčka hry
 			// TODO game->send(message) // odešle všem hráčům aktuální stav
 		}
 	}
@@ -36,6 +53,16 @@ void Player::work()
 	}
 
 	if(game != nullptr) game->remove_player(this);
+}
+
+int Player::get_id()
+{
+	return id;
+}
+
+Position Player::get_position()
+{
+	return position;
 }
 
 //TODO dát příkazy do samostatné třídy a ty používat v obou částech
@@ -65,7 +92,7 @@ bool Player::init()
 			else if(target == "quit") return false;
 
 			game_id = std::stoi(target, &pos);
-			if(pos != target.length() - 1)
+			if(pos != target.length())
 			{
 				// ve zprávě dvě čísla == zakládá novou hru
 				game_id = Server::get_instance()->new_game(target);
@@ -138,7 +165,7 @@ void Player::send_map(bool first_time)
 		message.append(std::to_string(color) + " ");
 		// message.append(std::to_string(position.x) + " ");
 		// message.append(std::to_string(position.y) + "\r\n");
-		message.append(std::to_string(1));
+		message.append(std::to_string(1) + " ");
 		message.append(std::to_string(1) + "\r\n");
 
 		// send(&info, Connection::SYNC);
@@ -152,7 +179,7 @@ void Player::send_map(bool first_time)
 		message.append(*it);
 	}
 
-	send(&message, Connection::ASYNC);
+	send(&message, Connection::SYNC);
 }
 
 int Player::get_color()

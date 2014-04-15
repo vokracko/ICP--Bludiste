@@ -8,6 +8,7 @@ class Map;
 #include <vector>
 #include <map>
 #include "player.h"
+#include "position.h"
 
 class Map
 {
@@ -42,22 +43,28 @@ class Map
 	private:
 		int width;
 		int height;
-		// TODO uchovávat pozici všech hráčů ať se to nemusí hledat
+		int map_id;
+		Position key; //TODO ve hře je více klíčů !!!
+
 
 		std::vector<std::string> map;
-
 
 	public:
 		static bool exists(int map_id);
 		static std::string list();
 		static void init();
+		int get(int x, int y);
+		void set(int x, int y, int box);
+		void open_gate();
+
 
 		Map(int map_id);
-		void set_position();// block * b, x, y, look
 		std::vector<std::string> * get_map();
 		int get_width();
 		int get_height();
 		void emplace_player(Player * p);
+		std::string get_name();
 
+		Position get_key_position();
 
 };

@@ -8,9 +8,7 @@ Map::Map(int map_id)
 	std::ifstream file;
 	std::string line;
 	size_t pos;
-
-	std::cout << "map:id: " << map_id << std::endl;
-	std::cout << "map:name: " << Map::maplist[map_id] << std::endl;
+	this->map_id = map_id;
 
 
 	file.open(Map::path + Map::maplist[map_id]);
@@ -28,6 +26,31 @@ Map::Map(int map_id)
 
 	file.close();
 
+	key.x = 0;
+	key.y = 0;
+
+}
+
+Position Map::get_key_position()
+{
+	return key;
+}
+
+int Map::get(int x, int y)
+{
+	// if(x < 0 || x >= width) throw std::exception("Out of range"); //TODO
+	return map.at(y).at(x);
+}
+
+void Map::set(int x, int y, int box)
+{
+	if(x < 0 || x >= width) return;
+	map.at(y).at(x) = box;
+}
+
+std::string Map::get_name()
+{
+	return Map::maplist[map_id];
 }
 
 void Map::init()
@@ -48,10 +71,9 @@ std::vector<std::string> * Map::get_map()
 	return &map;
 }
 
-
-void Map::set_position()
+void Map::open_gate()
 {
-// block * b, x, y, look
+	//TODO vyměnit obrázky
 }
 
 int Map::get_width()
@@ -68,18 +90,19 @@ void Map::emplace_player(Player * p)
 {
 	Position pos;
 
-	for(int y = 0; y < map.size(); ++y)
-		for(int x = 0; x < map.at(y).length(); ++x)
-		{
-			if(map.at(y).at(x) == 'p')
-			{
-				//TODO nějak vyřešit identifikaci hráče
-				pos.x = x;
-				pos.y = y;
-				p->set_position(pos);
-				return;
-			}
-		}
+	// for(int y = 0; y < map.size(); ++y)
+	// 	for(int x = 0; x < map.at(y).length(); ++x)
+	// 	{
+	// 		if(map.at(y).at(x) == 'p')
+	// 		{
+	// 			//TODO nějak vyřešit identifikaci hráče
+	// 			pos.x = x;
+	// 			pos.y = y;
+	// 			p->set_position(pos);
+	// 			return;
+	// 		}
+	// 	}
+	//TODO
 }
 
 std::string Map::list()

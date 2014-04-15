@@ -16,6 +16,7 @@ class Player
 	private:
 		int id;
 		int color;
+		bool own_key = false;
 		Connection * conn = nullptr;
 		std::thread thread;
 		std::string read_message;
@@ -41,7 +42,10 @@ class Player
 		int get_color();
 		void set_color(int color);
 		void set_position(Position pos);
+		Position get_position();
 		void send_quit();
-
+		int get_id();
+		bool has_key();
+		void take_key();
 };
 
