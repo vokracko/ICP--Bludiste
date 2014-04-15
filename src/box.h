@@ -3,55 +3,26 @@
 
 #include <string>
 
-
-class Box
+enum class Box
 {
-	public:
-		enum
-		{
-			RED = 10,
-			GREEN = 20,
-			BLUE = 30,
-			WHITE = 40,
+	RED = 40,
+	GREEN = 50,
+	BLUE = 60,
+	WHITE = 70,
 
-			MONSTER = 50,
-			KEY = 60,
-			GATE = 70,
-			WALL = 80,
+	MONSTER = 80,
+	KEY = 90,
+	GATE = 100,
+	WALL = 110,
+	EMPTY = 120,
 
-			TOP = 1,
-			LEFT = 2,
-			RIGHT = 3,
-			BOTTOM = 4,
-			NONE = 0
-		};
-
-
-		static std::string get_image(int type, int position = NONE)
-		{
-			std::string filename;
-			switch(type)
-			{
-				case MONSTER: filename = "monster";break;
-				case KEY: filename = "key";break;
-				case GATE: filename = "gate";break;
-				case WALL: filename = "wall";break;
-				case RED: filename = "red";break;
-				case GREEN: filename = "green";break;
-				case BLUE: filename = "blue";break;
-				case WHITE: filename = "white";break;
-			}
-
-			switch(position)
-			{
-				case TOP: filename.append("-top");break;
-				case LEFT: filename.append("-left");break;
-				case RIGHT: filename.append("-right");break;
-				case Box::BOTTOM: filename.append("-bottom");break;
-			}
-
-			return filename.append(".png");
-		}
+	TOP = 1,
+	LEFT = 2,
+	BOTTOM = 3,
+	RIGHT = 4,
+	NONE = 0
+	OPEN = 5,
+	CLOSE = 6
 };
 
 #endif
