@@ -9,10 +9,12 @@
 #include <iostream>
 #include "errors.h"
 #include <stdio.h>
+#include <locale.h>
 
 int main (int argc, char * argv[])
 {
 	QCoreApplication a(argc, argv);
+	setlocale(LC_NUMERIC,"C");
 	Client_cli client;
 
 	std::string host,game_type = "";
@@ -37,8 +39,8 @@ int main (int argc, char * argv[])
 		// vyber mezi join a create
 		std::cout<<"Přejete se připojit k některé z těchto her, nebo si založit vlastní?"<<std::endl;
 
-		int map_number,join,game_number;
-		float timeout;
+		int map_number=100,join,game_number,ec;
+		float timeout=0;
 
 		// vybere mezi join a create game
 		do
@@ -54,28 +56,29 @@ int main (int argc, char * argv[])
 		// zalozeni nove hry
 		if (join==1)
 		{
-			do
+			do // dokud neni zadan spravny timeout
 			{
-				std::cout<<"Zadejte timeout hry"<<std::endl;
-				std::cin >> game_type;
-				timeout=std::stof(game_type);
+				std::cout<<"Zadejte timeout hry (v intervalu <0.5 ; 5>)"<<std::endl;
+				//game_type="";
+				//std::cin>>game_type;
+				ec=scanf("%f",&timeout);
 			} while (timeout < 0.5 || timeout > 5);
 
-			do
+			do // dokud neni zadan spravne index mapy
 			{
-				std::cout<<"Zadejte cislo mapy "<<std::endl;
-				std::cin >> game_type;
-				map_number=std::stoi(game_type);
+				std::cout<<"Zadejte cislo mapy (musí být validní)"<<std::endl;
+				//game_type="";
+				//std::cin >> game_type;
+				ec=scanf("%d",&map_number);
 			} while (map_number < 1);
-			printf("%f %d\n",timeout,map_number);
 			client.create_game(timeout,map_number);
 		}
 		else
 		{
-			do
+			do // dokud neni zadano spravne cislo hry
 			{
 				repeat=0;
-				std::cout<<"Zadejte cislo hry"<<std::endl;
+				std::cout<<"Zadejte cislo hry (musí být validní)"<<std::endl;
 				std::cin >> game_type;
 				game_number=std::stoi(game_type);
 			} while (repeat!=1);
@@ -85,8 +88,8 @@ int main (int argc, char * argv[])
 		// hrani
 		int konec;
 		std::string move="stop";
-		// konec=client.accept_state_map();
-		do
+		
+		do // dokud neni konec tak provadej tahy
 		{
 			std::cout<<"Jaký chceš provést tah? (go, right, left, stop, take, open)"<<std::endl;
 			std::cin>>move;

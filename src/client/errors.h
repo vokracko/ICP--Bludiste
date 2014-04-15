@@ -1,9 +1,10 @@
-#pragma once
 /**
 *\file errors.h
 * Obsahuje implementaci hlavičky třídy Errors
 *\author Michal Veselý (xvesel63)
 */
+
+#pragma once
 
 #include <iostream>
 #include <string>
@@ -28,10 +29,11 @@ public:
 		SOCKET_READ,
 		GAME_NOT_CREATED,
 		NOT_JOINED,
+		UNKNOWN_COMMAND,
 	};
 
 	/**Pole chybových hlášek */
-	std::string error_messages[9]=
+	std::string error_messages[10]=
 	{
 		"Nepodařilo se připojit k serveru",
 		"Nebyl zadán správně parametr",
@@ -42,6 +44,7 @@ public:
 		"Nepodařilo se přijmout data od serveru",
 		"Hru nebylo možné vytvořit, zkontrolujte, že jste serveru poslal správné informace",
 		"Nepodařilo se vás připojit do hry",
+		"Neznámý příkaz pro tah (použij: go,stop,left,right,take,open)",
 	};
 public:
 	Errors(int code);

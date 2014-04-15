@@ -1,0 +1,89 @@
+\hypertarget{classserver__connection__window}{\section{server\-\_\-connection\-\_\-window Class Reference}
+\label{classserver__connection__window}\index{server\-\_\-connection\-\_\-window@{server\-\_\-connection\-\_\-window}}
+}
+
+
+{\ttfamily \#include $<$server\-\_\-connection\-\_\-window.\-h$>$}
+
+Inheritance diagram for server\-\_\-connection\-\_\-window\-:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{classserver__connection__window}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classserver__connection__window_a5c4228ae40722c21d5aaf33044d65e8c}{server\-\_\-connection\-\_\-window} (Q\-Widget $\ast$parent=0)
+\item 
+\hyperlink{classserver__connection__window_a4cb59e06328d101c22a5a0d1a0285faf}{$\sim$server\-\_\-connection\-\_\-window} ()
+\item 
+void \hyperlink{classserver__connection__window_a0e494399c11e10e00688bcbca8dc7053}{fullfill\-\_\-client\-\_\-reference} (\hyperlink{classClient}{Client} $\ast$\hyperlink{classserver__connection__window_aedf2c1c7bec9b66101617dfd75cc61cc}{client})
+\end{DoxyCompactItemize}
+\subsection*{Private Slots}
+\begin{DoxyCompactItemize}
+\item 
+void \hyperlink{classserver__connection__window_afed61024df5469b7a947f53b1fa1c1da}{on\-\_\-server\-\_\-connect\-\_\-button\-\_\-clicked} ()
+\end{DoxyCompactItemize}
+\subsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classClient}{Client} $\ast$ \hyperlink{classserver__connection__window_aedf2c1c7bec9b66101617dfd75cc61cc}{client}
+\item 
+\hyperlink{classUi_1_1server__connection__window}{Ui\-::server\-\_\-connection\-\_\-window} $\ast$ \hyperlink{classserver__connection__window_aafa54aec3e044c301c95915b68aae75f}{ui}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Obsahuje zobrazitelné okno, ve kterém je vyžadována adresa serveru. Dochází ke kontrole zda server existuje (pomocí funkcí třídy \hyperlink{classClient}{Client}) a v pozitivním případě dojde k připojení k serveru. V případě že server neexistuje dojde k vyvolání vyjímky, okno vypíše chybové hlášení , a hráč má možnost pokusit se připojit znovu (vyvoláním výjimky nedojde k vypnutí programu). \par
+\par
+ Grafické rozhraní okna pro připojení bylo vytvořeno pomocí Q\-T Creatoru a je uloženo v \hyperlink{classserver__connection__window_aafa54aec3e044c301c95915b68aae75f}{server\-\_\-connection\-\_\-window.\-ui}. 
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classserver__connection__window_a5c4228ae40722c21d5aaf33044d65e8c}{\index{server\-\_\-connection\-\_\-window@{server\-\_\-connection\-\_\-window}!server\-\_\-connection\-\_\-window@{server\-\_\-connection\-\_\-window}}
+\index{server\-\_\-connection\-\_\-window@{server\-\_\-connection\-\_\-window}!server_connection_window@{server\-\_\-connection\-\_\-window}}
+\subsubsection[{server\-\_\-connection\-\_\-window}]{\setlength{\rightskip}{0pt plus 5cm}server\-\_\-connection\-\_\-window\-::server\-\_\-connection\-\_\-window (
+\begin{DoxyParamCaption}
+\item[{Q\-Widget $\ast$}]{parent = {\ttfamily 0}}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [explicit]}}}\label{classserver__connection__window_a5c4228ae40722c21d5aaf33044d65e8c}
+\hypertarget{classserver__connection__window_a4cb59e06328d101c22a5a0d1a0285faf}{\index{server\-\_\-connection\-\_\-window@{server\-\_\-connection\-\_\-window}!$\sim$server\-\_\-connection\-\_\-window@{$\sim$server\-\_\-connection\-\_\-window}}
+\index{$\sim$server\-\_\-connection\-\_\-window@{$\sim$server\-\_\-connection\-\_\-window}!server_connection_window@{server\-\_\-connection\-\_\-window}}
+\subsubsection[{$\sim$server\-\_\-connection\-\_\-window}]{\setlength{\rightskip}{0pt plus 5cm}server\-\_\-connection\-\_\-window\-::$\sim$server\-\_\-connection\-\_\-window (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}\label{classserver__connection__window_a4cb59e06328d101c22a5a0d1a0285faf}
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classserver__connection__window_a0e494399c11e10e00688bcbca8dc7053}{\index{server\-\_\-connection\-\_\-window@{server\-\_\-connection\-\_\-window}!fullfill\-\_\-client\-\_\-reference@{fullfill\-\_\-client\-\_\-reference}}
+\index{fullfill\-\_\-client\-\_\-reference@{fullfill\-\_\-client\-\_\-reference}!server_connection_window@{server\-\_\-connection\-\_\-window}}
+\subsubsection[{fullfill\-\_\-client\-\_\-reference}]{\setlength{\rightskip}{0pt plus 5cm}void server\-\_\-connection\-\_\-window\-::fullfill\-\_\-client\-\_\-reference (
+\begin{DoxyParamCaption}
+\item[{{\bf Client} $\ast$}]{client}
+\end{DoxyParamCaption}
+)}}\label{classserver__connection__window_a0e494399c11e10e00688bcbca8dc7053}
+Provádí navázání reference na třídu \hyperlink{classClient}{Client}, která obsahuje veškeré informace o hráči a funkce pro práci s komunikací se serverem. \hypertarget{classserver__connection__window_afed61024df5469b7a947f53b1fa1c1da}{\index{server\-\_\-connection\-\_\-window@{server\-\_\-connection\-\_\-window}!on\-\_\-server\-\_\-connect\-\_\-button\-\_\-clicked@{on\-\_\-server\-\_\-connect\-\_\-button\-\_\-clicked}}
+\index{on\-\_\-server\-\_\-connect\-\_\-button\-\_\-clicked@{on\-\_\-server\-\_\-connect\-\_\-button\-\_\-clicked}!server_connection_window@{server\-\_\-connection\-\_\-window}}
+\subsubsection[{on\-\_\-server\-\_\-connect\-\_\-button\-\_\-clicked}]{\setlength{\rightskip}{0pt plus 5cm}void server\-\_\-connection\-\_\-window\-::on\-\_\-server\-\_\-connect\-\_\-button\-\_\-clicked (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [private]}, {\ttfamily [slot]}}}\label{classserver__connection__window_afed61024df5469b7a947f53b1fa1c1da}
+Funkce reagující na signál vyvolaný kliknutím na tlačítko připojit. \par
+ Dojde k pokusu o připojení k serveru v okně pro zadání adresy serveru. Pokud se k serveru nepodaří připojit, vygeneruje se výjimka která se projeví vypsáním chybové hlášky. Program umožňuje nové zadání adresy serveru (vyvoláním výjimky nedojde k ukončení programu). 
+
+\subsection{Member Data Documentation}
+\hypertarget{classserver__connection__window_aedf2c1c7bec9b66101617dfd75cc61cc}{\index{server\-\_\-connection\-\_\-window@{server\-\_\-connection\-\_\-window}!client@{client}}
+\index{client@{client}!server_connection_window@{server\-\_\-connection\-\_\-window}}
+\subsubsection[{client}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Client}$\ast$ server\-\_\-connection\-\_\-window\-::client\hspace{0.3cm}{\ttfamily [private]}}}\label{classserver__connection__window_aedf2c1c7bec9b66101617dfd75cc61cc}
+\hypertarget{classserver__connection__window_aafa54aec3e044c301c95915b68aae75f}{\index{server\-\_\-connection\-\_\-window@{server\-\_\-connection\-\_\-window}!ui@{ui}}
+\index{ui@{ui}!server_connection_window@{server\-\_\-connection\-\_\-window}}
+\subsubsection[{ui}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Ui\-::server\-\_\-connection\-\_\-window}$\ast$ server\-\_\-connection\-\_\-window\-::ui\hspace{0.3cm}{\ttfamily [private]}}}\label{classserver__connection__window_aafa54aec3e044c301c95915b68aae75f}
+
+
+The documentation for this class was generated from the following files\-:\begin{DoxyCompactItemize}
+\item 
+gui/client\-\_\-bludiste/\hyperlink{server__connection__window_8h}{server\-\_\-connection\-\_\-window.\-h}\item 
+gui/client\-\_\-bludiste/\hyperlink{server__connection__window_8cpp}{server\-\_\-connection\-\_\-window.\-cpp}\end{DoxyCompactItemize}

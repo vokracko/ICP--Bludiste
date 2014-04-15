@@ -1,13 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- Grafické rozhraní okna pro vykreslování hry a zadávání příkazů pohybu. Vygenerováno automaticky QT Creatorem.
+    Autor: Michal Veselý (xvesel63)-->
+
 <ui version="4.0">
  <class>game_window</class>
  <widget class="QMainWindow" name="game_window">
+  <property name="windowModality">
+   <enum>Qt::NonModal</enum>
+  </property>
+  <property name="enabled">
+   <bool>true</bool>
+  </property>
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>641</width>
-    <height>113</height>
+    <width>647</width>
+    <height>515</height>
    </rect>
   </property>
   <property name="palette">
@@ -102,19 +111,106 @@
    </palette>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>Bludiště 2014</string>
   </property>
   <widget class="QWidget" name="centralwidget">
+   <widget class="QLineEdit" name="command_edit">
+    <property name="geometry">
+     <rect>
+      <x>140</x>
+      <y>30</y>
+      <width>131</width>
+      <height>27</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>13</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color:blue</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="zadej_prikaz_label">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>30</y>
+      <width>111</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>13</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color: white</string>
+    </property>
+    <property name="text">
+     <string>Zadej příkaz:</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="when_error_label">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>10</y>
+      <width>511</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>11</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color:red
+</string>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="send_command_button">
+    <property name="geometry">
+     <rect>
+      <x>320</x>
+      <y>30</y>
+      <width>99</width>
+      <height>27</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>provést</string>
+    </property>
+   </widget>
    <widget class="QWidget" name="gridLayoutWidget">
     <property name="geometry">
      <rect>
-      <x>0</x>
-      <y>0</y>
-      <width>261</width>
-      <height>51</height>
+      <x>10</x>
+      <y>70</y>
+      <width>91</width>
+      <height>111</height>
      </rect>
     </property>
-    <layout class="QGridLayout" name="gridLayout"/>
+    <layout class="QGridLayout" name="grid">
+     <property name="sizeConstraint">
+      <enum>QLayout::SetMinAndMaxSize</enum>
+     </property>
+     <property name="spacing">
+      <number>0</number>
+     </property>
+    </layout>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
@@ -122,12 +218,11 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>641</width>
+     <width>647</width>
      <height>25</height>
     </rect>
    </property>
   </widget>
-  <widget class="QStatusBar" name="statusbar"/>
  </widget>
  <resources/>
  <connections/>

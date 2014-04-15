@@ -8,6 +8,10 @@
 
 #include "client.h"
 
+/**
+\class Client_cli
+* Rozšiřuje třídu Client o metody výpisu na konzoli pro konzolovou verzi hry.
+*/
 class Client_cli : public Client
 {
 	public:

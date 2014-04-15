@@ -19,7 +19,6 @@
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QMenuBar>
 #include <QtWidgets/QPushButton>
-#include <QtWidgets/QStatusBar>
 #include <QtWidgets/QWidget>
 
 QT_BEGIN_NAMESPACE
@@ -33,7 +32,6 @@ public:
     QPushButton *server_connect_button;
     QLabel *when_error_label;
     QMenuBar *menubar;
-    QStatusBar *statusbar;
 
     void setupUi(QMainWindow *server_connection_window)
     {
@@ -99,9 +97,6 @@ public:
         menubar->setObjectName(QStringLiteral("menubar"));
         menubar->setGeometry(QRect(0, 0, 438, 25));
         server_connection_window->setMenuBar(menubar);
-        statusbar = new QStatusBar(server_connection_window);
-        statusbar->setObjectName(QStringLiteral("statusbar"));
-        server_connection_window->setStatusBar(statusbar);
 
         retranslateUi(server_connection_window);
 

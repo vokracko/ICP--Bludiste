@@ -1,7 +1,7 @@
 /**
 *\file client_cli.cpp 
 * Soubor obsahující implementaci metod třídy Client_cli<br/>
-* Reimplementuje některé funkce pro účel komunikace s konzolí
+* Rozšiřuje metody třídy Klient pouze o některé funkce výpisu, původní funkcionalita je jinak zachována a neměněna
 *\author Michal Veselý (xvesel63)
 */
 
@@ -23,12 +23,20 @@ void Client_cli::print_map()
 	}
 }
 
+/**
+*\fn void Client_cli::print_games()
+* Vypíše rozehrané hry, ke kterým se lze připojit
+*/
 void Client_cli::print_games()
 {
 	this->get_games();
 	std::cout<<this->games<<std::endl<<std::endl;
 }
 
+/**
+*\fn void Client_cli::print_maps()
+* Vypíše mapy, které jsou k dispozici pro založení nové hry
+*/
 void Client_cli::print_maps()
 {
 	this->show_maps();
