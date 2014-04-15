@@ -131,6 +131,7 @@ void Game::remove_player(Player * p)
 			{
 				players.erase(it);
 				remove_color(p);
+				if(players.size() == 0) Server::get_instance()->delete_game(this);
 				//TODO unemplace player
 				break;
 			}

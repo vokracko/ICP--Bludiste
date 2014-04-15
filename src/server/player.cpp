@@ -136,8 +136,10 @@ void Player::send_map(bool first_time)
 		message.assign(std::to_string(game->get_map()->get_width()) + " ");
 		message.append(std::to_string(game->get_map()->get_height()) + " ");
 		message.append(std::to_string(color) + " ");
-		message.append(std::to_string(position.x) + " ");
-		message.append(std::to_string(position.y) + "\r\n");
+		// message.append(std::to_string(position.x) + " ");
+		// message.append(std::to_string(position.y) + "\r\n");
+		message.append(std::to_string(1));
+		message.append(std::to_string(1) + "\r\n");
 
 		// send(&info, Connection::SYNC);
 	}
@@ -192,6 +194,8 @@ void Player::receive(std::string * target, int mode)
 	{
 		conn->sync_receive(target);
 	}
+
+	std::cout << "Receive: " << *target << std::endl;
 }
 
 

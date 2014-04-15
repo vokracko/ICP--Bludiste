@@ -44,6 +44,7 @@ class Server
 		Game * assign(int game_id, Player * player);
 		int new_game(std::string & game_settings);
 		void add_orphan(Player * p);
+		void delete_game(Game * g);
 
 	private:
 		Server(boost::asio::io_service & ios);
