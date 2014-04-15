@@ -14,7 +14,7 @@
 int main (int argc, char * argv[])
 {
 	QCoreApplication a(argc, argv);
-	setlocale(LC_NUMERIC,"C");
+	
 	Client_cli client;
 
 	std::string host,game_type = "";

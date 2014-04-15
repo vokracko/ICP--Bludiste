@@ -167,6 +167,7 @@ void game_setup::on_create_game_button_clicked()
     {
         sscanf(this->ui->maps_list->currentItem()->text().toStdString().c_str(),"%d",&map_selected);
         timeout=this->ui->timeout_edit->value();
+        //std::cout<<timeout<<"  x  "<<map_selected<<std::endl;
         try
         {
             this->client->create_game(timeout,map_selected);
@@ -198,5 +199,6 @@ void game_setup::create_game_window()
     this->close();
     game_window_w->fullfill_client_reference(this->client);
     game_window_w->create_game_field();
+    game_window_w->print_map();
 
 }

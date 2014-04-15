@@ -1,7 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Grafické rozhraní okna pro přípojení k serveru. Vygenerováno automaticky QT Creatorem.
-    Autor: Michal Veselý (xvesel63)-->
-
 <ui version="4.0">
  <class>server_connection_window</class>
  <widget class="QMainWindow" name="server_connection_window">
@@ -244,6 +241,9 @@
       <width>301</width>
       <height>27</height>
      </rect>
+    </property>
+    <property name="text">
+     <string>147.229.178.173</string>
     </property>
    </widget>
    <widget class="QPushButton" name="server_connect_button">

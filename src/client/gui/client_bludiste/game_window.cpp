@@ -8,6 +8,7 @@
 #include "game_window.h"
 #include "ui_game_window.h"
 #include "./../../errors.h"
+#include <unistd.h>
 
 
 game_window::game_window(QWidget *parent) :
@@ -55,12 +56,12 @@ void game_window::create_game_field()
     //this->ui->game_field->addItem(box);
 
     // vytvoreni herniho pole
-             
-    Game_field * game_field = new Game_field(this->client->height,this->client->width);
-    game_field->set_map(this->client->map);
+
+    this->game_field = new Game_field(this->client->height,this->client->width);
+    this->game_field->set_map(this->client->map);
     for (int i=0;i<this->client->height;i++)
         for (int j=0;j<this->client->width;j++)
-            this->ui->grid->addWidget((game_field->field[i][j]),i,j);
+            this->ui->grid->addWidget((this->game_field->field[i][j]),i,j);
 
     //this->ui->grid=&(*game_field);
 
@@ -75,11 +76,16 @@ void game_window::create_game_field()
 
 void game_window::print_map()
 {
+    this->client->accept_state_map();
+    this->game_field->set_map(this->client->map);
 
+    this->client->accept_state_map();
+    this->game_field->set_map(this->client->map);
 }
 
 game_window::~game_window()
 {
+    delete game_field;
     delete ui;
 }
 
