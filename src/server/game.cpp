@@ -2,10 +2,10 @@
 
 Game::Game(float timeout, int map_id)
 {
+	map = new Map(map_id);
 	id = Server::get_instance()->get_game_id();
 	this->timeout = timeout;
 	running = true;
-	map = new Map(map_id);
 	// this->map = Server::get_instance()->get_map(map);
 }
 
@@ -41,21 +41,21 @@ void Game::stop()
 
 }
 
-void Game::set(int player_id, std::string * command)
+void Game::cmd(Player * p, std::string * command)
 {
-
+	bool res;
 	//TODO
 	if(*command == "left")
 	{
-		turn_left(player_id);
+		res = turn_left(p);
 	}
 	else if(*command == "right")
 	{
-		turn_right(player_id);
+		res = turn_right(p);
 	}
 	else if(*command == "take")
 	{
-
+		res = take(p);
 	}
 	else if(*command == "open")
 	{
@@ -71,15 +71,71 @@ void Game::set(int player_id, std::string * command)
 	}
 }
 
-void Game::turn_left(int player_id)
+void Game::set(Player * p, Position pos)
 {
-	// TODO
-	// map->
+	Position current_pos = p->get_position();
+
+	map->set(current_pos.x, current_pos.y, Box::EMPTY);
+	map->set(pos.x, pos.y, p->get_color() + pos.look);
+	p->set_position(pos);
 }
 
-void Game::turn_right(int player_id)
+bool Game::take(Player * p)
 {
-	// TODO
+	//TODO vyřešit překreslování klíče když na něm stojím
+}
+
+bool Game::open(Player * p)
+{
+	Position current_pos = p->get_position();
+	Position key = map->get_key_position(); //TODO více klíčů
+	int x = current_pos.x;
+	int y = current_pos.y;
+
+	if(!p->has_key()) return false; //nevlastní klíč, nemůže otevřít
+
+	switch(current_pos.look)
+	{
+		case Box::UP: x++;break;
+		case Box::DOWN: x--;break;
+		case Box::LEFT: y--;break;
+		case Box::RIGHT: y++;break;
+	}
+
+	if(map->get(x, y) == Box::KEY)
+	{
+		map->set(x,y, Box::EMPTY);
+		p->take_key();
+		return true;
+	}
+
+	return false;
+}
+
+bool Game::turn_left(Player * p)
+{
+	Position pos;
+	Position current_pos = p->get_position();
+	pos.x = current_pos.x;
+	pos.y = current_pos.y;
+	pos.look = (current_pos.look) == 4 ? 1 : current_pos.look + 1;
+
+	set(p, pos);
+
+	return true;
+}
+
+bool Game::turn_right(Player * p)
+{
+	Position pos;
+	Position current_pos = p->get_position();
+	pos.x = current_pos.x;
+	pos.y = current_pos.y;
+	pos.look = (current_pos.look) == 1 ? 4 : current_pos.look - 1;
+
+	set(p, pos);
+
+	return true;
 }
 
 /**
@@ -131,6 +187,7 @@ void Game::remove_player(Player * p)
 			{
 				players.erase(it);
 				remove_color(p);
+				if(players.size() == 0) Server::get_instance()->delete_game(this);
 				//TODO unemplace player
 				break;
 			}
@@ -159,10 +216,10 @@ void Game::set_color(Player * p)
 
 std::string Game::to_string()
 {
-	std::string message = get_id() + ": ";
+	std::string message = std::to_string(id) + ": ";
+	message.append(map->get_name() + ", ");
 	//TODO trvání hry
-	// message.append(players.size() + " ");
-	message.append(players.size() + "/4");
+	message.append("hráči: " + std::to_string(players.size()) + "/4");
 
 	return message;
 }

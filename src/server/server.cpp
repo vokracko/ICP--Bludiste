@@ -107,6 +107,19 @@ int Server::new_game(std::string & game_settings)
 	return games.back()->get_id();
 }
 
+void Server::delete_game(Game * g)
+{
+	for(std::vector<Game *>::iterator it = games.begin(); it != games.end(); ++it)
+	{
+		if(*it == g)
+		{
+			it = games.erase(it);
+			delete g;
+			break;
+		}
+	}
+}
+
 void Server::remove_orphan(Player * p)
 {
 	for(std::vector<Player *>::iterator it = orphans.begin(); it != orphans.end(); ++it)
