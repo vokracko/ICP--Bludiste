@@ -26,14 +26,14 @@ SOURCES +=\
 SOURCES+=
 ./../../bludiste2014-cli.cpp
 SOURCES+=./../../client.cpp
-SOURCES+=./../../errors.cpp
+SOURCES+=./../../../errors.cpp
 SOURCES+=game_field.cpp
 
 
 HEADERS  += game_setup.h \
     server_connection_window.h \
     game_window.h
-HEADER  +=./../../errors.h
+HEADER  +=./../../../errors.h
 HEADER  +=./../../client.h
 HEADER  +=game_field.h
 

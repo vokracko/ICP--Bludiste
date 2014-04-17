@@ -7,7 +7,7 @@
 
 #include "game_window.h"
 #include "ui_game_window.h"
-#include "./../../errors.h"
+#include "./../../../errors.h"
 
 
 game_window::game_window(QWidget *parent) :
@@ -29,8 +29,8 @@ void game_window::fullfill_client_reference(Client * client)
 
 /**
 *\fn void game_window::create_game_field()
-* Funkce pro vytvoření hracího okna. Dynamicky nastavuje velikost okna podle rozměrů hrací plochy. 
-* Dynamicky umisťuje jednotlivé komponenty podle rozměrů okna. 
+* Funkce pro vytvoření hracího okna. Dynamicky nastavuje velikost okna podle rozměrů hrací plochy.
+* Dynamicky umisťuje jednotlivé komponenty podle rozměrů okna.
 * alokuje hrací plochu a propojuje ji s mřížkou umístěnou v grafickém rozhraní.
 */
 void game_window::create_game_field()
@@ -55,7 +55,7 @@ void game_window::create_game_field()
     //this->ui->game_field->addItem(box);
 
     // vytvoreni herniho pole
-             
+
     Game_field * game_field = new Game_field(this->client->height,this->client->width);
     game_field->set_map(this->client->map);
     for (int i=0;i<this->client->height;i++)

@@ -12,7 +12,7 @@
 #include "./../../client.h"
 #include <deque>
 #include <QListWidget>
-#include "./../../errors.h"
+#include "./../../../errors.h"
 #include "game_window.h"
 
 namespace Ui {

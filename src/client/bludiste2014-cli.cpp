@@ -7,7 +7,7 @@
 #include "client_cli.h"
 #include <QCoreApplication>
 #include <iostream>
-#include "errors.h"
+#include "../errors.h"
 #include <stdio.h>
 #include <locale.h>
 
@@ -88,7 +88,7 @@ int main (int argc, char * argv[])
 		// hrani
 		int konec;
 		std::string move="stop";
-		
+
 		do // dokud neni konec tak provadej tahy
 		{
 			std::cout<<"Jaký chceš provést tah? (go, right, left, stop, take, open)"<<std::endl;

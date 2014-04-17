@@ -7,7 +7,7 @@
 #include "client.h"
 #include <iostream>
 #include <QHostAddress>
-#include "errors.h"
+#include "../errors.h"
 #include <string>
 
 
@@ -217,7 +217,7 @@ int Client::create_game(double timeout, int map_type)
 int Client::send_move(std::string command)
 {
 	if (command.compare("left")!=0 && command.compare("right")!=0 && command.compare("stop")!=0
-	    && command.compare("go")!=0 && command.compare("take")!=0 && command.compare("open")!=0) 
+	    && command.compare("go")!=0 && command.compare("take")!=0 && command.compare("open")!=0)
 	{
 		throw Errors(Errors::UNKNOWN_COMMAND);
 		return 0;
