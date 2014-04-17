@@ -107,6 +107,7 @@ public:
     {
         server_connection_window->setWindowTitle(QApplication::translate("server_connection_window", "Bludi\305\241t\304\233 2014 - p\305\231ipojen\303\255 k serveru", 0));
         label->setText(QApplication::translate("server_connection_window", "Zadejte server, ke kter\303\251mu se chcete p\305\231ipojit", 0));
+        server_name_edit->setText(QApplication::translate("server_connection_window", "147.229.178.173", 0));
         server_connect_button->setText(QApplication::translate("server_connection_window", "p\305\231ipojit se", 0));
         when_error_label->setText(QString());
     } // retranslateUi

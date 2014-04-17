@@ -11,7 +11,7 @@
 #include <string>
 
 
-Client::Client(QObject * parent): QObject(parent){;}
+Client::Client(QObject * parent): QObject(parent){setlocale(LC_NUMERIC,"C");	}
 Client::~Client(){;}
 
 /**
@@ -39,7 +39,7 @@ int Client::connect_socket(const char * host)
 // nacte data ze socketu
 // vyvola vyjimku v pripade chyby
 void read_from_socket(QTcpSocket * client_socket , std::string &msg)
-{
+{	
 	msg="";
 	char buffer[100]={0,};
 	int cont=1;
@@ -123,20 +123,23 @@ int Client::join_game(int game_id)
 	}
 
 	// pokud se nepodarilo hru vytvorit, server posle invalid
-	if (game_info.compare("invalid")==0)
+	if (game_info.compare("invalid\r\n")==0)
 	{
 		throw Errors(Errors::NOT_JOINED);
 		return 0;
 	}
 
 	// naskladani dat tam kam patri
-	sscanf(game_info.c_str(),"%d%d%d%d%d%lf",&(this->width),&(this->height),&(this->color),&(this->pos_x),&(this->pos_y),&(this->timeout));
+	sscanf(game_info.c_str(),"%d %d %d %d %d",&(this->width),&(this->height),&(this->color),&(this->pos_x),&(this->pos_y));
 
+	game_info=game_info.substr(game_info.find("\n")+1,game_info.size());
+	std::cout<<game_info.size()<<"\n";
 	// nacteni mapy
+	int index=0;
 	for (int i=0; i<this->height;i++)
-		for (int j=0; j<this->width; i++)
-		{
-			sscanf(game_info.c_str(),"%c",&(this->map[i][j]));
+		for (int j=0; j<this->width; j++)
+		{   std::cout<<index<<" ";
+			this->map[i][j]=game_info.at(index++);
 		}
 	return 1;
 }
@@ -181,19 +184,19 @@ int Client::create_game(double timeout, int map_type)
 	}
 
 	// pokud se nepodarilo hru vytvorit, server posle invalid
-	if (game_info.compare("invalid\n\r")==0)
+	if (game_info.compare("invalid\r\n")==0)
 	{
 		throw Errors(Errors::GAME_NOT_CREATED);
 		return 0;
 	}
-	std::cout<<"size: "<<game_info.size()<<"\n\n";
+	//std::cout<<"size: "<<game_info.size()<<"\n\n";
 	// naskladani dat tam kam patri
 	sscanf(game_info.c_str(),"%d %d %d %d %d",&(this->width),&(this->height),&(this->color),&(this->pos_x),&(this->pos_y));
 	// sscanf(game_info.c_str(),"%d %d",&(this->width),&(this->height));
 	// nacteni mapy
 	game_info=game_info.substr(game_info.find("\n")+1,game_info.size());
-	std::cout<<this->height<<" x "<<width<<"\n";
-	std::cout<<game_info.size()<<"\n";
+	
+	//std::cout<<game_info.size()<<"\n";
 	//std::cout<<game_info;
 	int index=0;
 	for (int i=0; i<this->height;i++)
@@ -201,9 +204,9 @@ int Client::create_game(double timeout, int map_type)
 		for (int j=0; j<this->width; j++)
 		{
 			this->map[i][j]=game_info.at(index++);
-	    	std::cout<<map[i][j];
+	    	//std::cout<<map[i][j];
 		}
-		std::cout<<"\n";
+		//std::cout<<"\n";
 	}
 	return 1;
 }
@@ -240,18 +243,19 @@ int Client::accept_state_map()
 {
 	std::string map_in_string;
 
-	if (client_socket->waitForReadyRead(5000))
+	if (client_socket->waitForReadyRead(2000))
 	{
-		read_from_socket(client_socket,this->games);
+		read_from_socket(client_socket,map_in_string);
 	}
 	else throw Errors(Errors::SOCKET_READ);
 
 	// pokud je konec, vrati 1
 	if (map_in_string.compare("end")==0) return 1;
 
+	int index=0;
 	for (int i=0; i<this->height;i++)
-		for (int j=0; j<this->width; i++)
-			sscanf(map_in_string.c_str(),"%c",&(this->map[i][j]));
+		for (int j=0; j<this->width; j++)
+			this->map[i][j]=map_in_string.at(index++);
 
 	// pokud konec neni vrati 0
 	return 0;

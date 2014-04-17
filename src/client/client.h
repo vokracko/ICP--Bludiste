@@ -35,17 +35,15 @@ class Client: public QObject
 {
 	QTcpSocket * client_socket;
 
-public:
+private:
 	int color; 
 	int pos_x,pos_y;
+	double timeout;	
+public:
 	int width,height;
-	char map[50][50];
-	int time_in_game;
-	int steps;
-	int visit_boxes;
 	std::string games;
 	std::string maps;
-	double timeout;	
+	char map[50][50];
 public:
 	explicit Client(QObject *parent=0);
 	~Client();
