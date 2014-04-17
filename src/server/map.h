@@ -9,6 +9,7 @@ class Map;
 #include <map>
 #include "player.h"
 #include "position.h"
+#include "../errors.h" // TODO errors přejmenovat !!! a dát do /stc, používáme oba, nezapomenou na makefile
 
 class Map
 {
@@ -44,10 +45,8 @@ class Map
 		int width;
 		int height;
 		int map_id;
-		Position key; //TODO ve hře je více klíčů !!!
 
-
-		std::vector<std::string> map;
+		std::string map;
 
 	public:
 		static bool exists(int map_id);
@@ -59,12 +58,10 @@ class Map
 
 
 		Map(int map_id);
-		std::vector<std::string> * get_map();
+		std::string * get_map();
 		int get_width();
 		int get_height();
 		void emplace_player(Player * p);
 		std::string get_name();
-
-		Position get_key_position();
 
 };

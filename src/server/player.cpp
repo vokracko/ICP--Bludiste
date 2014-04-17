@@ -26,14 +26,15 @@ void Player::take_key()
 void Player::work()
 {
 	std::string message;
+	bool res;
 
 	try
 	{
 		if(!init()) return;
 		send_map(true);
-		// usleep(2000000);
-		// game->get_map()->get_map()->at(0).at(0) = 'p';
-		// send_map();
+		usleep(2000000);
+		game->get_map()->set(0, 0, Box::RED + Box::DOWN);
+		send_map();
 
 		// usleep(2000000);
 		// game->get_map()->get_map()->at(1).at(0) = 'm';
@@ -43,8 +44,9 @@ void Player::work()
 		while(game->is_running() && message != "quit")
 		{
 			receive(&message, Connection::SYNC);
-			game->cmd(this, &message); // upraví políčka hry
-			// TODO game->send(message) // odešle všem hráčům aktuální stav
+			res = game->cmd(this, &message);  // upraví políčka hry
+			message = res ? "OK" : "KO";
+			send(&message, Connection::SYNC);
 		}
 	}
 	catch(std::exception & e)
@@ -138,7 +140,6 @@ void Player::send_invalid()
 void Player::send_games()
 {
 	std::string message = Server::get_instance()->get_games_string();
-	// message.assign("0: hra1 mapa2\r\n1: hra2 mapa1\r\n");
 	send(&message, Connection::SYNC);
 }
 
@@ -163,21 +164,19 @@ void Player::send_map(bool first_time)
 		message.assign(std::to_string(game->get_map()->get_width()) + " ");
 		message.append(std::to_string(game->get_map()->get_height()) + " ");
 		message.append(std::to_string(color) + " ");
-		// message.append(std::to_string(position.x) + " ");
-		// message.append(std::to_string(position.y) + "\r\n");
-		message.append(std::to_string(1) + " ");
-		message.append(std::to_string(1) + "\r\n");
+		message.append(std::to_string(position.x) + " ");
+		message.append(std::to_string(position.y) + "\r\n");
 
 		// send(&info, Connection::SYNC);
 	}
 
 	//TODO možná provádět kopii, možná synchronizaci s mutexem
-	std::vector<std::string> * map = game->get_map()->get_map();
+	message.append(*(game->get_map()->get_map()));
 
-	for(std::vector<std::string>::iterator it = map->begin(); it != map->end(); ++it)
-	{
-		message.append(*it);
-	}
+	// for(std::vector<std::string>::iterator it = map->begin(); it != map->end(); ++it)
+	// {
+	// 	message.append(*it);
+	// }
 
 	send(&message, Connection::SYNC);
 }

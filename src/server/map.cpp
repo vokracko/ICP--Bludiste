@@ -21,31 +21,22 @@ Map::Map(int map_id)
 	while(file.good() && !file.eof())
 	{
 		std::getline(file, line);
-		map.push_back(line);
+		map.append(line);
 	}
 
 	file.close();
-
-	key.x = 0;
-	key.y = 0;
-
-}
-
-Position Map::get_key_position()
-{
-	return key;
 }
 
 int Map::get(int x, int y)
 {
-	// if(x < 0 || x >= width) throw std::exception("Out of range"); //TODO
-	return map.at(y).at(x);
+	if(x < 0 || x >= width) throw Errors(Errors::OUT_OF_RANGE);
+	return map.at(y*width+x);
 }
 
 void Map::set(int x, int y, int box)
 {
-	if(x < 0 || x >= width) return;
-	map.at(y).at(x) = box;
+	if(x < 0 || x >= width) throw Errors(Errors::OUT_OF_RANGE);
+	map.at(y*width+x) = box;
 }
 
 std::string Map::get_name()
@@ -65,7 +56,7 @@ void Map::init()
 	}
 }
 
-std::vector<std::string> * Map::get_map()
+std::string * Map::get_map()
 {
 	// TODO můžná budou potřeba semafory'dokud se mapy nepodaří odeslat
 	return &map;
@@ -90,19 +81,19 @@ void Map::emplace_player(Player * p)
 {
 	Position pos;
 
-	// for(int y = 0; y < map.size(); ++y)
-	// 	for(int x = 0; x < map.at(y).length(); ++x)
-	// 	{
-	// 		if(map.at(y).at(x) == 'p')
-	// 		{
-	// 			//TODO nějak vyřešit identifikaci hráče
-	// 			pos.x = x;
-	// 			pos.y = y;
-	// 			p->set_position(pos);
-	// 			return;
-	// 		}
-	// 	}
-	//TODO
+	for(int y = 0; y < height; ++y)
+		for(int x = 0; x < width; ++x)
+		{
+			//TODO nějak vyřešit náhodnost
+			if(get(x, y) == Box::EMPTY)
+			{
+				pos.x = x;
+				pos.y = y;
+				p->set_position(pos);
+
+				return;
+			}
+		}
 }
 
 std::string Map::list()
