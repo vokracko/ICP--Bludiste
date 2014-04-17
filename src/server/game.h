@@ -34,10 +34,11 @@ class Game
 
 
 	private:
-		bool turn_right(Player * p);
-		bool turn_left(Player * p);
+		bool rotate(Player * p, int way);
 		bool take(Player * p);
 		bool open(Player * p);
+
+		void next(Position pos, int *x, int *y);
 
 	public:
 		Game(float timeout, int map_id);
@@ -48,7 +49,7 @@ class Game
 		std::string to_string();
 		bool is_running();
 		void remove_player(Player * p);
-		void cmd(Player * p, std::string * command);
+		bool cmd(Player * p, std::string * command);
 		void set(Player * p, Position pos);
 		void remove_color(Player * p);
 		void set_color(Player * p);

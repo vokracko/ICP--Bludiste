@@ -6,7 +6,6 @@ Game::Game(float timeout, int map_id)
 	id = Server::get_instance()->get_game_id();
 	this->timeout = timeout;
 	running = true;
-	// this->map = Server::get_instance()->get_map(map);
 }
 
 Game::~Game()
@@ -41,17 +40,17 @@ void Game::stop()
 
 }
 
-void Game::cmd(Player * p, std::string * command)
+bool Game::cmd(Player * p, std::string * command)
 {
 	bool res;
-	//TODO
+	//TODO asi použít mutex aby si to neměnily navzájem
 	if(*command == "left")
 	{
-		res = turn_left(p);
+		res = rotate(p, Box::LEFT);
 	}
 	else if(*command == "right")
 	{
-		res = turn_right(p);
+		res = rotate(p, Box::RIGHT);
 	}
 	else if(*command == "take")
 	{
@@ -59,7 +58,7 @@ void Game::cmd(Player * p, std::string * command)
 	}
 	else if(*command == "open")
 	{
-
+		res = open(p);
 	}
 	else if(*command == "go")
 	{
@@ -69,6 +68,10 @@ void Game::cmd(Player * p, std::string * command)
 	{
 
 	}
+
+	send(*(map->get_map())); // odešle všem hráčům aktuální stav
+
+	return res;
 }
 
 void Game::set(Player * p, Position pos)
@@ -80,31 +83,50 @@ void Game::set(Player * p, Position pos)
 	p->set_position(pos);
 }
 
+void Game::next(Position pos, int * x, int * y)
+{
+	*x = pos.x;
+	*y = pos.y;
+
+	switch(pos.look)
+	{
+		case Box::UP: (*x)++;break;
+		case Box::DOWN: (*x)--;break;
+		case Box::LEFT: (*y)--;break;
+		case Box::RIGHT: (*y)++;break;
+	}
+}
+
 bool Game::take(Player * p)
 {
-	//TODO vyřešit překreslování klíče když na něm stojím
+	Position current_pos = p->get_position();
+	int x, y;
+
+	if(p->has_key()) return false; //nemůže vzít více klíčů
+
+	next(current_pos, &x, &y);
+
+	if(map->get(x, y) == Box::KEY)
+	{
+		map->set(x,y, Box::EMPTY);
+		return true;
+	}
+
+	return false;
 }
 
 bool Game::open(Player * p)
 {
 	Position current_pos = p->get_position();
-	Position key = map->get_key_position(); //TODO více klíčů
-	int x = current_pos.x;
-	int y = current_pos.y;
+	int x, y;
 
 	if(!p->has_key()) return false; //nevlastní klíč, nemůže otevřít
 
-	switch(current_pos.look)
-	{
-		case Box::UP: x++;break;
-		case Box::DOWN: x--;break;
-		case Box::LEFT: y--;break;
-		case Box::RIGHT: y++;break;
-	}
+	next(current_pos, &x, &y);
 
-	if(map->get(x, y) == Box::KEY)
+	if(map->get(x, y) == Box::GATE + Box::CLOSED)
 	{
-		map->set(x,y, Box::EMPTY);
+		map->set(x,y, Box::GATE + Box::OPEN);
 		p->take_key();
 		return true;
 	}
@@ -112,26 +134,15 @@ bool Game::open(Player * p)
 	return false;
 }
 
-bool Game::turn_left(Player * p)
+bool Game::rotate(Player * p, int way)
 {
 	Position pos;
 	Position current_pos = p->get_position();
 	pos.x = current_pos.x;
 	pos.y = current_pos.y;
-	pos.look = (current_pos.look) == 4 ? 1 : current_pos.look + 1;
 
-	set(p, pos);
-
-	return true;
-}
-
-bool Game::turn_right(Player * p)
-{
-	Position pos;
-	Position current_pos = p->get_position();
-	pos.x = current_pos.x;
-	pos.y = current_pos.y;
-	pos.look = (current_pos.look) == 1 ? 4 : current_pos.look - 1;
+	if(way = Box::LEFT) pos.look = (current_pos.look) == 4 ? 1 : current_pos.look + 1;
+	else pos.look = (current_pos.look) == 1 ? 4 : current_pos.look - 1;
 
 	set(p, pos);
 
@@ -216,10 +227,16 @@ void Game::set_color(Player * p)
 
 std::string Game::to_string()
 {
+	auto diff = std::chrono::system_clock::now() - start;
+	int total = std::chrono::duration_cast<std::chrono::duration<int>>(diff).count();
+	int hours = total/(60*60);
+	int mins = total/60;
+	int secs = total%60;
+
 	std::string message = std::to_string(id) + ": ";
 	message.append(map->get_name() + ", ");
-	//TODO trvání hry
 	message.append("hráči: " + std::to_string(players.size()) + "/4");
+	message.append(", trvání: " + std::to_string(hours) + "h" + std::to_string(mins) + "m" + std::to_string(secs) + "s");
 
 	return message;
 }
