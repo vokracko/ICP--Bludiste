@@ -89,11 +89,19 @@ void Map::emplace_player(Player * p)
 			{
 				pos.x = x;
 				pos.y = y;
+				pos.look = Box::LEFT;
 				p->set_position(pos);
+				set(x, y, p->get_color() + Box::LEFT);
 
 				return;
 			}
 		}
+}
+
+void Map::unemplace_player(Player * p)
+{
+	Position pos = p->get_position();
+	set(pos.x, pos.y, Box::EMPTY);
 }
 
 std::string Map::list()

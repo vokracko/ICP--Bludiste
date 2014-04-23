@@ -31,28 +31,27 @@ void Player::work()
 	try
 	{
 		if(!init()) return;
+
+		// position.x = 0;
+		// position.y = 0;
+		// position.look = Box::DOWN;
+
 		send_map(true);
-		usleep(2000000);
-		game->get_map()->set(1, 1, Box::RED + Box::DOWN);
-		send_map();
 
-		 usleep(2000000);
-		 //game->get_map()->get_map()->at(1).at(0) = 12;
-		 game->get_map()->set(2, 1, Box::RED + Box::DOWN);
-		 send_map();
-
+		// game->get_map()->set(0, 0, Box::RED + Box::DOWN);
+		// send_map();
 
 		while(game->is_running() && message != "quit")
 		{
 			receive(&message, Connection::SYNC);
 			res = game->cmd(this, &message);  // upraví políčka hry
-			message = res ? "OK" : "KO";
-			send(&message, Connection::SYNC);
+			// message = res ? "OK" : "KO";
+			// send(&message, Connection::SYNC);
 		}
 	}
 	catch(std::exception & e)
 	{
-
+		//TODO posílat ukončení hry
 	}
 
 	if(game != nullptr) game->remove_player(this);
@@ -68,7 +67,6 @@ Position Player::get_position()
 	return position;
 }
 
-//TODO dát příkazy do samostatné třídy a ty používat v obou částech
 bool Player::init()
 {
 	std::string target;
@@ -164,20 +162,13 @@ void Player::send_map(bool first_time)
 	{
 		message.assign(std::to_string(game->get_map()->get_width()) + " ");
 		message.append(std::to_string(game->get_map()->get_height()) + " ");
-		message.append(std::to_string(color) + " ");
+		message.append(std::to_string(color/10) + " ");
 		message.append(std::to_string(position.x) + " ");
 		message.append(std::to_string(position.y) + "\r\n");
-
-		// send(&info, Connection::SYNC);
 	}
 
 	//TODO možná provádět kopii, možná synchronizaci s mutexem
 	message.append(*(game->get_map()->get_map()));
-
-	// for(std::vector<std::string>::iterator it = map->begin(); it != map->end(); ++it)
-	// {
-	// 	message.append(*it);
-	// }
 
 	send(&message, Connection::SYNC);
 }

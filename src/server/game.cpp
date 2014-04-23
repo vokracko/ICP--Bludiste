@@ -42,7 +42,7 @@ void Game::stop()
 
 bool Game::cmd(Player * p, std::string * command)
 {
-	bool res;
+	bool res = false;
 	//TODO asi použít mutex aby si to neměnily navzájem
 	if(*command == "left")
 	{
@@ -69,7 +69,7 @@ bool Game::cmd(Player * p, std::string * command)
 
 	}
 
-	send(*(map->get_map())); // odešle všem hráčům aktuální stav
+	send(*(map->get_map()), p, res); // odešle všem hráčům aktuální stav
 
 	return res;
 }
@@ -155,11 +155,21 @@ bool Game::rotate(Player * p, int way)
  * \param exclude odkaz na hráče, který zprávu vytvořil
  * \param message obsah zprávy
  */
-void Game::send(std::string message)
+void Game::send(std::string message, Player * p, int res)
 {
 	for(std::vector<Player*>::iterator it = players.begin(); it != players.end(); ++it)
 	{
-		(*it)->send(&message);
+		if(p == *it)
+		{
+			char c = res ? MOVE_PASS : MOVE_FAIL;
+			std::string info = (*map->get_map()) + c;
+			(*it)->send(&info);
+		}
+		else
+		{
+			(*it)->send(&message);
+		}
+
 	}
 }
 
@@ -174,9 +184,15 @@ bool Game::add_player(Player * p)
 {
 	if(players.size() < 4)
 	{
-		players.push_back(p);
 		set_color(p);
+
+		char c = p->get_color() + Box::CONNECTED;
+		std::string info = std::to_string(c);
+		send(*(map->get_map()) + info);
+
+		players.push_back(p);
 		map->emplace_player(p);
+
 		return true;
 	}
 
@@ -198,10 +214,20 @@ void Game::remove_player(Player * p)
 			{
 				players.erase(it);
 				remove_color(p);
-				if(players.size() == 0) Server::get_instance()->delete_game(this);
-				//TODO unemplace player
+				map->unemplace_player(p);
 				break;
 			}
+
+		}
+
+		if(players.size())
+		{
+			std::string info = std::to_string(p->get_color()+Box::DISCONNECTED);
+			send(*(map->get_map()) + info);
+		}
+		else
+		{
+			Server::get_instance()->delete_game(this);
 		}
 	}
 }
@@ -209,7 +235,7 @@ void Game::remove_player(Player * p)
 void Game::remove_color(Player * p)
 {
 	int color = p->get_color();
-	colors[color] = false;
+	colors[color/10-40] = false;
 }
 
 void Game::set_color(Player * p)
@@ -218,7 +244,7 @@ void Game::set_color(Player * p)
 	{
 		if(colors[i] == false)
 		{
-			p->set_color(i);
+			p->set_color(i*10+40);
 			colors[i] = true;
 			break;
 		}

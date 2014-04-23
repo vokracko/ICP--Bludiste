@@ -43,7 +43,7 @@ class Game
 	public:
 		Game(float timeout, int map_id);
 		~Game();
-		void send(std::string message);
+		void send(std::string message, Player * p = nullptr, int res = 0);
 		bool add_player(Player * p);
 		int get_id();
 		std::string to_string();
