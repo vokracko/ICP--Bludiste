@@ -14,6 +14,8 @@
 #include "./../../client.h"
 #include "game_window.h"
 #include "game_field.h"
+#include <QShowEvent>
+#include <cstdbool>
 
 namespace Ui {
 class game_window;
@@ -31,19 +33,25 @@ class game_window : public QMainWindow
     Client * client;
     Game_field * game_field;
 
+
 public:
-    explicit game_window(QWidget *parent = 0);
+    explicit game_window(Client * client,QWidget *parent = 0);
     ~game_window();
 
-    void fullfill_client_reference(Client * client);
     void create_game_field();
-    void print_map();
+
+
     
 private slots:
     void on_send_command_button_clicked();
+    void game_showing();
+
+
 
 private:
     Ui::game_window *ui;
+    void assign_tooltips();
+
 };
 
 #endif // GAME_WINDOW_H

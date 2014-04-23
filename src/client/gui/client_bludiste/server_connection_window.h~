@@ -10,7 +10,7 @@
 #define SERVER_CONNECTION_WINDOW_H
 
 #include <QMainWindow>
-#include "./../../client.h"
+#include "./../../../client.h"
 #include "game_setup.h"
 
 namespace Ui {
