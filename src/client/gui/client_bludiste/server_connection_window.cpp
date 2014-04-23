@@ -21,6 +21,7 @@ server_connection_window::server_connection_window(Client * client,QWidget *pare
 server_connection_window::~server_connection_window()
 {
     delete ui;
+    delete this->game_setup_w;
 }
 
 /**
@@ -42,9 +43,9 @@ void server_connection_window::on_server_connect_button_clicked()
 	}
     if (ec)
     {
-        game_setup *game_setup_w = new game_setup(client);
+        game_setup_w = new game_setup(client);
         game_setup_w->show();
-        this->close();
+        this->hide();
         game_setup_w->get_maps();
         game_setup_w->show_available_games();
     }
