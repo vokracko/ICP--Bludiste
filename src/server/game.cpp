@@ -69,6 +69,10 @@ bool Game::cmd(Player * p, std::string * command)
 		res = step(p);
 		p->inc_step();
 	}
+	else if(*command == "stop")
+	{
+		res = true;
+	}
 
 	send(*(map->get_map()), p, res); // odešle všem hráčům aktuální stav
 
@@ -118,10 +122,10 @@ void Game::next(Position pos, int * x, int * y)
 
 	switch(pos.look)
 	{
-		case Box::UP: (*x)++;break;
-		case Box::DOWN: (*x)--;break;
-		case Box::LEFT: (*y)--;break;
-		case Box::RIGHT: (*y)++;break;
+		case Box::UP: (*y)--;break;
+		case Box::DOWN: (*y)++;break;
+		case Box::LEFT: (*x)--;break;
+		case Box::RIGHT: (*x)++;break;
 	}
 }
 
@@ -129,6 +133,7 @@ bool Game::step(Player * p)
 {
 	Position current_pos = p->get_position();
 	Position pos;
+	pos.look = current_pos.look;
 
 	next(current_pos, &pos.x, &pos.y);
 
@@ -156,6 +161,7 @@ bool Game::take(Player * p)
 	if(map->get(x, y) == Box::KEY)
 	{
 		map->set(x,y, Box::EMPTY);
+		p->take_key();
 		return true;
 	}
 
@@ -174,7 +180,6 @@ bool Game::open(Player * p)
 	if(map->get(x, y) == Box::GATE + Box::CLOSED)
 	{
 		map->set(x,y, Box::GATE + Box::OPEN);
-		p->take_key();
 		return true;
 	}
 
