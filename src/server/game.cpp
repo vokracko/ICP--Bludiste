@@ -62,13 +62,10 @@ bool Game::cmd(Player * p, std::string * command)
 	{
 		res = open(p);
 	}
-	else if(*command == "go")
+	else if(*command == "step")
 	{
+		res = step(p);
 		p->inc_step();
-	}
-	else if(*command == "stop")
-	{
-
 	}
 
 	send(*(map->get_map()), p, res); // odešle všem hráčům aktuální stav
@@ -124,6 +121,25 @@ void Game::next(Position pos, int * x, int * y)
 		case Box::LEFT: (*y)--;break;
 		case Box::RIGHT: (*y)++;break;
 	}
+}
+
+bool Game::step()
+{
+	Position current_pos = p->get_position();
+	int x, y;
+
+	next(current_pos, &x, &y);
+
+	if(map->get(x, y) == Box::EMPTY)
+	{
+		map->set(x, y, p->get_color() + current_pos.look);
+
+		return true;
+	}
+
+	//TODO doplnit přejíždění klíčů
+
+	return false;
 }
 
 bool Game::take(Player * p)

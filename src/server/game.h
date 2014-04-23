@@ -38,6 +38,7 @@ class Game
 		bool rotate(Player * p, int way);
 		bool take(Player * p);
 		bool open(Player * p);
+		bool step(Player * p);
 
 		void next(Position pos, int *x, int *y);
 
