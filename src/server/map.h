@@ -62,6 +62,7 @@ class Map
 		int get_width();
 		int get_height();
 		void emplace_player(Player * p);
+		void unemplace_player(Player * p);
 		std::string get_name();
 
 };

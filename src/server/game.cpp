@@ -42,7 +42,7 @@ void Game::stop()
 
 bool Game::cmd(Player * p, std::string * command)
 {
-	bool res;
+	bool res = false;
 	//TODO asi použít mutex aby si to neměnily navzájem
 	if(*command == "left")
 	{
@@ -161,7 +161,8 @@ void Game::send(std::string message, Player * p, int res)
 	{
 		if(p == *it)
 		{
-			std::string info = (*map->get_map()) + std::to_string(res ? MOVE_PASS : MOVE_FAIL);
+			char c = res ? MOVE_PASS : MOVE_FAIL;
+			std::string info = (*map->get_map()) + c;
 			(*it)->send(&info);
 		}
 		else
@@ -185,7 +186,8 @@ bool Game::add_player(Player * p)
 	{
 		set_color(p);
 
-		std::string info = std::to_string(p->get_color()+Box::CONNECTED);
+		char c = p->get_color() + Box::CONNECTED;
+		std::string info = std::to_string(c);
 		send(*(map->get_map()) + info);
 
 		players.push_back(p);
@@ -212,16 +214,22 @@ void Game::remove_player(Player * p)
 			{
 				players.erase(it);
 				remove_color(p);
-				if(players.size() == 0) Server::get_instance()->delete_game(this);
-				//TODO unemplace player
+				map->unemplace_player(p);
 				break;
 			}
 
 		}
-	}
 
-	std::string info = std::to_string(p->get_color()+Box::DISCONNECTED);
-	send(*(map->get_map()) + info);
+		if(players.size())
+		{
+			std::string info = std::to_string(p->get_color()+Box::DISCONNECTED);
+			send(*(map->get_map()) + info);
+		}
+		else
+		{
+			Server::get_instance()->delete_game(this);
+		}
+	}
 }
 
 void Game::remove_color(Player * p)

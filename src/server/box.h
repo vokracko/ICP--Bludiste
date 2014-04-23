@@ -24,7 +24,7 @@ enum Box
 	CONNECTED = 8,
 	KILLED = 7,
 
-	MOVE_PASS = 254,
-	MOVE_FAIL = 253,
+	MOVE_PASS = 35,
+	MOVE_FAIL = 36,
 };
 
