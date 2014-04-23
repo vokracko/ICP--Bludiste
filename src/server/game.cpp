@@ -187,8 +187,8 @@ bool Game::add_player(Player * p)
 		set_color(p);
 
 		char c = p->get_color() + Box::CONNECTED;
-		std::string info = std::to_string(c);
-		send(*(map->get_map()) + info);
+		std::string info = *(map->get_map()) + info;
+		send(info);
 
 		players.push_back(p);
 		map->emplace_player(p);
@@ -222,8 +222,8 @@ void Game::remove_player(Player * p)
 
 		if(players.size())
 		{
-			std::string info = std::to_string(p->get_color()+Box::DISCONNECTED);
-			send(*(map->get_map()) + info);
+			std::string info = *(map->get_map()) + (char) (p->get_color()+Box::DISCONNECTED);
+			send(info);
 		}
 		else
 		{

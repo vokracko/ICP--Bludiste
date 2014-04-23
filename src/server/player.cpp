@@ -32,14 +32,7 @@ void Player::work()
 	{
 		if(!init()) return;
 
-		// position.x = 0;
-		// position.y = 0;
-		// position.look = Box::DOWN;
-
 		send_map(true);
-
-		// game->get_map()->set(0, 0, Box::RED + Box::DOWN);
-		// send_map();
 
 		while(game->is_running() && message != "quit")
 		{
