@@ -10,11 +10,15 @@
 #include "game_setup.h"
 #include "ui_game_setup.h"
 
-game_setup::game_setup(QWidget *parent) :
+
+
+game_setup::game_setup(Client * client,QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::game_setup)
 {
     ui->setupUi(this);
+    this->client=client;
+
 }
 
 game_setup::~game_setup()
@@ -22,14 +26,6 @@ game_setup::~game_setup()
     delete ui;
 }
 
-/**
-*\fn void game_setup::fullfill_client_reference(Client * client)
-* Naplění reference na třídu Client, obsahující informace o hráči a metody pro komunikaci se serverem.
-*/
-void game_setup::fullfill_client_reference(Client * client)
-{
-    this->client=client;
-}
 
 /**
 *\fn void game_setup::get_maps()
@@ -194,11 +190,10 @@ void game_setup::on_create_game_button_clicked()
 */
 void game_setup::create_game_window()
 {
-    game_window * game_window_w = new game_window;
+    game_window * game_window_w = new game_window(this->client);
     game_window_w->show();
     this->close();
-    game_window_w->fullfill_client_reference(this->client);
     game_window_w->create_game_field();
-    game_window_w->print_map();
+    //game_window_w->print_map();
 
 }

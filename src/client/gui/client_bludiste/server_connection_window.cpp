@@ -10,11 +10,12 @@
 #include "ui_server_connection_window.h"
 #include "./../../../errors.h"
 
-server_connection_window::server_connection_window(QWidget *parent) :
+server_connection_window::server_connection_window(Client * client,QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::server_connection_window)
 {
     ui->setupUi(this);
+    this->client=client;
 }
 
 server_connection_window::~server_connection_window()
@@ -41,20 +42,11 @@ void server_connection_window::on_server_connect_button_clicked()
 	}
     if (ec)
     {
-        game_setup *game_setup_w = new game_setup;
+        game_setup *game_setup_w = new game_setup(client);
         game_setup_w->show();
         this->close();
-        game_setup_w->fullfill_client_reference(this->client);
         game_setup_w->get_maps();
         game_setup_w->show_available_games();
     }
 }
 
-/**
-*\fn void server_connection_window::fullfill_client_reference(Client * client)
-* Provádí navázání reference na třídu Client, která obsahuje veškeré informace o hráči a funkce pro práci s komunikací se serverem.
-*/
-void server_connection_window::fullfill_client_reference(Client * client)
-{
-	this->client=client;
-}

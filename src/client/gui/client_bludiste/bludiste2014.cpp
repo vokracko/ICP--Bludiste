@@ -16,9 +16,9 @@ int main(int argc, char *argv[])
     QApplication a(argc, argv);
 
     Client client;
-    server_connection_window server_connection_w;
+    server_connection_window server_connection_w(&client);
     server_connection_w.show();
-    server_connection_w.fullfill_client_reference(&client);
+
 
 /*
 game_window gw;

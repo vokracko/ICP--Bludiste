@@ -41,7 +41,7 @@ public:
 		"Nepodařilo se přijmout data od serveru",
 		"Hru nebylo možné vytvořit",
 		"Nepodařilo se vás připojit do hry",
-		"Neznámý příkaz pro tah (go,take,stop,left,right,open)",
+		"Neznámý příkaz pro tah",
 		"Pozice je mimo mapu",
 	};
 public:

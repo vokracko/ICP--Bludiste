@@ -8,10 +8,7 @@ QT       += core gui
 QT+=network
 
 QMAKE_CXXFLAGS += -std=c++11
-QMAKE_CXXFLAGS += -pg
 
-QMAKE_CXXFLAGS_DEBUG += -pg
-QMAKE_LFLAGS_DEBUG += -pg
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -38,7 +35,9 @@ HEADERS  += game_setup.h \
     server_connection_window.h \
     game_window.h
 HEADER  +=./../../../errors.h
-HEADER  +=./../../client.h
+HEADER  +=./../../../game_components.h
+HEADER  +=./../../../events_enumerator.h
+HEADER  +=./../../../client.h
 HEADER  +=game_field.h
 
 FORMS    += game_setup.ui \

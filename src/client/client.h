@@ -1,7 +1,7 @@
 /**
 *\file client.h
 *Hlavičkový soubor pro třídu Client <br/>
-*Obsahuje aktualni stav hry<br/> 
+*Obsahuje aktualni stav hry<br/>
 *Šířku a výšku hracího pole<br/>
 *Barvu daného klienta<br/>
 *Časovou prodlevu mezi tahy<br/>
@@ -16,10 +16,12 @@
 
 #include <iostream>
 #include <QtCore>
-#include <QtNetwork>
 #include <string>
 #include <QObject>
-#include <QTcpSocket>
+ #include <QTcpSocket>
+#include "./../errors.h"
+#include "./../game_components.h"
+#include "./../events_enumerator.h"
 
 /**
 \class Client
@@ -33,25 +35,35 @@
 
 class Client: public QObject
 {
-	QTcpSocket * client_socket;
+
+public:
+    QTcpSocket * client_socket;
 
 private:
-	int color; 
-	int pos_x,pos_y;
-	double timeout;	
+    int pos_x,pos_y;
+    double timeout;
 public:
-	int width,height;
-	std::string games;
-	std::string maps;
-	char map[50][50];
+    int color;
+    int width,height;
+    std::string games;
+    std::string maps;
+    char map[50][50];
+    int white_steps,red_steps,blue_steps,green_steps;
+    double white_time,red_time,blue_time,green_time,game_duration;
+
 public:
-	explicit Client(QObject *parent=0);
-	~Client();
-	int send_move(std::string command);
-	int accept_state_map();
-	int connect_socket(const char * host);
-	int create_game(double timeout,int map_type);
-	int join_game(int game_id);
-	int get_games();
-	int show_maps();
+    explicit Client(QObject *parent=0);
+    ~Client();
+    int send_move(std::string command);
+    void send_quit();
+    int accept_state_map(char events[MAX_EVENTS],int * events_count);
+    int connect_socket(const char * host);
+    int create_game(double timeout,int map_type);
+    int join_game(int game_id);
+    int get_games();
+    int show_maps();
+    std::string get_game_time();
+    std::string recognize_event(int event_code);
+    std::string refer_color();
+    std::string get_tooltip(int x,int y);
 };

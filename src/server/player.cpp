@@ -33,12 +33,13 @@ void Player::work()
 		if(!init()) return;
 		send_map(true);
 		usleep(2000000);
-		game->get_map()->set(0, 0, Box::RED + Box::DOWN);
+		game->get_map()->set(1, 1, Box::RED + Box::DOWN);
 		send_map();
 
-		// usleep(2000000);
-		// game->get_map()->get_map()->at(1).at(0) = 'm';
-		// send_map();
+		 usleep(2000000);
+		 //game->get_map()->get_map()->at(1).at(0) = 12;
+		 game->get_map()->set(2, 1, Box::RED + Box::DOWN);
+		 send_map();
 
 
 		while(game->is_running() && message != "quit")

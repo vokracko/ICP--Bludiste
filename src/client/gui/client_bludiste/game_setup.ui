@@ -1,7 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Grafické rozhraní okna pro vytvoření hry a připojení se již k existující hře. Vygenerováno automaticky QT Creatorem.
-    Autor: Michal Veselý (xvesel63)-->
-
 <ui version="4.0">
  <class>game_setup</class>
  <widget class="QMainWindow" name="game_setup">
