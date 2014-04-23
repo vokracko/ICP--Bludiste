@@ -25,7 +25,10 @@ Client::Client(QObject * parent): QObject(parent)
 Client::~Client()
 {
     if (this->client_socket!=NULL)
+    {
         this->send_quit();
+        delete this->client_socket;
+    }   
 }
 
 /**
@@ -144,15 +147,15 @@ int Client::join_game(int game_id)
     }
 
     // naskladani dat tam kam patri
-    sscanf(game_info.c_str(),"%d %d %d %d %d",&(this->width),&(this->height),&(this->color),&(this->pos_x),&(this->pos_y));
+    sscanf(game_info.c_str(),"%d %d %d %d %d\r\n",&(this->width),&(this->height),&(this->color),&(this->pos_x),&(this->pos_y));
 
-    game_info=game_info.substr(game_info.find("\n")+1,game_info.size());
-    std::cout<<game_info.size()<<"\n";
+    //game_info=game_info.substr(game_info.find("\n")+1,game_info.size());
+    std::cout<<"size: "<<game_info.size()<<"\n";
     // nacteni mapy
     int index=0;
     for (int i=0; i<this->height;i++)
         for (int j=0; j<this->width; j++)
-        {   std::cout<<index<<" ";
+        {   //std::cout<<index<<" ";
             this->map[i][j]=game_info.at(index++);
         }
     return 1;
@@ -274,17 +277,23 @@ int Client::accept_state_map(char events[MAX_EVENTS],int * events_count)
     }
 
     int index=0;
+//std::cout<<"size pred: "<<map_in_string<<"\n";
+//std::cout<<"width"<<this->width<<"  height "<<this->height<<"\n";
     for (int i=0; i<this->height;i++)
         for (int j=0; j<this->width; j++)
             this->map[i][j]=map_in_string.at(index++);
 
-    map_in_string=map_in_string.substr(index,map_in_string.size());
+    map_in_string=map_in_string.substr(index,map_in_string.size()-index);
+
+//std::cout<<"X"<<map_in_string<<"X\n"<<std::flush;
 
     *events_count=map_in_string.size();
-    //std::cout<<*events_count<<"\n";
+    
+//std::cout<<*events_count<<"\n"<<std::flush;
 
     for (int i=0; i< *events_count; i++)
     {
+//std::cout<<"a"<<"\n"<<std::flush;
         events[i]=map_in_string.at(i);
     }
 
