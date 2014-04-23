@@ -6,6 +6,7 @@ Game::Game(float timeout, int map_id)
 	id = Server::get_instance()->get_game_id();
 	this->timeout = timeout;
 	running = true;
+	// monster = new Monster(this, timeout); //TODO
 }
 
 Game::~Game()
@@ -18,6 +19,7 @@ Game::~Game()
 	}
 
 	delete map;
+	// delete monster; //TODO
 }
 
 bool Game::is_running()
@@ -123,17 +125,17 @@ void Game::next(Position pos, int * x, int * y)
 	}
 }
 
-bool Game::step()
+bool Game::step(Player * p)
 {
 	Position current_pos = p->get_position();
-	int x, y;
+	Position pos;
 
-	next(current_pos, &x, &y);
+	next(current_pos, &pos.x, &pos.y);
 
-	if(map->get(x, y) == Box::EMPTY)
+	if(map->get(pos.x, pos.y) == Box::EMPTY)
 	{
-		map->set(x, y, p->get_color() + current_pos.look);
-
+		map->set(pos.x, pos.y, p->get_color() + current_pos.look);
+		set(p, pos);
 		return true;
 	}
 

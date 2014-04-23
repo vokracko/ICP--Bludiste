@@ -16,12 +16,14 @@ class Game;
 #include "position.h"
 #include "map.h"
 #include "box.h"
+// #include "monster.h" //TODO
 
 class Game
 {
 	private:
 		std::vector<Player*> players;
 		Map * map;
+		// Monster * monster; //TODO
 
 		int id;
 		float timeout;
