@@ -28,6 +28,7 @@ class Game
 		bool running;
 		bool colors[4] = {false};
 
+		std::mutex map_mutex;
 		std::chrono::time_point<std::chrono::system_clock> start = std::chrono::system_clock::now();
 
 	public:
@@ -43,7 +44,7 @@ class Game
 	public:
 		Game(float timeout, int map_id);
 		~Game();
-		void send(std::string message, Player * p = nullptr, int res = 0);
+		void send(std::string message, Player * p = nullptr, int res = 0, Player * skip = nullptr);
 		bool add_player(Player * p);
 		int get_id();
 		std::string to_string();
@@ -54,5 +55,6 @@ class Game
 		void remove_color(Player * p);
 		void set_color(Player * p);
 		Map * get_map();
+		std::string quit_info();
 		void stop();
 };

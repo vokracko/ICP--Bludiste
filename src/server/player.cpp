@@ -44,7 +44,6 @@ void Player::work()
 	}
 	catch(std::exception & e)
 	{
-		//TODO posílat ukončení hry
 	}
 
 	if(game != nullptr) game->remove_player(this);
@@ -109,7 +108,7 @@ bool Player::init()
 			}
 			else
 			{
-				send_play();
+				// start = std::chrono::system_clock::now();
 				return true;
 			}
 
@@ -118,10 +117,13 @@ bool Player::init()
 	} while(target == "list"); //aktualizace her ze strany klienta
 }
 
-void Player::send_play()
+void Player::inc_step()
 {
-	std::string message = "play\r\n";
+	step_count++;
 }
+
+
+
 
 void Player::send_invalid()
 {
@@ -144,7 +146,19 @@ void Player::send_map_list()
 void Player::send_quit()
 {
 	std::string message = "quit\r\n";
+	message.append(game->quit_info());
 	send(&message, Connection::SYNC);
+}
+
+std::string Player::quit_info()
+{
+	std::string message;
+	auto diff = std::chrono::system_clock::now() - start;
+	int total = std::chrono::duration_cast<std::chrono::duration<int>>(diff).count();
+
+
+	message = std::to_string(total) + " " + std::to_string(step_count);
+	return message;
 }
 
 void Player::send_map(bool first_time)
@@ -160,7 +174,6 @@ void Player::send_map(bool first_time)
 		message.append(std::to_string(position.y) + "\r\n");
 	}
 
-	//TODO možná provádět kopii, možná synchronizaci s mutexem
 	message.append(*(game->get_map()->get_map()));
 
 	send(&message, Connection::SYNC);
@@ -183,6 +196,7 @@ void Player::set_color(int color)
 
 void Player::send(std::string * message, int mode)
 {
+	std::cout << "Player: " << id << std::endl;
 	std::cout << *message << std::endl;
 
 	if(mode == Connection::ASYNC)
@@ -210,3 +224,4 @@ void Player::receive(std::string * target, int mode)
 }
 
 
+//TODO ctrlc kilnutí serveru a poslání zprávy klientovy ať jde do píči

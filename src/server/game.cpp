@@ -42,8 +42,10 @@ void Game::stop()
 
 bool Game::cmd(Player * p, std::string * command)
 {
+	map_mutex.lock();
+
 	bool res = false;
-	//TODO asi použít mutex aby si to neměnily navzájem
+
 	if(*command == "left")
 	{
 		res = rotate(p, Box::LEFT);
@@ -62,7 +64,7 @@ bool Game::cmd(Player * p, std::string * command)
 	}
 	else if(*command == "go")
 	{
-
+		p->inc_step();
 	}
 	else if(*command == "stop")
 	{
@@ -70,6 +72,33 @@ bool Game::cmd(Player * p, std::string * command)
 	}
 
 	send(*(map->get_map()), p, res); // odešle všem hráčům aktuální stav
+
+	map_mutex.unlock();
+
+	return res;
+}
+
+std::string Game::quit_info()
+{
+	std::string info[5] = {"0", "0 0", "0 0", "0 0", "0 0"};
+
+
+	auto diff = std::chrono::system_clock::now() - start;
+	int total = std::chrono::duration_cast<std::chrono::duration<int>>(diff).count();
+
+	info[0] = std::to_string(total) + "\r\n";
+
+	for(std::vector<Player *>::iterator it = players.begin(); it != players.end(); ++it)
+	{
+		info[(*it)->get_id()-4] = (*it)->quit_info();
+	}
+
+	std::string res;
+
+	for(int i = 0; i < 5; ++i)
+	{
+		res.append(info[i] + "\r\n");
+	}
 
 	return res;
 }
@@ -141,7 +170,7 @@ bool Game::rotate(Player * p, int way)
 	pos.x = current_pos.x;
 	pos.y = current_pos.y;
 
-	if(way = Box::LEFT) pos.look = (current_pos.look) == 4 ? 1 : current_pos.look + 1;
+	if(way == Box::LEFT) pos.look = (current_pos.look) == 4 ? 1 : current_pos.look + 1;
 	else pos.look = (current_pos.look) == 1 ? 4 : current_pos.look - 1;
 
 	set(p, pos);
@@ -155,10 +184,15 @@ bool Game::rotate(Player * p, int way)
  * \param exclude odkaz na hráče, který zprávu vytvořil
  * \param message obsah zprávy
  */
-void Game::send(std::string message, Player * p, int res)
+void Game::send(std::string message, Player * p, int res, Player * skip)
 {
 	for(std::vector<Player*>::iterator it = players.begin(); it != players.end(); ++it)
 	{
+		if(*it == skip)
+		{
+			continue;
+		}
+
 		if(p == *it)
 		{
 			char c = res ? MOVE_PASS : MOVE_FAIL;
@@ -169,7 +203,6 @@ void Game::send(std::string message, Player * p, int res)
 		{
 			(*it)->send(&message);
 		}
-
 	}
 }
 
@@ -186,12 +219,14 @@ bool Game::add_player(Player * p)
 	{
 		set_color(p);
 
+		map->emplace_player(p);
+
 		char c = p->get_color() + Box::CONNECTED;
-		std::string info = *(map->get_map()) + info;
+		std::string info = *(map->get_map());
+		info += c;
 		send(info);
 
 		players.push_back(p);
-		map->emplace_player(p);
 
 		return true;
 	}
@@ -234,8 +269,7 @@ void Game::remove_player(Player * p)
 
 void Game::remove_color(Player * p)
 {
-	int color = p->get_color();
-	colors[color/10-40] = false;
+	colors[p->get_color()/10-40] = false;
 }
 
 void Game::set_color(Player * p)
