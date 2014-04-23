@@ -18,6 +18,10 @@ enum Box
 	RIGHT = 4,
 	NONE = 0,
 	OPEN = 5,
-	CLOSED = 6
+	CLOSED = 6,
+
+	DISCONNECTED = 9,
+	CONNECTED = 8,
+	KILLED = 7,
 };
 

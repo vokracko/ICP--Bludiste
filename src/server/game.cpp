@@ -174,9 +174,14 @@ bool Game::add_player(Player * p)
 {
 	if(players.size() < 4)
 	{
-		players.push_back(p);
 		set_color(p);
+
+		std::string info = std::to_string(p->get_color()+Box::CONNECTED);
+		send(*(map->get_map()) + info);
+
+		players.push_back(p);
 		map->emplace_player(p);
+
 		return true;
 	}
 
@@ -202,14 +207,18 @@ void Game::remove_player(Player * p)
 				//TODO unemplace player
 				break;
 			}
+
 		}
 	}
+
+	std::string info = std::to_string(p->get_color()+Box::DISCONNECTED);
+	send(*(map->get_map()) + info);
 }
 
 void Game::remove_color(Player * p)
 {
 	int color = p->get_color();
-	colors[color] = false;
+	colors[color/10-40] = false;
 }
 
 void Game::set_color(Player * p)
@@ -218,7 +227,7 @@ void Game::set_color(Player * p)
 	{
 		if(colors[i] == false)
 		{
-			p->set_color(i);
+			p->set_color(i*10+40);
 			colors[i] = true;
 			break;
 		}
