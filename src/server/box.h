@@ -23,5 +23,8 @@ enum Box
 	DISCONNECTED = 9,
 	CONNECTED = 8,
 	KILLED = 7,
+
+	MOVE_PASS = 254,
+	MOVE_FAIL = 253,
 };
 

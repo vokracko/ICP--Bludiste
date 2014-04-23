@@ -69,7 +69,7 @@ bool Game::cmd(Player * p, std::string * command)
 
 	}
 
-	send(*(map->get_map())); // odešle všem hráčům aktuální stav
+	send(*(map->get_map()), p, res); // odešle všem hráčům aktuální stav
 
 	return res;
 }
@@ -155,11 +155,20 @@ bool Game::rotate(Player * p, int way)
  * \param exclude odkaz na hráče, který zprávu vytvořil
  * \param message obsah zprávy
  */
-void Game::send(std::string message)
+void Game::send(std::string message, Player * p, int res)
 {
 	for(std::vector<Player*>::iterator it = players.begin(); it != players.end(); ++it)
 	{
-		(*it)->send(&message);
+		if(p == *it)
+		{
+			std::string info = (*map->get_map()) + std::to_string(res ? MOVE_PASS : MOVE_FAIL);
+			(*it)->send(&info);
+		}
+		else
+		{
+			(*it)->send(&message);
+		}
+
 	}
 }
 
