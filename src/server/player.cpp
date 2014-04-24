@@ -169,7 +169,8 @@ void Player::send_map(bool first_time)
 		message.append(std::to_string(game->get_map()->get_height()) + " ");
 		message.append(std::to_string(color/10) + " ");
 		message.append(std::to_string(position.x) + " ");
-		message.append(std::to_string(position.y) + "\r\n");
+		message.append(std::to_string(position.y) + " ");
+		message.append(std::to_string(game->get_timeout()) + "\r\n");
 	}
 
 	message.append(*(game->get_map()->get_map()));
