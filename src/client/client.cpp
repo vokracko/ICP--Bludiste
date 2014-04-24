@@ -313,26 +313,38 @@ int Client::accept_state_map(char events[MAX_EVENTS],int * events_count)
     int index=0;
 //std::cout<<"size pred: "<<map_in_string<<"\n";
 //std::cout<<"width"<<this->width<<"  height "<<this->height<<"\n";
+    std::cout<<"cela zprava:\n"<<map_in_string<<"\n\n";
     for (int i=0; i<this->height;i++)
         for (int j=0; j<this->width; j++)
             this->map[i][j]=map_in_string.at(index++);
 
-    map_in_string=map_in_string.substr(index,map_in_string.size()-index);
+    std::string event_string;
 
-//std::cout<<"X"<<map_in_string<<"X\n"<<std::flush;
-
-    *events_count=map_in_string.size();
+    int end_message_index=map_in_string.find("\r\n");
+    std::cout<<"index endmsgind  "<<end_message_index<<"delka zpravy  "<< map_in_string.size()<<"\n";
+    event_string=map_in_string.substr(index,end_message_index);
+    std::cout<<"pocet udalosti: "<<event_string.size()<<"\n";
     
+    map_in_string=map_in_string.substr(end_message_index,map_in_string.size()-end_message_index);
+    std::cout<<"zbytek z mapy: "<<map_in_string<<"\n";
+//std::cout<<"X"<<map_in_string<<"X\n"<<std::flush;
+    
+    *events_count=event_string.size();
+    std::cout<<"index: "<<index<<"\npocet udalosti"<<*events_count<<"\n\n";
 //std::cout<<*events_count<<"\n"<<std::flush;
 
     for (int i=0; i< *events_count; i++)
     {
 //std::cout<<"a"<<"\n"<<std::flush;
-        events[i]=map_in_string.at(i);
+        events[i]=event_string.at(i);
         if (events[i]==MOVE_PASS) this->last_command_successfull=true;
         if (events[i]==MOVE_FAIL) this->last_command_successfull=false;
+
+                    if (events[i]==MOVE_PASS) std::cout<<"udalost move pass:\n\n";
+                    if (events[i]==MOVE_FAIL) std::cout<<"udalost move fail:\n\n";
     }
 
+    if (map_in_string.size()!=2) accept_state_map(events,events_count);
     // pokud konec neni vrati 0
     return 0;
 }

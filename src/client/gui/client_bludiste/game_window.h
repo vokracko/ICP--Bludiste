@@ -32,6 +32,7 @@ class game_window : public QMainWindow
     Q_OBJECT
     Client * client;
     Game_field * game_field;
+    
 
 
 public:
