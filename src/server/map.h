@@ -25,7 +25,7 @@ class Map
 		int map_id;
 
 		std::string map;
-		int ** ghost_objects;
+		unsigned char ** ghost_objects;
 
 	public:
 		static bool exists(int map_id);
@@ -35,8 +35,8 @@ class Map
 		void set(int x, int y, int box);
 
 
-		void set_ghost(int x, int y, int obj);
-		int get_ghost(int x, int y);
+		void set_ghost(int x, int y, unsigned char obj);
+		unsigned char get_ghost(int x, int y);
 		Map(int map_id);
 		~Map();
 		std::string * get_map();

@@ -26,21 +26,21 @@ Map::Map(int map_id)
 
 	file.close();
 
-	ghost_objects = new int*[height];
+	ghost_objects = new unsigned char*[height];
 
 	for(int i = 0; i < height; ++i)
 	{
-		ghost_objects[i] = new int[width];
-		memset(ghost_objects[i], Box::EMPTY, width);
+		ghost_objects[i] = new unsigned char[width];
+		memset(ghost_objects[i], 0, width);
 	}
 }
 
-void Map::set_ghost(int x, int y, int obj)
+void Map::set_ghost(int x, int y, unsigned char obj)
 {
 	ghost_objects[y][x] = obj;
 }
 
-int Map::get_ghost(int x, int y)
+unsigned char Map::get_ghost(int x, int y)
 {
 	return ghost_objects[y][x];
 }
