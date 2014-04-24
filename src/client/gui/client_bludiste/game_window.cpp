@@ -44,10 +44,8 @@ void game_window::create_game_field()
     this->ui->game_info_label->setGeometry(this->client->width*13+25,40,200,25);
     this->ui->game_info_list->setGeometry(this->client->width*13+25,70,275,height-85);
 
-    Game_field * game_field = new Game_field(this->client->height,this->client->width);
-    game_field->set_map(this->client->map);
-
     this->game_field = new Game_field(this->client->height,this->client->width);
+    game_field->set_map(this->client->map);
 
     QApplication::processEvents();
 

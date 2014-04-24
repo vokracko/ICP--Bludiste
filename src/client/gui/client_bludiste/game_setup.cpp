@@ -18,12 +18,15 @@ game_setup::game_setup(Client * client,QWidget *parent) :
 {
     ui->setupUi(this);
     this->client=client;
+    this->game_window_w=NULL;
 
 }
 
 game_setup::~game_setup()
 {
     delete ui;
+    if (game_window_w!=NULL)
+        delete game_window_w;
 }
 
 
@@ -190,9 +193,9 @@ void game_setup::on_create_game_button_clicked()
 */
 void game_setup::create_game_window()
 {
-    game_window * game_window_w = new game_window(this->client);
+    game_window_w = new game_window(this->client);
     game_window_w->show();
-    this->close();
+    this->hide();
     game_window_w->create_game_field();
     //game_window_w->print_map();
 

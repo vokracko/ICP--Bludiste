@@ -16,12 +16,13 @@ server_connection_window::server_connection_window(Client * client,QWidget *pare
 {
     ui->setupUi(this);
     this->client=client;
+    this->game_setup_w=NULL;
 }
 
 server_connection_window::~server_connection_window()
 {
+    if (game_setup_w!=NULL) delete game_setup_w;
     delete ui;
-    delete this->game_setup_w;
 }
 
 /**

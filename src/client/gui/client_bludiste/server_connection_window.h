@@ -30,7 +30,7 @@ class server_connection_window : public QMainWindow
     Q_OBJECT
     
     Client * client;
-    game_setup *game_setup_w;
+    game_setup * game_setup_w;
 
 public:
     explicit server_connection_window(Client * client,QWidget *parent = 0);

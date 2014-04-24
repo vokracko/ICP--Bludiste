@@ -19,9 +19,12 @@
 #include <string>
 #include <QObject>
  #include <QTcpSocket>
+#include <QTimer>
 #include "./../errors.h"
 #include "./../game_components.h"
 #include "./../events_enumerator.h"
+
+#define BUFFER_SIZE 1024
 
 /**
 \class Client
@@ -35,13 +38,15 @@
 
 class Client: public QObject
 {
-
+    Q_OBJECT
 public:
     QTcpSocket * client_socket;
 
 private:
     int pos_x,pos_y;
     double timeout;
+    std::string last_command;
+    bool last_command_successfull;
 public:
     int color;
     int width,height;
@@ -66,4 +71,7 @@ public:
     std::string recognize_event(int event_code);
     std::string refer_color();
     std::string get_tooltip(int x,int y);
+
+public slots:
+    void when_go();
 };

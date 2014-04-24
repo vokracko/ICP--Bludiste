@@ -8,7 +8,7 @@
 #ifndef GAME_SETUP_H
 #define GAME_SETUP_H
 
-#include <QMainWindow>
+#include <QtWidgets/QMainWindow>
 #include "./../../client.h"
 #include <deque>
 #include <QListWidget>
@@ -28,6 +28,7 @@ class game_setup : public QMainWindow
 {
     Q_OBJECT
     Client * client;
+    game_window * game_window_w;
 public:
     explicit game_setup(Client * client,QWidget *parent = 0);
     ~game_setup();
