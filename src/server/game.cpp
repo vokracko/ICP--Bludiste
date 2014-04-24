@@ -110,7 +110,6 @@ void Game::set(Player * p, Position pos)
 	unsigned char ghost_obj = map->get_ghost(current_pos.x, current_pos.y);
 
 	map->set(current_pos.x, current_pos.y, ghost_obj ? ghost_obj : Box::EMPTY);
-	// map->set(current_pos.x, current_pos.y, Box::EMPTY);
 	map->set(pos.x, pos.y, p->get_color() + pos.look);
 
 	map->set_ghost(current_pos.x, current_pos.y, 0);
@@ -142,7 +141,14 @@ bool Game::step(Player * p)
 	pos.look = current_pos.look;
 	next(current_pos, &pos.x, &pos.y);
 
-	next_obj = map->get(pos.x, pos.y);
+	try
+	{
+		next_obj = map->get(pos.x, pos.y);
+	}
+	catch(std::exception & e)
+	{
+		return false;
+	}
 
 	if(next_obj == Box::EMPTY)
 	{
@@ -151,7 +157,6 @@ bool Game::step(Player * p)
 	else if(next_obj == Box::KEY && p->has_key())
 	{
 		map->set_ghost(pos.x, pos.y, Box::KEY);
-		std::cout<<"Vkládám ghosta na key: " << pos.x << "," << pos.y<<std::endl;
 		res = true;
 	}
 	else if(next_obj == Box::GATE + Box::OPEN)
@@ -165,7 +170,6 @@ bool Game::step(Player * p)
 		if(next_obj == Box::GATE + Box::OPEN)
 		{
 			//TODO výhra
-			//TODO kontrola hranic mapy
 		}
 		else
 		{
