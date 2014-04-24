@@ -37,10 +37,10 @@ class Game
 
 
 	private:
-		bool rotate(Player * p, int way);
-		bool take(Player * p);
-		bool open(Player * p);
-		bool step(Player * p);
+		int rotate(Player * p, int way);
+		int take(Player * p);
+		int open(Player * p);
+		int step(Player * p);
 
 	public:
 		Game(float timeout, int map_id);
@@ -59,4 +59,5 @@ class Game
 		void next(Position pos, int *x, int *y);
 		std::string quit_info();
 		void stop();
+		float get_timeout();
 };
