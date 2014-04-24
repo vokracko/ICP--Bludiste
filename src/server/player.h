@@ -22,6 +22,8 @@ class Player
 		std::string read_message;
 		Game * game = nullptr;
 		Position position;
+		std::chrono::time_point<std::chrono::system_clock> start = std::chrono::system_clock::now();
+		int step_count = 0;
 
 	public:
 
@@ -30,11 +32,12 @@ class Player
 		void send_map_list();
 		void send_map(bool firt_time = false);
 		void send_invalid();
-		void send_play();
 
 	public:
 		Player(Connection * conn);
 		~Player();
+		void inc_step();
+		std::string quit_info();
 		bool init();
 		void work();
 		void send(std::string * message, int mode = Connection::ASYNC);

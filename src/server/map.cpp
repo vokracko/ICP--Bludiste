@@ -58,13 +58,7 @@ void Map::init()
 
 std::string * Map::get_map()
 {
-	// TODO můžná budou potřeba semafory'dokud se mapy nepodaří odeslat
 	return &map;
-}
-
-void Map::open_gate()
-{
-	//TODO vyměnit obrázky
 }
 
 int Map::get_width()

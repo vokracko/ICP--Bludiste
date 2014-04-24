@@ -6,6 +6,7 @@ Game::Game(float timeout, int map_id)
 	id = Server::get_instance()->get_game_id();
 	this->timeout = timeout;
 	running = true;
+	// monster = new Monster(this, timeout); //TODO
 }
 
 Game::~Game()
@@ -18,6 +19,7 @@ Game::~Game()
 	}
 
 	delete map;
+	// delete monster; //TODO
 }
 
 bool Game::is_running()
@@ -42,8 +44,10 @@ void Game::stop()
 
 bool Game::cmd(Player * p, std::string * command)
 {
+	map_mutex.lock();
+
 	bool res = false;
-	//TODO asi použít mutex aby si to neměnily navzájem
+
 	if(*command == "left")
 	{
 		res = rotate(p, Box::LEFT);
@@ -60,16 +64,44 @@ bool Game::cmd(Player * p, std::string * command)
 	{
 		res = open(p);
 	}
-	else if(*command == "go")
+	else if(*command == "step")
 	{
-
+		res = step(p);
+		p->inc_step();
 	}
 	else if(*command == "stop")
 	{
-
+		res = true;
 	}
 
 	send(*(map->get_map()), p, res); // odešle všem hráčům aktuální stav
+
+	map_mutex.unlock();
+
+	return res;
+}
+
+std::string Game::quit_info()
+{
+	std::string info[5] = {"0", "0 0", "0 0", "0 0", "0 0"};
+
+
+	auto diff = std::chrono::system_clock::now() - start;
+	int total = std::chrono::duration_cast<std::chrono::duration<int>>(diff).count();
+
+	info[0] = std::to_string(total) + "\r\n";
+
+	for(std::vector<Player *>::iterator it = players.begin(); it != players.end(); ++it)
+	{
+		info[(*it)->get_id()-4] = (*it)->quit_info();
+	}
+
+	std::string res;
+
+	for(int i = 0; i < 5; ++i)
+	{
+		res.append(info[i] + "\r\n");
+	}
 
 	return res;
 }
@@ -90,11 +122,31 @@ void Game::next(Position pos, int * x, int * y)
 
 	switch(pos.look)
 	{
-		case Box::UP: (*x)++;break;
-		case Box::DOWN: (*x)--;break;
-		case Box::LEFT: (*y)--;break;
-		case Box::RIGHT: (*y)++;break;
+		case Box::UP: (*y)--;break;
+		case Box::DOWN: (*y)++;break;
+		case Box::LEFT: (*x)--;break;
+		case Box::RIGHT: (*x)++;break;
 	}
+}
+
+bool Game::step(Player * p)
+{
+	Position current_pos = p->get_position();
+	Position pos;
+	pos.look = current_pos.look;
+
+	next(current_pos, &pos.x, &pos.y);
+
+	if(map->get(pos.x, pos.y) == Box::EMPTY)
+	{
+		map->set(pos.x, pos.y, p->get_color() + current_pos.look);
+		set(p, pos);
+		return true;
+	}
+
+	//TODO doplnit přejíždění klíčů
+
+	return false;
 }
 
 bool Game::take(Player * p)
@@ -109,6 +161,7 @@ bool Game::take(Player * p)
 	if(map->get(x, y) == Box::KEY)
 	{
 		map->set(x,y, Box::EMPTY);
+		p->take_key();
 		return true;
 	}
 
@@ -127,7 +180,6 @@ bool Game::open(Player * p)
 	if(map->get(x, y) == Box::GATE + Box::CLOSED)
 	{
 		map->set(x,y, Box::GATE + Box::OPEN);
-		p->take_key();
 		return true;
 	}
 
@@ -141,7 +193,7 @@ bool Game::rotate(Player * p, int way)
 	pos.x = current_pos.x;
 	pos.y = current_pos.y;
 
-	if(way = Box::LEFT) pos.look = (current_pos.look) == 4 ? 1 : current_pos.look + 1;
+	if(way == Box::LEFT) pos.look = (current_pos.look) == 4 ? 1 : current_pos.look + 1;
 	else pos.look = (current_pos.look) == 1 ? 4 : current_pos.look - 1;
 
 	set(p, pos);
@@ -155,10 +207,15 @@ bool Game::rotate(Player * p, int way)
  * \param exclude odkaz na hráče, který zprávu vytvořil
  * \param message obsah zprávy
  */
-void Game::send(std::string message, Player * p, int res)
+void Game::send(std::string message, Player * p, int res, Player * skip)
 {
 	for(std::vector<Player*>::iterator it = players.begin(); it != players.end(); ++it)
 	{
+		if(*it == skip)
+		{
+			continue;
+		}
+
 		if(p == *it)
 		{
 			char c = res ? MOVE_PASS : MOVE_FAIL;
@@ -169,7 +226,6 @@ void Game::send(std::string message, Player * p, int res)
 		{
 			(*it)->send(&message);
 		}
-
 	}
 }
 
@@ -186,12 +242,14 @@ bool Game::add_player(Player * p)
 	{
 		set_color(p);
 
+		map->emplace_player(p);
+
 		char c = p->get_color() + Box::CONNECTED;
-		std::string info = std::to_string(c);
-		send(*(map->get_map()) + info);
+		std::string info = *(map->get_map());
+		info += c;
+		send(info);
 
 		players.push_back(p);
-		map->emplace_player(p);
 
 		return true;
 	}
@@ -222,8 +280,8 @@ void Game::remove_player(Player * p)
 
 		if(players.size())
 		{
-			std::string info = std::to_string(p->get_color()+Box::DISCONNECTED);
-			send(*(map->get_map()) + info);
+			std::string info = *(map->get_map()) + (char) (p->get_color()+Box::DISCONNECTED);
+			send(info);
 		}
 		else
 		{
@@ -234,8 +292,7 @@ void Game::remove_player(Player * p)
 
 void Game::remove_color(Player * p)
 {
-	int color = p->get_color();
-	colors[color/10-40] = false;
+	colors[p->get_color()/10-40] = false;
 }
 
 void Game::set_color(Player * p)

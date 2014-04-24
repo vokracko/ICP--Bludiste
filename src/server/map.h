@@ -35,10 +35,8 @@ class Map
 
 		static const std::string path;//TODO před odevzdání změnit složku do rootu
 		static std::map<int, std::string> maplist;
-		//TODO umístění hráčů náhodně
 		//TODO hlídač
 
-		// TODO výsledek požadované operace (provedena/nelze provést); týká se pouze vlastního hráče
 		// TODO kolize hráče s jiným objektem s následným zabitím hráče (týká se všech)
 
 	private:
@@ -54,7 +52,6 @@ class Map
 		static void init();
 		int get(int x, int y);
 		void set(int x, int y, int box);
-		void open_gate();
 
 
 		Map(int map_id);
