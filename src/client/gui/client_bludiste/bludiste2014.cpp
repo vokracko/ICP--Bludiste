@@ -18,7 +18,7 @@ int main(int argc, char *argv[])
     Client client;
     server_connection_window server_connection_w(&client);
     server_connection_w.show();
-
+    
 
 /*
 game_window gw;

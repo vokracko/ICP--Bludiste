@@ -33,12 +33,15 @@ SOURCES+=game_field.cpp
 
 HEADERS  += game_setup.h \
     server_connection_window.h \
-    game_window.h
-HEADER  +=./../../../errors.h
-HEADER  +=./../../../game_components.h
-HEADER  +=./../../../events_enumerator.h
-HEADER  +=./../../../client.h
-HEADER  +=game_field.h
+    game_window.h\
+    ./../../client.h \
+    
+
+HEADERS  +=./../../../errors.h
+HEADERS  +=./../../../game_components.h
+HEADERS  +=./../../../events_enumerator.h
+
+HEADERS  +=game_field.h
 
 FORMS    += game_setup.ui \
     server_connection_window.ui \

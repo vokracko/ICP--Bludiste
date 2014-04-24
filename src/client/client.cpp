@@ -21,6 +21,8 @@ Client::Client(QObject * parent): QObject(parent)
     blue_time=0;
     green_time=0;
     game_duration=0;
+    this->last_command_successfull=true;
+    client_socket=NULL;
 }
 Client::~Client()
 {
@@ -58,8 +60,10 @@ int Client::connect_socket(const char * host)
 void read_from_socket(QTcpSocket * client_socket , std::string &msg)
 {
     msg="";
-    char buffer[100]={0,};
+
+    char buffer[BUFFER_SIZE]={0,};
     int cont=1;
+    int cont2=1;
     while(cont>0)
     {
         cont=client_socket->read(buffer,100);
@@ -67,6 +71,25 @@ void read_from_socket(QTcpSocket * client_socket , std::string &msg)
         memset(buffer,0,100);
     }
     if (cont<0) throw Errors(Errors::SOCKET_READ);
+    while (cont2)
+    {
+        if(client_socket->waitForReadyRead(50))
+        {
+            cont=1;
+            while(cont>0)
+            {
+                cont=client_socket->read(buffer,100);
+                msg+=buffer;
+                memset(buffer,0,100);
+            }
+            if (cont<0) throw Errors(Errors::SOCKET_READ);
+        }
+        else
+        {
+            cont2=0;
+        }
+    }
+    
 }
 
 /**
@@ -149,8 +172,7 @@ int Client::join_game(int game_id)
     // naskladani dat tam kam patri
     sscanf(game_info.c_str(),"%d %d %d %d %d\r\n",&(this->width),&(this->height),&(this->color),&(this->pos_x),&(this->pos_y));
 
-    //game_info=game_info.substr(game_info.find("\n")+1,game_info.size());
-    std::cout<<"size: "<<game_info.size()<<"\n";
+    game_info=game_info.substr(game_info.find("\n")+1,game_info.size());
     // nacteni mapy
     int index=0;
     for (int i=0; i<this->height;i++)
@@ -208,13 +230,15 @@ int Client::create_game(double timeout, int map_type)
     }
     //std::cout<<"size: "<<game_info.size()<<"\n\n";
     // naskladani dat tam kam patri
-    sscanf(game_info.c_str(),"%d %d %d %d %d",&(this->width),&(this->height),&(this->color),&(this->pos_x),&(this->pos_y));
+    sscanf(game_info.c_str(),"%d %d %d %d %d\r\n",&(this->width),&(this->height),&(this->color),&(this->pos_x),&(this->pos_y));
     // sscanf(game_info.c_str(),"%d %d",&(this->width),&(this->height));
     // nacteni mapy
+    
+    //std::cout<<"size: "<<game_info.size()<<"\n";
+    //std::cout<<game_info;
+   
     game_info=game_info.substr(game_info.find("\n")+1,game_info.size());
 
-    //std::cout<<game_info.size()<<"\n";
-    //std::cout<<game_info;
     int index=0;
     for (int i=0; i<this->height;i++)
     {
@@ -236,11 +260,21 @@ int Client::create_game(double timeout, int map_type)
 */
 int Client::send_move(std::string command)
 {
-    if (command.compare("left")!=0 && command.compare("right")!=0 && command.compare("stop")!=0
-        && command.compare("go")!=0 && command.compare("take")!=0 && command.compare("open")!=0)
+    if (command.compare("left")!=0 && command.compare("right")!=0 && command.compare("stop")!=0 && command.compare("go")!=0
+        && command.compare("step")!=0 && command.compare("take")!=0 && command.compare("open")!=0)
     {
         throw Errors(Errors::UNKNOWN_COMMAND);
         return 0;
+    }
+    if (command.compare("go")==0) 
+    {
+        command="step";
+        this->last_command="go";
+        QTimer::singleShot(((int)(this->timeout*1000)),this,SLOT(when_go()));
+    }
+    else
+    {
+        this->last_command=command;
     }
     client_socket->write((command+"\r\n").c_str());
     if (!(client_socket->waitForBytesWritten(5000)))
@@ -295,12 +329,20 @@ int Client::accept_state_map(char events[MAX_EVENTS],int * events_count)
     {
 //std::cout<<"a"<<"\n"<<std::flush;
         events[i]=map_in_string.at(i);
+        if (events[i]==MOVE_PASS) this->last_command_successfull=true;
+        if (events[i]==MOVE_FAIL) this->last_command_successfull=false;
     }
 
     // pokud konec neni vrati 0
     return 0;
 }
 
+/**
+*\fn std::string Client::recognize_event(int event_code)
+* Rozpozná událost která nastala podle event_code a vrátí textovou reprezentaci této informace.
+* \param events_code Hodnota enumerátoru z events_enumerator.h, identifikující události
+* \return Textový řetězec reprezentující informaci o události jenž je vypsána.
+*/
 std::string Client::recognize_event(int event_code)
 {
     if (event_code==WHITE_KILLED && color==WHITE)
@@ -351,29 +393,49 @@ std::string Client::recognize_event(int event_code)
     return "Něco opomněného se stalo";
 }
 
+/**
+*\fn std::string Client::refer_color()
+* Rozpozná na základě atributu color z třídy Client o jakou se jedná barvu a vrátí výsledek jako textovou informaci, jenž může být vypsána.
+* \return Textový řetězec reprezentující informaci o barvě.
+*/
 std::string Client::refer_color()
 {
     switch (this->color)
     {
-        case WHITE:	return "Jste bílý hrýč";
-        case RED: return "Jste červený hrýč";
-        case BLUE: return "Jste modrý hrýč";
-        case GREEN: return "Jste zelený hrýč";
+        case WHITE:	return "Jste bílý hráč";
+        case RED: return "Jste červený hráč";
+        case BLUE: return "Jste modrý hráč";
+        case GREEN: return "Jste zelený hráč";
     }
     return "takovou barvu neznám";
 }
 
+/**
+*\fn void Client::send_quit()
+* Pošle informaci o ukončení klienta serveru.
+*/
 void Client::send_quit()
 {
     this->client_socket->write("quit\r\n");
 }
 
+
+/**
+*\fn std::string Client::get_game_time()
+* \return Vrátí textovou informaci a době trvání hry.
+*/
 std::string Client::get_game_time()
 {
     return "Hra trvala "+std::to_string(this->game_duration);
 }
 
-
+/**
+*\fn std::string Client::get_tooltip(int x,int y)
+* Získá informaci o konkrétním políčku a vrátí hint (tooltip), který má být tomuto políčku přiřazen.
+* \param x X-ová souřadnice hráče na mapě
+* \param y Y-ová souřadnice hráče na mapě
+* \return Textový řetězec reprezentující informaci o hráči, obsahující počet kroků a čas strávený ve hře.
+*/
 std::string Client::get_tooltip(int x,int y)
 {
     if (this->map[x][y]/10==WHITE)
@@ -396,4 +458,12 @@ std::string Client::get_tooltip(int x,int y)
         return "Červený hráč:\nPočet kroků: "+std::to_string(this->red_steps)+"\nČas strávený ve hře: "+std::to_string(this->red_time);
     }
     return "";
+}
+
+void Client::when_go()
+{
+    if ((this->last_command.compare("go")==0) && (this->last_command_successfull))
+    {  
+        this->send_move("go");
+    }
 }

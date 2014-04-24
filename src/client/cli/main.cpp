@@ -17,36 +17,21 @@
 
 
 
-Client_cli client;
+Client_cli * client= new Client_cli;
 
 void  INThandler(int sig)
 {
      signal(sig, SIG_IGN);
 
+     delete client;
 
-     //jak to uvolnit?
-        //zavolat destruktor Clienta :D
-
-
-     std::cout<<"\n\nHra byla ukončena!\n\n";
+     std::cout<<"\n\nHra byla ukončena (násilí nic nevyřeší)!\n\n";
      exit(0);
 }
 
 void read_from_cin(Client_cli * client)
 {
-    setlocale(LC_CTYPE,"");
-   /* int c;
-    while ((c=fgetc(stdout))!='\n') client->msg+=c;
-    client->send_move(client->msg);
-    client->msg="";*/
-    int c='a';
-    while ((c=getchar())!=EOF) 
-        if (c!='\n') client->msg+=c;
-        else
-        {
-            // tady bude sendmove
-            return;
-        }
+    std::cin>>client->msg;
 }
 
 void catch_signal(Client_cli * client)
@@ -71,14 +56,14 @@ int main (int argc, char * argv[])
         // host="localhost";
         std::cin>>host;
         std::cout<<std::endl;
-        client.connect_socket(const_cast<char *>(host.c_str()));
+        client->connect_socket(const_cast<char *>(host.c_str()));
 
         // vypis her
         std::cout<<"Jsou vam k dispozici tyto mapy:" <<std::endl<<std::endl;
-        client.print_maps();
+        client->print_maps();
 
         std::cout<<"Jsou vam k dispozici tyto hry:"<<std::endl<<std::endl;
-        client.print_games();
+        client->print_games();
 
 
         // vyber mezi join a create
@@ -116,7 +101,7 @@ int main (int argc, char * argv[])
                 //std::cin >> game_type;
                 ec=scanf("%d",&map_number);
             } while (map_number < 1);
-            client.create_game(timeout,map_number);
+            client->create_game(timeout,map_number);
         }
         else
         {
@@ -124,34 +109,33 @@ int main (int argc, char * argv[])
             {
                 repeat=0;
                 std::cout<<"Zadejte cislo hry (musí být validní)"<<std::endl;
-                std::cin >> game_type;
-                game_number=std::stoi(game_type);
+                repeat=scanf("%d",&game_number);
             } while (repeat!=1);
-            client.join_game(game_number);
+            client->join_game(game_number);
         }
 
         // hrani
         int konec;
         
 
-        client.clear_screen();
-        client.print_map();
-        client.print_color();
+        client->clear_screen();
+        client->print_map();
+        client->print_color();
         std::cout<<std::endl;
 
         
 
-        //std::thread read_thread(read_from_cin,&client); 
-        //std::thread catch_signal_thread(catch_signal,&client);
+        //std::thread read_thread(read_from_cin,client); 
+        std::thread catch_signal_thread(catch_signal,client);
 
 
         //read_thread.join();
-        //catch_signal_thread.join();
+        catch_signal_thread.join();
 
-        std::cout<<"jsem tadz\n";
-        read_from_cin(&client);
-        std::cout<<"a pak i  tadz\n";
-        std::cout<<client.msg<<std::endl;
+        //std::cout<<"jsem tadz\n";
+        //read_from_cin(client);
+        //std::cout<<"a pak i  tadz\n";
+        //std::cout<<client->msg<<std::endl;
 
     }
 
