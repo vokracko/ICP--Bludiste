@@ -92,7 +92,6 @@ bool Player::init()
 				if(game_id == 0)
 				{
 					send_invalid();
-					send_games();
 					continue;
 				}
 			}
@@ -103,7 +102,6 @@ bool Player::init()
 			{
 				// není místo ve hře/neexistující hra
 				send_invalid();
-				send_games();
 				continue;
 			}
 			else

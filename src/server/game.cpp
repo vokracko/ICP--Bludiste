@@ -29,10 +29,6 @@ bool Game::is_running()
 
 void Game::stop()
 {
-	//std::chrono::duration<int> elapsed_seconds = std::chrono::system_clock::now() - start;
-	//TODO poslat čas hry a další bullshity
-	//TODO elapsed_seconds.count()
-
 	running = false;
 
 	for(std::vector<Player*>::iterator it = players.begin(); it != players.end(); ++it)
@@ -93,7 +89,9 @@ std::string Game::quit_info()
 
 	for(std::vector<Player *>::iterator it = players.begin(); it != players.end(); ++it)
 	{
-		info[(*it)->get_id()-4] = (*it)->quit_info();
+		int xxx = (*it)->get_id();
+		std::string yyyy = (*it)->quit_info();
+		// info[(*it)->get_id()-4] = (*it)->quit_info();
 	}
 
 	std::string res;
@@ -109,9 +107,13 @@ std::string Game::quit_info()
 void Game::set(Player * p, Position pos)
 {
 	Position current_pos = p->get_position();
+	unsigned char ghost_obj = map->get_ghost(current_pos.x, current_pos.y);
 
-	map->set(current_pos.x, current_pos.y, Box::EMPTY);
+	map->set(current_pos.x, current_pos.y, ghost_obj ? ghost_obj : Box::EMPTY);
+	// map->set(current_pos.x, current_pos.y, Box::EMPTY);
 	map->set(pos.x, pos.y, p->get_color() + pos.look);
+
+	map->set_ghost(current_pos.x, current_pos.y, 0);
 	p->set_position(pos);
 }
 
@@ -133,20 +135,49 @@ bool Game::step(Player * p)
 {
 	Position current_pos = p->get_position();
 	Position pos;
-	pos.look = current_pos.look;
+	int next_obj;
+	int ghost_obj;
+	bool res = false;
 
+	pos.look = current_pos.look;
 	next(current_pos, &pos.x, &pos.y);
 
-	if(map->get(pos.x, pos.y) == Box::EMPTY)
+	next_obj = map->get(pos.x, pos.y);
+
+	if(next_obj == Box::EMPTY)
 	{
-		map->set(pos.x, pos.y, p->get_color() + current_pos.look);
-		set(p, pos);
+		res = true;
+	}
+	else if(next_obj == Box::KEY && p->has_key())
+	{
+		map->set_ghost(pos.x, pos.y, Box::KEY);
+		std::cout<<"Vkládám ghosta na key: " << pos.x << "," << pos.y<<std::endl;
+		res = true;
+	}
+	else if(next_obj == Box::GATE + Box::OPEN)
+	{
+		map->set_ghost(pos.x, pos.y, Box::GATE + Box::OPEN);
+		res = true;
+	}
+
+	if(res)
+	{
+		if(next_obj == Box::GATE + Box::OPEN)
+		{
+			//TODO výhra
+			//TODO kontrola hranic mapy
+		}
+		else
+		{
+			map->set(pos.x, pos.y, p->get_color() + current_pos.look);
+			set(p, pos);
+		}
+
 		return true;
 	}
 
-	//TODO doplnit přejíždění klíčů
-
 	return false;
+
 }
 
 bool Game::take(Player * p)
@@ -209,6 +240,10 @@ bool Game::rotate(Player * p, int way)
  */
 void Game::send(std::string message, Player * p, int res, Player * skip)
 {
+	char c = res ? MOVE_PASS : MOVE_FAIL;;
+	std::string info = message + c + "\r\n";
+	std::string no_info = message + "\r\n";
+
 	for(std::vector<Player*>::iterator it = players.begin(); it != players.end(); ++it)
 	{
 		if(*it == skip)
@@ -218,13 +253,11 @@ void Game::send(std::string message, Player * p, int res, Player * skip)
 
 		if(p == *it)
 		{
-			char c = res ? MOVE_PASS : MOVE_FAIL;
-			std::string info = (*map->get_map()) + c;
 			(*it)->send(&info);
 		}
 		else
 		{
-			(*it)->send(&message);
+			(*it)->send(&no_info);
 		}
 	}
 }
