@@ -42,8 +42,6 @@ class Game
 		bool open(Player * p);
 		bool step(Player * p);
 
-		void next(Position pos, int *x, int *y);
-
 	public:
 		Game(float timeout, int map_id);
 		~Game();
@@ -58,6 +56,7 @@ class Game
 		void remove_color(Player * p);
 		void set_color(Player * p);
 		Map * get_map();
+		void next(Position pos, int *x, int *y);
 		std::string quit_info();
 		void stop();
 };

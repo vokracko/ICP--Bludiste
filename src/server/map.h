@@ -14,29 +14,9 @@ class Map;
 class Map
 {
 	public:
-		enum
-		{
-			RED = 10,
-			GREEN = 20,
-			BLUE = 30,
-			WHITE = 40,
-
-			MONSTER = 50,
-			KEY = 60,
-			GATE = 70,
-			WALL = 80,
-
-			TOP = 1,
-			RIGHT = 2,
-			BOTTOM = 3,
-			LEFT = 4,
-			NONE = 0
-		};
 
 		static const std::string path;//TODO před odevzdání změnit složku do rootu
 		static std::map<int, std::string> maplist;
-		//TODO hlídač
-
 		// TODO kolize hráče s jiným objektem s následným zabitím hráče (týká se všech)
 
 	private:
@@ -45,6 +25,7 @@ class Map
 		int map_id;
 
 		std::string map;
+		int ** ghost_objects;
 
 	public:
 		static bool exists(int map_id);
@@ -54,7 +35,10 @@ class Map
 		void set(int x, int y, int box);
 
 
+		void set_ghost(int x, int y, int obj);
+		int get_ghost(int x, int y);
 		Map(int map_id);
+		~Map();
 		std::string * get_map();
 		int get_width();
 		int get_height();

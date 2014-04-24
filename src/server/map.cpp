@@ -25,6 +25,34 @@ Map::Map(int map_id)
 	}
 
 	file.close();
+
+	ghost_objects = new int*[height];
+
+	for(int i = 0; i < height; ++i)
+	{
+		ghost_objects[i] = new int[width];
+		memset(ghost_objects[i], Box::EMPTY, width);
+	}
+}
+
+void Map::set_ghost(int x, int y, int obj)
+{
+	ghost_objects[y][x] = obj;
+}
+
+int Map::get_ghost(int x, int y)
+{
+	return ghost_objects[y][x];
+}
+
+Map::~Map()
+{
+	for(int i = 0; i < height; ++i)
+	{
+		 delete[] ghost_objects[i];
+	}
+
+	delete[] ghost_objects;
 }
 
 int Map::get(int x, int y)
@@ -74,18 +102,41 @@ int Map::get_height()
 void Map::emplace_player(Player * p)
 {
 	Position pos;
+	int x, y, x_end, y_end, x_start;
 
-	for(int y = 0; y < height; ++y)
-		for(int x = 0; x < width; ++x)
+	if(p->get_color() > Box::GREEN)
+	{
+		y = height/2;
+		y_end = height;
+	}
+	else
+	{
+		y = 0;
+		y_end = height/2;
+	}
+
+	if((p->get_color()/10) % 2 == 0)
+	{
+		x_start = width/2;
+		x_end = width;
+	}
+	else
+	{
+		x_start = 0;
+		x_end = width/2;
+	}
+
+
+	for(; y < y_end; ++y)
+		for(x = x_start; x < x_end; ++x)
 		{
-			//TODO nějak vyřešit náhodnost
 			if(get(x, y) == Box::EMPTY)
 			{
 				pos.x = x;
 				pos.y = y;
-				pos.look = Box::LEFT;
+				pos.look = rand()%4+1;
 				p->set_position(pos);
-				set(x, y, p->get_color() + Box::LEFT);
+				set(x, y, p->get_color() + pos.look);
 
 				return;
 			}
