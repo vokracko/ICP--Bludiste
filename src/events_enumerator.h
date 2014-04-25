@@ -21,4 +21,19 @@ enum game_events
 
 	MOVE_PASS = 35,
 	MOVE_FAIL = 36,
+
+	RED_KEY = 130,
+	GREEN_KEY = 140,
+	BLUE_KEY = 150,
+	WHITE_KEY = 160,
+
+	RED_OPEN = 45,
+	GREEN_OPEN = 55,
+	BLUE_OPEN = 65,
+	WHITE_OPEN = 75,
+
+	RED_WIN = 40,
+	GREEN_WIN = 50,
+	BLUE_WIN = 60,
+	WHITE_WIN = 70,
 };
