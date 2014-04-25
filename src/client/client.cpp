@@ -170,7 +170,7 @@ int Client::join_game(int game_id)
     }
 
     // naskladani dat tam kam patri
-    sscanf(game_info.c_str(),"%d %d %d %d %d\r\n",&(this->width),&(this->height),&(this->color),&(this->pos_x),&(this->pos_y));
+    sscanf(game_info.c_str(),"%d %d %d %d %d %lf\r\n",&(this->width),&(this->height),&(this->color),&(this->pos_x),&(this->pos_y), &(this->timeout));
 
     game_info=game_info.substr(game_info.find("\n")+1,game_info.size());
     // nacteni mapy
@@ -270,6 +270,7 @@ int Client::send_move(std::string command)
     {
         command="step";
         this->last_command="go";
+        printf("cas %d\n",(int)(this->timeout*1000));
         QTimer::singleShot(((int)(this->timeout*1000)),this,SLOT(when_go()));
     }
     else
@@ -284,6 +285,57 @@ int Client::send_move(std::string command)
     }
     return 1;
 }
+
+int Client::parse_map(char events[MAX_EVENTS],int * events_count,std::string map_in_string)
+{
+    std::cout<<"velikost zpravy"<<map_in_string.size()<<std::endl;
+        // pokud je konec, vraci 1 a zpracuje udaje o hre
+    if (map_in_string.substr(0,5).compare("end\r\n")==0)
+    {
+        map_in_string=map_in_string.substr(5,map_in_string.size());
+        sscanf(map_in_string.c_str(),"%lf\n%lf %d\n%lf %d\n%lf %d\n%lf %d\n",&(this->game_duration),&(this->white_time),&(this->white_steps),&(this->red_time),
+               &(this->red_steps),&(this->green_time),&(this->green_steps),&(this->blue_time),&(this->blue_steps));
+        return 1;
+    }
+
+    int index=0;
+
+    for (int i=0; i<this->height;i++)
+        for (int j=0; j<this->width; j++)
+            this->map[i][j]=map_in_string.at(index++);
+
+    std::string event_string;
+
+    int end_message_index=map_in_string.find("\r\n")+2;
+
+    event_string=map_in_string.substr(index,end_message_index-2-index);
+    
+    map_in_string=map_in_string.substr(end_message_index,map_in_string.size()-end_message_index);
+    
+    *events_count=event_string.size();
+    
+
+
+    for (int i=0; i< *events_count; i++)
+    {
+        // naplni udalosti
+        events[i]=event_string.at(i);
+        // kvuli go, uklada jestli se posledni tah povedl nebo ne
+        if (events[i]==MOVE_PASS) this->last_command_successfull=true;
+        if (events[i]==MOVE_FAIL) this->last_command_successfull=false;
+    }
+
+    if (map_in_string.size()!=0) 
+    {
+        std::cout<<"rekurzivne volam fci"<<std::endl;
+        return parse_map(events,events_count,map_in_string);
+    }
+    // pokud konec neni vrati 0
+    return 0;
+
+}
+
+
 
 /**
 *\fn void Client::accept_state_map()
@@ -301,52 +353,7 @@ int Client::accept_state_map(char events[MAX_EVENTS],int * events_count)
 
     read_from_socket(client_socket,map_in_string);
 
-    // pokud je konec, vraci 1 a zpracuje udaje o hre
-    if (map_in_string.substr(0,5).compare("end\r\n")==0)
-    {
-        map_in_string=map_in_string.substr(5,map_in_string.size());
-        sscanf(map_in_string.c_str(),"%lf\n%lf %d\n%lf %d\n%lf %d\n%lf %d\n",&(this->game_duration),&(this->white_time),&(this->white_steps),&(this->red_time),
-               &(this->red_steps),&(this->green_time),&(this->green_steps),&(this->blue_time),&(this->blue_steps));
-        return 1;
-    }
-
-    int index=0;
-//std::cout<<"size pred: "<<map_in_string<<"\n";
-//std::cout<<"width"<<this->width<<"  height "<<this->height<<"\n";
-    std::cout<<"cela zprava:\n"<<map_in_string<<"\n\n";
-    for (int i=0; i<this->height;i++)
-        for (int j=0; j<this->width; j++)
-            this->map[i][j]=map_in_string.at(index++);
-
-    std::string event_string;
-
-    int end_message_index=map_in_string.find("\r\n");
-    std::cout<<"index endmsgind  "<<end_message_index<<"delka zpravy  "<< map_in_string.size()<<"\n";
-    event_string=map_in_string.substr(index,end_message_index);
-    std::cout<<"pocet udalosti: "<<event_string.size()<<"\n";
-    
-    map_in_string=map_in_string.substr(end_message_index,map_in_string.size()-end_message_index);
-    std::cout<<"zbytek z mapy: "<<map_in_string<<"\n";
-//std::cout<<"X"<<map_in_string<<"X\n"<<std::flush;
-    
-    *events_count=event_string.size();
-    std::cout<<"index: "<<index<<"\npocet udalosti"<<*events_count<<"\n\n";
-//std::cout<<*events_count<<"\n"<<std::flush;
-
-    for (int i=0; i< *events_count; i++)
-    {
-//std::cout<<"a"<<"\n"<<std::flush;
-        events[i]=event_string.at(i);
-        if (events[i]==MOVE_PASS) this->last_command_successfull=true;
-        if (events[i]==MOVE_FAIL) this->last_command_successfull=false;
-
-                    if (events[i]==MOVE_PASS) std::cout<<"udalost move pass:\n\n";
-                    if (events[i]==MOVE_FAIL) std::cout<<"udalost move fail:\n\n";
-    }
-
-    if (map_in_string.size()!=2) accept_state_map(events,events_count);
-    // pokud konec neni vrati 0
-    return 0;
+    return parse_map(events,events_count,map_in_string);
 }
 
 /**

@@ -72,6 +72,9 @@ public:
     std::string refer_color();
     std::string get_tooltip(int x,int y);
 
+private:
+    int parse_map(char events[MAX_EVENTS],int * events_count,std::string map_in_string);
+
 public slots:
     void when_go();
 };
