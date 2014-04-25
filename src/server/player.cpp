@@ -3,12 +3,14 @@
 Player::Player(Connection * conn)
 {
 	this->conn = conn;
-	thread = std::thread(&Player::work, this);
 	id = Server::get_instance()->get_player_id();
+	std::cout << "player++" << std::endl;
+	thread = std::thread(&Player::work, this);
 }
 
 Player::~Player()
 {
+	std::cout << "player--" << std::endl;
 	delete conn;
 	thread.join();
 }
@@ -42,10 +44,12 @@ void Player::work()
 	}
 	catch(std::exception & e)
 	{
+		if(game != nullptr) game->remove_player(this);
+		else Server::get_instance()->remove_orphan(this);
 	}
-
-	if(game != nullptr) game->remove_player(this);
 }
+
+//TODO předělat na asynchroní, volat destruktory
 
 int Player::get_id()
 {
@@ -104,7 +108,7 @@ bool Player::init()
 			}
 			else
 			{
-				// start = std::chrono::system_clock::now();
+				start = std::chrono::system_clock::now();
 				return true;
 			}
 
@@ -139,14 +143,7 @@ void Player::send_map_list()
 	send(&message, Connection::SYNC);
 }
 
-void Player::send_quit()
-{
-	std::string message = "quit\r\n";
-	message.append(game->quit_info());
-	send(&message, Connection::SYNC);
-}
-
-std::string Player::quit_info()
+std::string Player::end_info()
 {
 	std::string message;
 	auto diff = std::chrono::system_clock::now() - start;
@@ -193,8 +190,8 @@ void Player::set_color(int color)
 
 void Player::send(std::string * message, int mode)
 {
-	std::cout << "Player: " << id << std::endl;
-	std::cout << *message << std::endl;
+	// std::cout << "Player: " << id << std::endl;
+	// std::cout << *message << std::endl;
 
 	if(mode == Connection::ASYNC)
 	{
@@ -217,7 +214,7 @@ void Player::receive(std::string * target, int mode)
 		conn->sync_receive(target);
 	}
 
-	std::cout << "Receive: " << *target << std::endl;
+	// std::cout << "Receive: " << *target << std::endl;
 }
 
 

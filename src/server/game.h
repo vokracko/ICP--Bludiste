@@ -12,29 +12,29 @@ class Game;
 #include <vector>
 #include <iostream>
 #include <chrono>
+#include <future>
 #include "player.h"
 #include "position.h"
 #include "map.h"
 #include "box.h"
-// #include "monster.h" //TODO
+#include "monster.h"
 
 class Game
 {
 	private:
 		std::vector<Player*> players;
 		Map * map;
-		// Monster * monster; //TODO
+		Monster * monster;
 
 		int id;
 		float timeout;
 		bool running;
 		bool colors[4] = {false};
 
-		std::mutex map_mutex;
 		std::chrono::time_point<std::chrono::system_clock> start = std::chrono::system_clock::now();
 
 	public:
-
+		std::mutex map_mutex;
 
 	private:
 		int rotate(Player * p, int way);
@@ -57,7 +57,8 @@ class Game
 		void set_color(Player * p);
 		Map * get_map();
 		void next(Position pos, int *x, int *y);
-		std::string quit_info();
-		void stop();
+		void end_info();
+		void stop(bool quit = false);
 		float get_timeout();
+		void kill(int color);
 };

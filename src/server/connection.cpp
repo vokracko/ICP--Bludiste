@@ -2,19 +2,15 @@
 
 Connection::Connection(boost::asio::io_service & ios): socket(ios)
 {
-
+	std::cout << "conn++" << std::endl;
 }
 
 Connection::~Connection()
 {
 	socket.close();
-}
+	std::cout << "conn--" << std::endl;
 
-// boost::asio::ip::tcp::socket get_socket()
-// {
-// 	return socket;
-// TODO předělat ať nemusí být public
-// }
+}
 
 void Connection::sync_send(std::string * message)
 {

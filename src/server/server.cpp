@@ -29,7 +29,7 @@ void Server::accept_player(Connection * conn, const boost::system::error_code& e
 	if(!e)
 	{
 		Player * player = new Player(conn);
-		orphans.push_back(player);
+		add_orphan(player);
 
 		listen();
 	}
@@ -48,6 +48,7 @@ std::string Server::get_games_string()
 	{
 		for(std::vector<Game*>::iterator it = games.begin(); it != games.end(); ++it)
 		{
+			if(!(*it)->is_running()) continue;
 			message.append((*it)->to_string() + "\r\n");
 		}
 	}
@@ -87,6 +88,14 @@ int Server::new_game(std::string & game_settings)
 	size_t pos;
 	int map_id;
 	float timeout;
+
+	for(std::vector<Game *>::iterator it = games.begin(); it != games.end(); ++it)
+	{
+		if(!(*it)->is_running())
+		{
+			delete_game(*it);
+		}
+	}
 
 	try
 	{
@@ -155,7 +164,7 @@ void Server::kill(int sig)
 	std::vector<Game *> games = Server::get_instance()->games;
 	for(std::vector<Game *>::iterator it = games.begin(); it != games.end(); ++it)
 	{
-		(*it)->stop();
+		(*it)->stop(true);
 	}
 
 
@@ -167,18 +176,22 @@ void Server::stop()
 	Server::ios->stop();
 	acceptor.close();
 
+	std::cout << "server::stop" << std::endl;
+
+	for(std::vector<Game *>::iterator it = games.begin(); it != games.end(); ++it)
+	{
+		std::cout << "orphan" << std::endl;
+		delete *it;
+	}
+
+	games.clear();
+
 	for(std::vector<Player *>::iterator it = orphans.begin(); it != orphans.end(); ++it)
 	{
 		delete *it;
 	}
 
-	for(std::vector<Game *>::iterator it = games.begin(); it != games.end(); ++it)
-	{
-		delete *it;
-	}
-
 	orphans.clear();
-	games.clear();
 
 	delete last_connection;
 }

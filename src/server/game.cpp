@@ -6,20 +6,15 @@ Game::Game(float timeout, int map_id)
 	id = Server::get_instance()->get_game_id();
 	this->timeout = timeout;
 	running = true;
-	// monster = new Monster(this, timeout); //TODO
+	monster = new Monster(this, timeout);
+	std::cout << "game++" << std::endl;
 }
 
 Game::~Game()
 {
-	for(std::vector<Player *>::iterator it = players.begin(); it != players.end(); ++it)
-	{
-		Server::get_instance()->add_orphan(*it);
-		(*it)->work();
-		players.erase(it);
-	}
-
+	std::cout << "game--" << std::endl;
 	delete map;
-	// delete monster; //TODO
+	delete monster;
 }
 
 bool Game::is_running()
@@ -27,14 +22,26 @@ bool Game::is_running()
 	return running;
 }
 
-void Game::stop()
+void Game::stop(bool quit)
 {
 	running = false;
 
-	for(std::vector<Player*>::iterator it = players.begin(); it != players.end(); ++it)
+	if(quit)
 	{
-		(*it)->send_quit();
+		std::string msg = "quit\r\n";
+		send(msg);
 	}
+	else
+	{
+		end_info();
+	}
+
+	for(std::vector<Player *>::iterator it = players.begin(); it != players.end(); ++it)
+	{
+		delete *it;
+	}
+
+	players.clear();
 
 }
 
@@ -67,40 +74,33 @@ void Game::cmd(Player * p, std::string * command)
 	{
 		res = step(p);
 		p->inc_step();
-
-		if(res == Box::WIN)
-		{
-			send(*(map->get_map()), p, MOVE_PASS, p->get_color() + Box::WIN); // odešle všem hráčům aktuální stav
-			stop();
-			Server::get_instance()->delete_game(this);
-			return;
-		}
 	}
 	else if(*command == "stop")
 	{
 		res = MOVE_PASS;
 	}
 
-	send(*(map->get_map()), p, res, res == MOVE_PASS ? state : 0); // odešle všem hráčům aktuální stav
+	send(*(map->get_map()), p, res, res == MOVE_FAIL ? 0 : state); // odešle všem hráčům aktuální stav
+
+	if(res == Box::WIN)
+	{
+		stop();
+	}
 
 	map_mutex.unlock();
 }
 
-std::string Game::quit_info()
+void Game::end_info()
 {
-	std::string info[5] = {"0", "0 0", "0 0", "0 0", "0 0"};
-
-
 	auto diff = std::chrono::system_clock::now() - start;
 	int total = std::chrono::duration_cast<std::chrono::duration<int>>(diff).count();
+	std::string info[5] = {"", "0 0", "0 0", "0 0", "0 0"};
 
-	info[0] = std::to_string(total) + "\r\n";
+	info[0] = "end\r\n" + std::to_string(total);
 
 	for(std::vector<Player *>::iterator it = players.begin(); it != players.end(); ++it)
 	{
-		int xxx = (*it)->get_id();
-		std::string yyyy = (*it)->quit_info();
-		// info[(*it)->get_id()-4] = (*it)->quit_info();
+		info[(*it)->get_color()/10-3] = (*it)->end_info();
 	}
 
 	std::string res;
@@ -110,7 +110,7 @@ std::string Game::quit_info()
 		res.append(info[i] + "\r\n");
 	}
 
-	return res;
+	send(res);
 }
 
 void Game::set(Player * p, Position pos)
@@ -123,6 +123,19 @@ void Game::set(Player * p, Position pos)
 
 	map->set_ghost(current_pos.x, current_pos.y, 0);
 	p->set_position(pos);
+}
+
+void Game::kill(int color)
+{
+	for(std::vector<Player *>::iterator it = players.begin(); it != players.end(); ++it)
+	{
+		if((*it)->get_color() == color)
+		{
+			send(*(map->get_map()), nullptr, 0, (*it)->get_color() + Box::KILLED);
+			remove_player(*it);
+			break;
+		}
+	}
 }
 
 void Game::next(Position pos, int * x, int * y)
@@ -312,6 +325,7 @@ void Game::remove_player(Player * p)
 				players.erase(it);
 				remove_color(p);
 				map->unemplace_player(p);
+				Server::get_instance()->add_orphan(p);
 				break;
 			}
 
@@ -324,7 +338,7 @@ void Game::remove_player(Player * p)
 		}
 		else
 		{
-			Server::get_instance()->delete_game(this);
+			running = false;
 		}
 	}
 }

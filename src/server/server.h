@@ -34,7 +34,6 @@ class Server
 		static void create(boost::asio::io_service * ios);
 		static void kill(int sig);
 
-
 		int get_player_id();
 		int get_game_id();
 		void listen();
@@ -45,9 +44,9 @@ class Server
 		int new_game(std::string & game_settings);
 		void add_orphan(Player * p);
 		void delete_game(Game * g);
-
+		void remove_orphan(Player * p);
 	private:
 		Server(boost::asio::io_service & ios);
 		void accept_player(Connection * conn, const boost::system::error_code& e);
-		void remove_orphan(Player * p);
+
 };
