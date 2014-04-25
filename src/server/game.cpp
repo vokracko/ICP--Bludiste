@@ -42,7 +42,7 @@ bool Game::cmd(Player * p, std::string * command)
 {
 	map_mutex.lock();
 
-	bool res = false;
+	int res = MOVE_FAIL;
 
 	if(*command == "left")
 	{
@@ -67,7 +67,7 @@ bool Game::cmd(Player * p, std::string * command)
 	}
 	else if(*command == "stop")
 	{
-		res = true;
+		res = MOVE_PASS;
 	}
 
 	send(*(map->get_map()), p, res); // odešle všem hráčům aktuální stav
@@ -110,7 +110,6 @@ void Game::set(Player * p, Position pos)
 	unsigned char ghost_obj = map->get_ghost(current_pos.x, current_pos.y);
 
 	map->set(current_pos.x, current_pos.y, ghost_obj ? ghost_obj : Box::EMPTY);
-	// map->set(current_pos.x, current_pos.y, Box::EMPTY);
 	map->set(pos.x, pos.y, p->get_color() + pos.look);
 
 	map->set_ghost(current_pos.x, current_pos.y, 0);
@@ -131,61 +130,62 @@ void Game::next(Position pos, int * x, int * y)
 	}
 }
 
-bool Game::step(Player * p)
+int Game::step(Player * p)
 {
 	Position current_pos = p->get_position();
 	Position pos;
 	int next_obj;
 	int ghost_obj;
-	bool res = false;
+	int res = MOVE_FAIL;
 
 	pos.look = current_pos.look;
 	next(current_pos, &pos.x, &pos.y);
 
-	next_obj = map->get(pos.x, pos.y);
+	try
+	{
+		next_obj = map->get(pos.x, pos.y);
+	}
+	catch(std::exception & e)
+	{
+		return MOVE_FAIL;
+	}
 
 	if(next_obj == Box::EMPTY)
 	{
-		res = true;
+		res = MOVE_PASS;
 	}
 	else if(next_obj == Box::KEY && p->has_key())
 	{
 		map->set_ghost(pos.x, pos.y, Box::KEY);
-		std::cout<<"Vkládám ghosta na key: " << pos.x << "," << pos.y<<std::endl;
-		res = true;
+		res = MOVE_PASS;
 	}
-	else if(next_obj == Box::GATE + Box::OPEN)
+	else if(next_obj == (Box::GATE + Box::OPEN))
 	{
-		map->set_ghost(pos.x, pos.y, Box::GATE + Box::OPEN);
-		res = true;
+		//TODO výhra
+		res = MOVE_PASS;
 	}
-
-	if(res)
+	else if(next_obj >= 40 && next_obj <= 90 && p->get_color() == Box::MONSTER)
 	{
-		if(next_obj == Box::GATE + Box::OPEN)
-		{
-			//TODO výhra
-			//TODO kontrola hranic mapy
-		}
-		else
-		{
-			map->set(pos.x, pos.y, p->get_color() + current_pos.look);
-			set(p, pos);
-		}
-
-		return true;
+		//TODO zabití hráče
+		res = next_obj - next_obj%10 + Box::KILLED;
 	}
 
-	return false;
+	if(res != MOVE_FAIL)
+	{
+		map->set(pos.x, pos.y, p->get_color() + current_pos.look);
+		set(p, pos);
+	}
+
+	return res;
 
 }
 
-bool Game::take(Player * p)
+int Game::take(Player * p)
 {
 	Position current_pos = p->get_position();
 	int x, y;
 
-	if(p->has_key()) return false; //nemůže vzít více klíčů
+	if(p->has_key()) return MOVE_FAIL; //nemůže vzít více klíčů
 
 	next(current_pos, &x, &y);
 
@@ -193,31 +193,31 @@ bool Game::take(Player * p)
 	{
 		map->set(x,y, Box::EMPTY);
 		p->take_key();
-		return true;
+		return MOVE_PASS;
 	}
 
-	return false;
+	return MOVE_FAIL;
 }
 
-bool Game::open(Player * p)
+int Game::open(Player * p)
 {
 	Position current_pos = p->get_position();
 	int x, y;
 
-	if(!p->has_key()) return false; //nevlastní klíč, nemůže otevřít
+	if(!p->has_key()) return MOVE_FAIL; //nevlastní klíč, nemůže otevřít
 
 	next(current_pos, &x, &y);
 
 	if(map->get(x, y) == Box::GATE + Box::CLOSED)
 	{
 		map->set(x,y, Box::GATE + Box::OPEN);
-		return true;
+		return MOVE_PASS;
 	}
 
-	return false;
+	return MOVE_FAIL;
 }
 
-bool Game::rotate(Player * p, int way)
+int Game::rotate(Player * p, int way)
 {
 	Position pos;
 	Position current_pos = p->get_position();
@@ -229,7 +229,7 @@ bool Game::rotate(Player * p, int way)
 
 	set(p, pos);
 
-	return true;
+	return MOVE_PASS;
 }
 
 /**
@@ -240,8 +240,7 @@ bool Game::rotate(Player * p, int way)
  */
 void Game::send(std::string message, Player * p, int res, Player * skip)
 {
-	char c = res ? MOVE_PASS : MOVE_FAIL;;
-	std::string info = message + c + "\r\n";
+	std::string info = message + (char) res + "\r\n";
 	std::string no_info = message + "\r\n";
 
 	for(std::vector<Player*>::iterator it = players.begin(); it != players.end(); ++it)
@@ -262,6 +261,10 @@ void Game::send(std::string message, Player * p, int res, Player * skip)
 	}
 }
 
+float Game::get_timeout()
+{
+	return timeout;
+}
 
 /**
  * Připojí hráče do hry
