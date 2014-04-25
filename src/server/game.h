@@ -45,13 +45,13 @@ class Game
 	public:
 		Game(float timeout, int map_id);
 		~Game();
-		void send(std::string message, Player * p = nullptr, int res = 0, Player * skip = nullptr);
+		void send(std::string message, Player * p = nullptr, int move_res = 0, int state_code = 0);
 		bool add_player(Player * p);
 		int get_id();
 		std::string to_string();
 		bool is_running();
 		void remove_player(Player * p);
-		bool cmd(Player * p, std::string * command);
+		void cmd(Player * p, std::string * command);
 		void set(Player * p, Position pos);
 		void remove_color(Player * p);
 		void set_color(Player * p);

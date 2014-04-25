@@ -38,11 +38,12 @@ void Game::stop()
 
 }
 
-bool Game::cmd(Player * p, std::string * command)
+void Game::cmd(Player * p, std::string * command)
 {
 	map_mutex.lock();
 
 	int res = MOVE_FAIL;
+	int state = 0;
 
 	if(*command == "left")
 	{
@@ -55,26 +56,34 @@ bool Game::cmd(Player * p, std::string * command)
 	else if(*command == "take")
 	{
 		res = take(p);
+		state = p->get_color() + Box::KEY;
 	}
 	else if(*command == "open")
 	{
 		res = open(p);
+		state = p->get_color() + Box::OPEN;
 	}
 	else if(*command == "step")
 	{
 		res = step(p);
 		p->inc_step();
+
+		if(res == Box::WIN)
+		{
+			send(*(map->get_map()), p, MOVE_PASS, p->get_color() + Box::WIN); // odešle všem hráčům aktuální stav
+			stop();
+			Server::get_instance()->delete_game(this);
+			return;
+		}
 	}
 	else if(*command == "stop")
 	{
 		res = MOVE_PASS;
 	}
 
-	send(*(map->get_map()), p, res); // odešle všem hráčům aktuální stav
+	send(*(map->get_map()), p, res, res == MOVE_PASS ? state : 0); // odešle všem hráčům aktuální stav
 
 	map_mutex.unlock();
-
-	return res;
 }
 
 std::string Game::quit_info()
@@ -161,8 +170,7 @@ int Game::step(Player * p)
 	}
 	else if(next_obj == (Box::GATE + Box::OPEN))
 	{
-		//TODO výhra
-		res = MOVE_PASS;
+		return Box::WIN;
 	}
 	else if(next_obj >= 40 && next_obj <= 90 && p->get_color() == Box::MONSTER)
 	{
@@ -238,25 +246,20 @@ int Game::rotate(Player * p, int way)
  * \param exclude odkaz na hráče, který zprávu vytvořil
  * \param message obsah zprávy
  */
-void Game::send(std::string message, Player * p, int res, Player * skip)
+void Game::send(std::string message, Player * p, int move_res, int state_code)
 {
-	std::string info = message + (char) res + "\r\n";
-	std::string no_info = message + "\r\n";
+	std::string res_info = message + (char) move_res + "\r\n";
+	std::string state_info = state_code ? message + (char) state_code + "\r\n" : message + "\r\n";
 
 	for(std::vector<Player*>::iterator it = players.begin(); it != players.end(); ++it)
 	{
-		if(*it == skip)
-		{
-			continue;
-		}
-
 		if(p == *it)
 		{
-			(*it)->send(&info);
+			(*it)->send(&res_info);
 		}
 		else
 		{
-			(*it)->send(&no_info);
+			(*it)->send(&state_info);
 		}
 	}
 }

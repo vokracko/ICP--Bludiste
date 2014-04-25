@@ -37,9 +37,7 @@ void Player::work()
 		while(game->is_running() && message != "quit")
 		{
 			receive(&message, Connection::SYNC);
-			res = game->cmd(this, &message);  // upraví políčka hry
-			// message = res ? "OK" : "KO";
-			// send(&message, Connection::SYNC);
+			game->cmd(this, &message);  // upraví políčka hry
 		}
 	}
 	catch(std::exception & e)
