@@ -26,8 +26,8 @@ void Server::listen()
 /**
  * \fn void Server::accept_player(Connection::pointer conn, const boost::system::error_code& e)
  * \brief Ověřuje příchozí spojení
- * \param conn příchozí spojení
- * \param e chybový kód spojení
+ * \param[in] conn příchozí spojení
+ * \param[in] e chybový kód spojení
  */
 void Server::accept_player(Connection * conn, const boost::system::error_code& e)
 {
@@ -72,8 +72,8 @@ std::string Server::get_games_string()
 /**
  * \fn Game * Server::assign(int game_id, Player * player)
  * \brief Připojí hráče ke hře
- * \param game_id identifikátor hry
- * \param player ukazatel na připojováního hráče
+ * \param[in] game_id identifikátor hry
+ * \param[in] player ukazatel na připojováního hráče
  * \return ukazatel na hru, kam se připojil
  */
 Game * Server::assign(int game_id, Player * player)
@@ -103,7 +103,7 @@ Game * Server::assign(int game_id, Player * player)
 /**
  * \fn int Server::new_game(std::string & game_settings)
  * \brief Vytvoří novou hru
- * \param game_setting nastavení hry
+ * \param[in] game_setting nastavení hry
  * \return identifikátor hry
  */
 int Server::new_game(std::string & game_settings)
@@ -142,7 +142,7 @@ int Server::new_game(std::string & game_settings)
 /**
  * \fn void Server::delete_game(Game * g)
  * \brief Smaže hru
- * \param g ukazatel na hru, jež se má smazat
+ * \param[in] g ukazatel na hru, jež se má smazat
  */
 void Server::delete_game(Game * g)
 {
@@ -160,7 +160,7 @@ void Server::delete_game(Game * g)
 /**
  * \fn void Server::remove_orphan(Player * p)
  * \brief Odstraní hráče, jež není připojen k žádné hře
- * \param p ukazatel na hráče, jež se má odstranit
+ * \param[in] p ukazatel na hráče, jež se má odstranit
  */
 void Server::remove_orphan(Player * p)
 {
@@ -177,7 +177,7 @@ void Server::remove_orphan(Player * p)
 /**
  * \fn void Server::add_orphan(Player * p)
  * \brief Uchová hráče bez připojení ke hře
- * \param p ukazatel na hráče
+ * \param[in] p ukazatel na hráče
  */
 void Server::add_orphan(Player * p)
 {
@@ -199,7 +199,7 @@ Server * Server::get_instance()
 /**
  * \fn void Server::create(boost::asio::io_service * ios)
  * \brief Inicializuje io_service a seznam map
- * \param ios io_service
+ * \param[in] ios io_service
  * \see Map::init()
  */
 void Server::create(boost::asio::io_service * ios)
@@ -211,16 +211,17 @@ void Server::create(boost::asio::io_service * ios)
 /**
  * \fn void Server::kill(int sig)
  * \brief Odchytává ctrl+c, zastaví io_service
- * \param sig číslo signálu
+ * \param[in] sig číslo signálu
  */
 void Server::kill(int sig)
 {
+	std::cout << "server::kill" << std::endl;
 	std::vector<Game *> games = Server::get_instance()->games;
+	std::cout << "stop games" << std::endl;
 	for(std::vector<Game *>::iterator it = games.begin(); it != games.end(); ++it)
 	{
-		(*it)->stop(true);
+		if((*it)->is_running()) (*it)->stop(true);
 	}
-
 
 	Server::get_instance()->stop();
 }
@@ -231,9 +232,11 @@ void Server::kill(int sig)
  */
 void Server::stop()
 {
+	std::cout << "server::stop" << std::endl;
 	Server::ios->stop();
 	acceptor.close();
 
+	std::cout << "delte games" << std::endl;
 	for(std::vector<Game *>::iterator it = games.begin(); it != games.end(); ++it)
 	{
 		delete *it;
@@ -241,13 +244,16 @@ void Server::stop()
 
 	games.clear();
 
+	std::cout << "delte orphans" << std::endl;
 	for(std::vector<Player *>::iterator it = orphans.begin(); it != orphans.end(); ++it)
 	{
+		std::cout << " N ";
 		delete *it;
 	}
 
 	orphans.clear();
 
+	std::cout << "delet last conn" << std::endl;
 	delete last_connection;
 }
 

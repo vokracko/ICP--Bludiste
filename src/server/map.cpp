@@ -168,45 +168,16 @@ int Map::get_height()
 void Map::emplace_player(Player * p)
 {
 	Position pos;
-	int x, y, x_end, y_end, x_start;
 
-	if(p->get_color() > Box::GREEN)
+	do
 	{
-		y = height/2;
-		y_end = height;
-	}
-	else
-	{
-		y = 0;
-		y_end = height/2;
-	}
+		pos.x = rand() % get_width();
+		pos.y = rand() % get_height();
+	} while(get(pos.x, pos.y) != Box::EMPTY);
 
-	if((p->get_color()/10) % 2 == 0)
-	{
-		x_start = width/2;
-		x_end = width;
-	}
-	else
-	{
-		x_start = 0;
-		x_end = width/2;
-	}
-
-
-	for(; y < y_end; ++y)
-		for(x = x_start; x < x_end; ++x)
-		{
-			if(get(x, y) == Box::EMPTY)
-			{
-				pos.x = x;
-				pos.y = y;
-				pos.look = rand()%4+1;
-				p->set_position(pos);
-				set(x, y, p->get_color() + pos.look);
-
-				return;
-			}
-		}
+	pos.look = rand() % 4 + 1;
+	p->set_position(pos);
+	set(pos.x, pos.y, p->get_color() + pos.look);
 }
 
 /**

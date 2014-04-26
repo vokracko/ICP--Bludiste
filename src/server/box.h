@@ -20,7 +20,6 @@ enum Box
 	LEFT = 2,
 	DOWN = 3,
 	RIGHT = 4,
-	WIN = 0,
 	OPEN = 5,
 	CLOSED = 6,
 
@@ -30,6 +29,6 @@ enum Box
 
 	MOVE_PASS = 35,
 	MOVE_FAIL = 36,
-
+	YOU_WIN = 37
 };
 

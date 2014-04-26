@@ -8,8 +8,8 @@
 /**
  * \fn Monster::Monster(Game * game, float timeout)
  * \brief Vytvoření monstra, jeho umístění v bludišti a spuštění vlastního vlákna
- * \param game ukazatel na hru
- * \param timeout časová prodleva mezi kroky
+ * \param[in] game ukazatel na hru
+ * \param[in] timeout časová prodleva mezi kroky
  */
 Monster::Monster(Game * game, float timeout)
 {
@@ -76,7 +76,7 @@ void Monster::work()
 /**
  * \fn bool Monster::isPlayer(unsigned char obj)
  * \brief Zjistí, zda je objekt hráčem
- * \param obj objekt
+ * \param[in] obj objekt
  * \return výsledek
  */
 bool Monster::isPlayer(unsigned char obj)
@@ -100,7 +100,7 @@ int Monster::rotate(int look, int way)
 /**
  * \fn void Monster::new_way(Position * current)
  * \brief Nastavý nové natočení hlídače
- * \param current Aktuální pozice v mapě
+ * \param[in,out] current Aktuální pozice v mapě
  */
 void Monster::new_way(Position * current)
 {

@@ -24,6 +24,7 @@ class Player
 		int color;
 		int step_count = 0;
 		bool own_key = false;
+		bool ok = true;
 
 		Connection * conn = nullptr;
 		std::thread thread;
@@ -50,8 +51,8 @@ class Player
 		void work();
 		int get_id();
 
-		void send(std::string * message, int mode = Connection::ASYNC);
-		void receive(std::string * target, int mode = Connection::ASYNC);
+		void send(std::string * message, int mode = Connection::SYNC);
+		void receive(std::string * target, int mode = Connection::SYNC);
 
 		int get_color();
 		void set_color(int color);

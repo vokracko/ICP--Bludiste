@@ -30,7 +30,7 @@ Client::~Client()
     {
         this->send_quit();
         delete this->client_socket;
-    }   
+    }
 }
 
 /**
@@ -90,7 +90,7 @@ void read_from_socket(QTcpSocket * client_socket , std::string &msg)
             cont2=0;
         }
     }
-    
+
 }
 
 /**
@@ -234,10 +234,10 @@ int Client::create_game(double timeout, int map_type)
     sscanf(game_info.c_str(),"%d %d %d %d %d\r\n",&(this->width),&(this->height),&(this->color),&(this->pos_x),&(this->pos_y));
     // sscanf(game_info.c_str(),"%d %d",&(this->width),&(this->height));
     // nacteni mapy
-    
+
     //std::cout<<"size: "<<game_info.size()<<"\n";
     //std::cout<<game_info;
-   
+
     game_info=game_info.substr(game_info.find("\n")+1,game_info.size());
 
     int index=0;
@@ -267,7 +267,8 @@ int Client::send_move(std::string command)
         throw Errors(Errors::UNKNOWN_COMMAND);
         return 0;
     }
-    /*if (command.compare("go")==0) 
+    /*if (command.compare("go")==0)
+>>>>>>> 20423e5e8efaf5830e37d6b055e8385d4b4a954b
     {
         command="step";
         this->last_command="go";
@@ -330,11 +331,23 @@ int Client::parse_map(unsigned char events[MAX_EVENTS],int * events_count,std::s
     int end_message_index=map_in_string.find("\r\n")+2;
     std::cout<<"endmsgind "<<end_message_index<<" mapinstrsiz "<<map_in_string.size()<<std::endl;
     event_string=map_in_string.substr(index,end_message_index-2-index);
+<<<<<<< HEAD
     std::cout<<"events: "<<event_string<<std::endl<<std::flush;    
+=======
+<<<<<<< HEAD
+
+    map_in_string=map_in_string.substr(end_message_index,map_in_string.size()-end_message_index);
+
+    *events_count=event_string.size();
+
+=======
+    std::cout<<"events: "<<event_string<<std::endl;
+>>>>>>> 0e175e8b508fef9d5f9deef3f73766840125f9d3
     map_in_string=map_in_string.substr(end_message_index,map_in_string.size()-end_message_index);
     std::cout<<"zbytek: "<<map_in_string<<std::endl<<std::flush;
     *events_count+=event_string.size();
-    
+
+>>>>>>> 20423e5e8efaf5830e37d6b055e8385d4b4a954b
 
 
     for (unsigned i=0; i< event_string.size(); i++)
@@ -347,7 +360,7 @@ int Client::parse_map(unsigned char events[MAX_EVENTS],int * events_count,std::s
         event_index++;
     }
 
-    if (map_in_string.size()!=0) 
+    if (map_in_string.size()!=0)
     {
         return parse_map(events,events_count,map_in_string,event_index);
     }
@@ -488,6 +501,7 @@ std::string Client::refer_color()
 void Client::send_quit()
 {
     this->client_socket->write("quit\r\n");
+    client_socket->waitForBytesWritten(5000);
 }
 
 
@@ -533,7 +547,7 @@ std::string Client::get_tooltip(int x,int y)
     {
         return "Bílý hráč:\nPočet kroků: "+std::to_string(this->white_steps)+"\nČas strávený ve hře: "+convert_string_time(this->white_time);
     }
-    
+
     if (this->map[x][y]/10==GREEN)
     {
         return "Zelený hráč:\nPočet kroků: "+std::to_string(this->green_steps)+"\nČas strávený ve hře: "+convert_string_time(this->green_time);
@@ -550,3 +564,4 @@ std::string Client::get_tooltip(int x,int y)
     }
     return "";
 }
+

@@ -49,6 +49,7 @@ bool Game::is_running()
 */
 void Game::stop(bool quit)
 {
+	std::cout << "game::stop" << std::endl;
 	running = false;
 
 	if(quit)
@@ -61,12 +62,13 @@ void Game::stop(bool quit)
 		end_info();
 	}
 
+	std::cout << "game::stop zabití hráčů" << std::endl;
 	for(std::vector<Player *>::iterator it = players.begin(); it != players.end(); ++it)
 	{
 		delete *it;
 	}
 
-	players.clear();
+	// players.clear();
 
 }
 
@@ -82,9 +84,11 @@ void Game::cmd(Player * p, std::string * command)
 
 	int res = MOVE_FAIL;
 	int state = 0;
+	p->go = false;
 
 	if(*command == "left")
 	{
+
 		res = rotate(p, Box::LEFT);
 	}
 	else if(*command == "right")
@@ -105,16 +109,20 @@ void Game::cmd(Player * p, std::string * command)
 	{
 		res = step(p);
 		p->inc_step();
+
+		if(res == Box::YOU_WIN)
+		{
+			state = p->get_color();
+		}
 	}
 	else if(*command == "stop")
 	{
-		p->go = false;
 		res = MOVE_PASS;
 	}
 
 	send(*(map->get_map()), p, res, res == MOVE_FAIL ? 0 : state); // odešle všem hráčům aktuální stav
 
-	if(res == Box::WIN)
+	if(res == Box::YOU_WIN)
 	{
 		stop();
 	}
@@ -132,7 +140,7 @@ void Game::end_info()
 	int total = std::chrono::duration_cast<std::chrono::duration<int>>(diff).count();
 	std::string info[5] = {"", "0 0", "0 0", "0 0", "0 0"};
 
-	info[0] = "end\r\n" + std::to_string(total);
+	info[0] = "end" + std::to_string(total);
 
 	for(std::vector<Player *>::iterator it = players.begin(); it != players.end(); ++it)
 	{
@@ -143,10 +151,21 @@ void Game::end_info()
 
 	for(int i = 0; i < 5; ++i)
 	{
-		res.append(info[i] + "\r\n");
+		if(i == 4)
+		{
+			res.append(info[i] + "\r\n");
+		}
+		else
+		{
+
+		res.append(info[i] + "\n");
+		}
 	}
 
-	send(res);
+	for(std::vector<Player *>::iterator it = players.begin(); it!= players.end(); ++it)
+	{
+		(*it)->send(&res);
+	}
 }
 
 /**
@@ -178,6 +197,7 @@ void Game::kill(int color)
 	{
 		if((*it)->get_color() == color)
 		{
+			(*it)->go = false;
 			remove_player(*it);
 			send(*(map->get_map()), nullptr, 0, (*it)->get_color() + Box::KILLED);
 			break;
@@ -220,7 +240,7 @@ int Game::step(Player * p)
 	int next_obj;
 	int ghost_obj;
 	int res = MOVE_FAIL;
-
+	p->go = true;
 	pos.look = current_pos.look;
 	next(&current_pos, &pos.x, &pos.y);
 
@@ -245,7 +265,7 @@ int Game::step(Player * p)
 	}
 	else if(next_obj == (Box::GATE + Box::OPEN))
 	{
-		return Box::WIN;
+		return Box::YOU_WIN;
 	}
 	else if(next_obj >= 40 && next_obj <= 90 && p->get_color() == Box::MONSTER)
 	{
@@ -451,7 +471,7 @@ void Game::remove_player(Player * p)
 */
 void Game::remove_color(Player * p)
 {
-	colors[p->get_color()/10-40] = false;
+	colors[p->get_color()/10-4] = false;
 }
 
 /**
