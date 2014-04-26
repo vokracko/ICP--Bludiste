@@ -1,3 +1,8 @@
+/**
+ * \brief Třída hlídače bludiště
+ * \file monster.h
+ * \author Lukáš Vokráčko (xvokra00)
+ */
 
 class Monster;
 
@@ -19,5 +24,9 @@ class Monster
 	public:
 		Monster(Game * game, float timeout);
 		~Monster();
+
+		int rotate(int look, int way);
+		void new_way(Position * current);
 		void work();
+		bool isPlayer(unsigned char obj);
 };
