@@ -25,8 +25,10 @@ class Monster
 		Monster(Game * game, float timeout);
 		~Monster();
 
+		void work();
+
+	private:
 		int rotate(int look, int way);
 		void new_way(Position * current);
-		void work();
 		bool isPlayer(unsigned char obj);
 };
