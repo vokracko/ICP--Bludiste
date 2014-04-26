@@ -10,7 +10,7 @@ QT+=network
 
 QT       -= gui
 
-TARGET = bludiste2014_cli
+TARGET = bludiste2014-cli
 CONFIG   += console
 CONFIG   -= app_bundle
 
@@ -19,14 +19,14 @@ TEMPLATE = app
 QMAKE_CXXFLAGS += -std=c++11
 QMAKE_CXXFLAGS += -pthread
 
-SOURCES += ../../errors.cpp
+SOURCES += ./../../errors.cpp
 
 SOURCES += main.cpp \
     ./../client.cpp \
     client_cli.cpp
 
 
-HEADERS +=../../../errors.h
+HEADERS +=./../../errors.h
 HEADERS += ./../../game_components.h
 HEADERS += ./../../events_enumerator.h
 HEADERS += \

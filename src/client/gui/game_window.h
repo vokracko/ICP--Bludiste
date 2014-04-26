@@ -1,7 +1,7 @@
 /**
 *\file game_window.h
 * Hlavičkový soubor definující třídu game_window. Vygenerováno pomocí QT Creator s rozšířením o některé atributy a metody.<br/>
-* Je implementací okna ve kterém dochází k hraní hry. Importuje si třídu Game_field, která obsahuje matici hracího pole. 
+* Je implementací okna ve kterém dochází k hraní hry. Importuje si třídu Game_field, která obsahuje matici hracího pole.
 *\author Michal Veselý (xvesel63)
 */
 
@@ -11,7 +11,7 @@
 
 
 #include <QMainWindow>
-#include "./../../client.h"
+#include "./../client.h"
 #include "game_window.h"
 #include "game_field.h"
 #include <QShowEvent>
@@ -32,7 +32,7 @@ class game_window : public QMainWindow
     Q_OBJECT
     Client * client;
     Game_field * game_field;
-    
+
 
 
 public:
@@ -42,7 +42,7 @@ public:
     void create_game_field();
 
 
-    
+
 private slots:
     void on_send_command_button_clicked();
     void game_showing();

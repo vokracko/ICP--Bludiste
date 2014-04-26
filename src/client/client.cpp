@@ -305,17 +305,13 @@ int Client::send_move(std::string command)
 int Client::parse_map(unsigned char events[MAX_EVENTS],int * events_count,std::string map_in_string, int event_index)
 {
         // pokud je konec, vraci 1 a zpracuje udaje o hre
-    std::cout<<"mapa: \n"<<map_in_string<<std::endl<<std::flush;
 
     if (map_in_string.substr(0,3).compare("end")==0)
     {
-        std::cout<<"jsem tady na konci\n"<<std::flush;
         this->last_command_successfull=false;
         map_in_string=map_in_string.substr(3,map_in_string.size()-5);
-        std::cout<<"jsem tady na konci 2\n"<<std::flush;
         sscanf(map_in_string.c_str(),"%d\n%d %d\n%d %d\n%d %d\n%d %d\r\n",&(this->game_duration),&(this->red_time),&(this->red_steps),&(this->green_time),
                                                     &(this->green_steps),&(this->blue_time),&(this->blue_steps),&(this->white_time),&(this->white_steps));
-        std::cout<<"jsem tady na konci 3\n"<<std::flush;
         return 1;
     }
 
@@ -327,28 +323,10 @@ int Client::parse_map(unsigned char events[MAX_EVENTS],int * events_count,std::s
 
     std::string event_string;
 
-    std::cout<<"mapa pred ziskanim end indexu:\n"<<map_in_string<<std::endl;
     int end_message_index=map_in_string.find("\r\n")+2;
-    std::cout<<"endmsgind "<<end_message_index<<" mapinstrsiz "<<map_in_string.size()<<std::endl;
     event_string=map_in_string.substr(index,end_message_index-2-index);
-<<<<<<< HEAD
-    std::cout<<"events: "<<event_string<<std::endl<<std::flush;    
-=======
-<<<<<<< HEAD
-
     map_in_string=map_in_string.substr(end_message_index,map_in_string.size()-end_message_index);
-
-    *events_count=event_string.size();
-
-=======
-    std::cout<<"events: "<<event_string<<std::endl;
->>>>>>> 0e175e8b508fef9d5f9deef3f73766840125f9d3
-    map_in_string=map_in_string.substr(end_message_index,map_in_string.size()-end_message_index);
-    std::cout<<"zbytek: "<<map_in_string<<std::endl<<std::flush;
     *events_count+=event_string.size();
-
->>>>>>> 20423e5e8efaf5830e37d6b055e8385d4b4a954b
-
 
     for (unsigned i=0; i< event_string.size(); i++)
     {
@@ -364,7 +342,6 @@ int Client::parse_map(unsigned char events[MAX_EVENTS],int * events_count,std::s
     {
         return parse_map(events,events_count,map_in_string,event_index);
     }
-    std::cout<<"konec jednoho parse\n\n"<<std::flush;
     // pokud konec neni vrati 0
     return 0;
 
@@ -508,7 +485,7 @@ void Client::send_quit()
 /**
 * \fn std::string Client::convert_string_time(int time_int)
 * Převede čas ze sekund na string tvaru Xh Ym Zs
-* \param time_int Čas v sekundach 
+* \param time_int Čas v sekundach
 */
 std::string Client::convert_string_time(int time_int)
 {
@@ -520,7 +497,7 @@ std::string Client::convert_string_time(int time_int)
     mins=time_int/60;
     time_int-=mins*60;
     secs=time_int;
-    
+
     return std::to_string(hours)+"h "+std::to_string(mins)+"m "+std::to_string(secs)+"s";
 }
 

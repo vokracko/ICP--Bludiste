@@ -1,6 +1,6 @@
 /**
 *\file game_field.h
-* Třída dědící od QGridLayout.<br /> 
+* Třída dědící od QGridLayout.<br />
 * Obsahuje všechny herní komponenty v podobě QPixmap a pole QLabelů do kterých se tyto obrázky komponent zobrazují
 *\author Michal Veselý (xvesel63)
 */
@@ -8,7 +8,7 @@
 
 #include <QGridLayout>
 #include <QLabel>
-#include "./../../../game_components.h"
+#include "./../../game_components.h"
 
 /**
 \class Game_field

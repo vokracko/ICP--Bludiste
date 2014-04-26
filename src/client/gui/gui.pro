@@ -24,22 +24,20 @@ SOURCES +=\
     server_connection_window.cpp \
     game_window.cpp
 
-SOURCES+=
-./../../bludiste2014-cli.cpp
-SOURCES+=./../../client.cpp
-SOURCES+=./../../../errors.cpp
+SOURCES+=./../client.cpp
+SOURCES+=./../../errors.cpp
 SOURCES+=game_field.cpp
 
 
 HEADERS  += game_setup.h \
     server_connection_window.h \
     game_window.h\
-    ./../../client.h \
-    
+    ./../client.h \
 
-HEADERS  +=./../../../errors.h
-HEADERS  +=./../../../game_components.h
-HEADERS  +=./../../../events_enumerator.h
+
+HEADERS  +=./../../errors.h
+HEADERS  +=./../../game_components.h
+HEADERS  +=./../../events_enumerator.h
 
 HEADERS  +=game_field.h
 

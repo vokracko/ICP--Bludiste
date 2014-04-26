@@ -7,8 +7,8 @@
 
 #include "game_window.h"
 #include "ui_game_window.h"
-#include "./../../../errors.h"
-#include "./../../../events_enumerator.h"
+#include "./../../errors.h"
+#include "./../../events_enumerator.h"
 
 game_window::game_window(Client * client,QWidget *parent) :
     QMainWindow(parent),
@@ -102,7 +102,7 @@ void game_window::show_happend_events(unsigned char events[MAX_EVENTS],int event
 /**
 *\fn void game_window::game_showing()
 * Slot který je spušťěn signálem readyRead, když přijdou data ze serveru.
-* Obstarává vykreslování a hrací plochy po příchodu aktuálního stavu hry od serveru. 
+* Obstarává vykreslování a hrací plochy po příchodu aktuálního stavu hry od serveru.
 * Současně se stará o detekci konce hry a jeho obsluhu a o vypisování událostí které během hry nastali.
 */
 void game_window::game_showing()
@@ -113,7 +113,7 @@ void game_window::game_showing()
 
     // vraci true pokud je konec hry:
     // pokud dojde ke konci hry, tak se tato informace uchová
-    // a umožní se tak funkce pro zobrazování informací o hře 
+    // a umožní se tak funkce pro zobrazování informací o hře
     if (this->client->accept_state_map(events,&events_count))
     {
         // KONEC HRY
@@ -124,12 +124,12 @@ void game_window::game_showing()
         QApplication::processEvents();
         // vypise cas hry
         this->ui->game_info_list->addItem(QString::fromStdString(this->client->get_game_time()));
-        
+
         // schova widgety pro zadavani prikazu
         this->ui->send_command_button->setVisible(false);
         this->ui->command_edit->setVisible(false);
         this->ui->zadej_prikaz_label->setVisible(false);
-        
+
         // nastavi tooltipy
         this->assign_tooltips();
         return;
