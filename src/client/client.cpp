@@ -57,6 +57,7 @@ int Client::connect_socket(const char * host)
 
 // nacte data ze socketu
 // vyvola vyjimku v pripade chyby
+// po nacteni se pokusi nacist znovu, kdyby nahodou neprisla vsechna data v prvni zprave
 void read_from_socket(QTcpSocket * client_socket , std::string &msg)
 {
     msg="";
@@ -266,7 +267,7 @@ int Client::send_move(std::string command)
         throw Errors(Errors::UNKNOWN_COMMAND);
         return 0;
     }
-    if (command.compare("go")==0) 
+    /*if (command.compare("go")==0) 
     {
         command="step";
         this->last_command="go";
@@ -274,9 +275,9 @@ int Client::send_move(std::string command)
         QTimer::singleShot(((int)(this->timeout*1000)),this,SLOT(when_go()));
     }
     else
-    {
+    {*/
         this->last_command=command;
-    }
+    //}
     client_socket->write((command+"\r\n").c_str());
     if (!(client_socket->waitForBytesWritten(5000)))
     {
@@ -286,15 +287,33 @@ int Client::send_move(std::string command)
     return 1;
 }
 
-int Client::parse_map(char events[MAX_EVENTS],int * events_count,std::string map_in_string)
+
+/**
+*\fn int Client::parse_map(unsigned char events[MAX_EVENTS],int * events_count,std::string map_in_string, int event_index)
+* Přečte ze socketu informace o aktuálním stavu hry a uloží je do atributu map.<br />
+* V případě, že je konec hry získá informace o hře (celkový čas hry, doba hry každého hráče, a počet kroků kolik hráč udělal).<br />
+* V případě že není konec hry, ale nastane nějaká speciální událost, je součástí této zprávy a bude vyhodnocena (například úmrtí některého hráče apod.).<br />
+* Socket client_socket je propoj se slotem v třídě game_window a tato metoda je invokována v případě, že na socket přijdou data obsahující mapu (obdobně pro CLI mód). <br />
+* Může dojít k rekurzivnímu volání v případě, že došlo ke spojení více zpráv dohromady.
+*\return 1 pokud je konec hry, jinak 0
+* \param events Pole enum hodnot do kterého naplní funkce specifické události, které vznikly
+* \param events_count Celočíselná proměnná, do které uloží funkce počet specifických událostí, které vznikly
+* \param map_in_string Textová reprezentace mapy která byla zaslána serverem (může dojít ke spojení více zpráv dohromady)
+* \param event_index, index od kterého se má plnit parametr events, kvůli možnosti spojení více zpráv dohromady.
+*/
+int Client::parse_map(unsigned char events[MAX_EVENTS],int * events_count,std::string map_in_string, int event_index)
 {
-    std::cout<<"velikost zpravy"<<map_in_string.size()<<std::endl;
         // pokud je konec, vraci 1 a zpracuje udaje o hre
+    std::cout<<"mapa: \n"<<map_in_string<<std::endl<<std::endl;
     if (map_in_string.substr(0,5).compare("end\r\n")==0)
     {
+        std::cout<<"jsem tady na konci\n"<<std::flush;
+        this->last_command_successfull=false;
         map_in_string=map_in_string.substr(5,map_in_string.size());
-        sscanf(map_in_string.c_str(),"%lf\n%lf %d\n%lf %d\n%lf %d\n%lf %d\n",&(this->game_duration),&(this->white_time),&(this->white_steps),&(this->red_time),
-               &(this->red_steps),&(this->green_time),&(this->green_steps),&(this->blue_time),&(this->blue_steps));
+        std::cout<<"jsem tady na konci 2\n"<<std::flush;
+        sscanf(map_in_string.c_str(),"%lf\n%lf %d\n%lf %d\n%lf %d\n%lf %d\n",&(this->game_duration),&(this->red_time),&(this->red_steps),&(this->green_time),
+                                                    &(this->green_steps),&(this->blue_time),&(this->blue_steps),&(this->white_time),&(this->white_steps));
+        std::cout<<"jsem tady na konci 3\n"<<std::flush;
         return 1;
     }
 
@@ -309,26 +328,26 @@ int Client::parse_map(char events[MAX_EVENTS],int * events_count,std::string map
     int end_message_index=map_in_string.find("\r\n")+2;
 
     event_string=map_in_string.substr(index,end_message_index-2-index);
-    
+    std::cout<<"events: "<<event_string<<std::endl;    
     map_in_string=map_in_string.substr(end_message_index,map_in_string.size()-end_message_index);
-    
-    *events_count=event_string.size();
+    std::cout<<"zbytek: "<<map_in_string<<std::endl;
+    *events_count+=event_string.size();
     
 
 
-    for (int i=0; i< *events_count; i++)
+    for (unsigned i=0; i< event_string.size(); i++)
     {
         // naplni udalosti
-        events[i]=event_string.at(i);
+        events[event_index]=event_string.at(i);
         // kvuli go, uklada jestli se posledni tah povedl nebo ne
-        if (events[i]==MOVE_PASS) this->last_command_successfull=true;
-        if (events[i]==MOVE_FAIL) this->last_command_successfull=false;
+        if (events[event_index]==MOVE_PASS) this->last_command_successfull=true;
+        if (events[event_index]==MOVE_FAIL) this->last_command_successfull=false;
+        event_index++;
     }
 
     if (map_in_string.size()!=0) 
     {
-        std::cout<<"rekurzivne volam fci"<<std::endl;
-        return parse_map(events,events_count,map_in_string);
+        return parse_map(events,events_count,map_in_string,event_index);
     }
     // pokud konec neni vrati 0
     return 0;
@@ -339,21 +358,19 @@ int Client::parse_map(char events[MAX_EVENTS],int * events_count,std::string map
 
 /**
 *\fn void Client::accept_state_map()
-* Přečte ze socketu informace o aktuálním stavu hry a uloží je do atributu map.<br />
-* V případě, že je konec hry získá informace o hře (celkový čas hry, doba hry každého hráče, a počet kroků kolik hráč udělal).<br />
-* V případě že není konec hry, ale nastane nějaká speciální událost, je součástí této zprávy a bude vyhodnocena (například úmrtí některého hráče apod.).<br />
-* Socket client_socket je propoj se slotem v třídě game_window a tato metoda je invokována v případě, že na socket přijdou data obsahující mapu (obdobně pro CLI mód). <br />
+* Volá funkci parse_map, která naplní pole events událostmi které vznikli, events_count počtem těchto událostí a events_count počtem těchto událostí.
+* Počítá i s možností spojení více zpráv dohromady.
 *\return 1 pokud je konec hry, jinak 0
 * \param events Pole enum hodnot do kterého naplní funkce specifické události, které vznikly
 * \param events_count Celočíselná proměnná, do které uloží funkce počet specifických událostí, které vznikly
 */
-int Client::accept_state_map(char events[MAX_EVENTS],int * events_count)
+int Client::accept_state_map(unsigned char events[MAX_EVENTS],int * events_count)
 {
     std::string map_in_string;
 
     read_from_socket(client_socket,map_in_string);
 
-    return parse_map(events,events_count,map_in_string);
+    return parse_map(events,events_count,map_in_string,0);
 }
 
 /**
@@ -364,6 +381,7 @@ int Client::accept_state_map(char events[MAX_EVENTS],int * events_count)
 */
 std::string Client::recognize_event(int event_code)
 {
+    std::cout<<"cislo udalosti: "<<event_code<<std::endl;
     if (event_code==WHITE_KILLED && color==WHITE)
         return "Byl jsi zabit";
     if (event_code==RED_KILLED && color==RED)
@@ -406,7 +424,37 @@ std::string Client::recognize_event(int event_code)
             return "Tah byl úspěšný";
         case MOVE_FAIL:
             return "Tah byl neúspěšný";
+
+        case RED_KEY :
+            return "Červený hráč si vzal klíč";
+        case GREEN_KEY :
+            return "Zelený hráč si vzal klíč";
+        case BLUE_KEY :
+            return "Modrý hráč si vzal klíč";
+        case WHITE_KEY :
+            return "Bílý hráč si vzal klíč";
+
+        case RED_OPEN :
+            return "Červený hráč otevřel bránu";
+        case GREEN_OPEN :
+            return "Zelený hráč otevřel bránu";
+        case BLUE_OPEN :
+            return "Modrý hráč otevřel bránu";
+        case WHITE_OPEN :
+            return "Bílý hráč otevřel bránu";
+
+        case RED_WIN :
+            return "Červený hráč zvítězil";
+        case GREEN_WIN :
+            return "Zelený hráč zvítězil";
+        case BLUE_WIN :
+            return "Modrý hráč zvítězil";
+        case WHITE_WIN:
+            return "Bílý hráč zvítězil";
+        case WIN:
+            return "Vyhrál jsi! Gratulejeme ;-)";
     };
+
 
     // jinak
     return "Něco opomněného se stalo";

@@ -62,6 +62,10 @@ void game_window::create_game_field()
 
 }
 
+/**
+*\fn void game_window::assign_tooltips()
+* Vyhledá na hrací ploše hráče a každému přiřadí tooltip obsahující počet kroků a čas strávený ve hře.
+*/
 void game_window::assign_tooltips()
 {
     for (int i=0;i<this->client->height;i++)
@@ -69,29 +73,18 @@ void game_window::assign_tooltips()
         {
             this->game_field->field[i][j]->setToolTip(QString::fromStdString(this->client->get_tooltip(i,j)));
         }
+    QApplication::processEvents();
 
 }
 
-void game_window::game_showing()
+/**
+*\fn void game_window::show_happend_events(unsigned char events[MAX_EVENTS],int events_count)
+* Vypíše do list widgetu umístěném v hracím okně poslední události, které nastali.
+* \param events Pole událostí jenž nastali při posledním zaslání mapy od sereveru
+* \param events_count Počet událostí které nastali
+*/
+void game_window::show_happend_events(unsigned char events[MAX_EVENTS],int events_count)
 {
-    // pole udalosti
-    char events[MAX_EVENTS]={0,};
-    int events_count;
-
-    // vraci true pokud je konec hry:
-    // pokud dojde ke konci hry, tak se tato informace uchová
-    // a umožní se tak funkce pro zobrazování informací o hře 
-    if (this->client->accept_state_map(events,&events_count))
-    {
-        // KONEC HRY
-        this->ui->game_info_list->addItem(QString::fromStdString(this->client->get_game_time()));
-        this->ui->send_command_button->setVisible(false);
-        this->ui->command_edit->setVisible(false);
-        this->ui->zadej_prikaz_label->setVisible(false);
-        return;
-    }
-    // pokud neni konec hry
-    // vypis specificke události do listu
     for (int i=0;i<events_count;i++)
     {
         std::string event=this->client->recognize_event(events[i]);
@@ -103,11 +96,52 @@ void game_window::game_showing()
         }
         this->ui->game_info_list->addItem(QString::fromStdString(event));
     }
+}
+
+
+/**
+*\fn void game_window::game_showing()
+* Slot který je spušťěn signálem readyRead, když přijdou data ze serveru.
+* Obstarává vykreslování a hrací plochy po příchodu aktuálního stavu hry od serveru. 
+* Současně se stará o detekci konce hry a jeho obsluhu a o vypisování událostí které během hry nastali.
+*/
+void game_window::game_showing()
+{
+    // pole udalosti
+    unsigned char events[MAX_EVENTS]={0,};
+    int events_count=0;
+
+    // vraci true pokud je konec hry:
+    // pokud dojde ke konci hry, tak se tato informace uchová
+    // a umožní se tak funkce pro zobrazování informací o hře 
+    if (this->client->accept_state_map(events,&events_count))
+    {
+        // KONEC HRY
+        // vypise specificke udalosti
+        this->show_happend_events(events,events_count);
+        //zobrazi mapu
+        this->game_field->set_map(this->client->map);
+        QApplication::processEvents();
+        // vypise cas hry
+        this->ui->game_info_list->addItem(QString::fromStdString(this->client->get_game_time()));
+        
+        // schova widgety pro zadavani prikazu
+        this->ui->send_command_button->setVisible(false);
+        this->ui->command_edit->setVisible(false);
+        this->ui->zadej_prikaz_label->setVisible(false);
+        
+        // nastavi tooltipy
+        this->assign_tooltips();
+        return;
+    }
+    // pokud neni konec hry
+    // vypise specificke udalosti
+    this->show_happend_events(events,events_count);
 
     this->game_field->set_map(this->client->map);
     QApplication::processEvents();
-
 }
+
 
 game_window::~game_window()
 {
