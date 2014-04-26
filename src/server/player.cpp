@@ -14,8 +14,8 @@ Player::Player(Connection * conn)
 {
 	this->conn = conn;
 	id = Server::get_instance()->get_player_id();
-	std::cout << "player++" << std::endl;
 	thread = std::thread(&Player::work, this);
+	thread.detach();
 }
 
 /**
@@ -24,8 +24,6 @@ Player::Player(Connection * conn)
  */
 Player::~Player()
 {
-	std::cout << "player--" << std::endl;
-	thread.join();
 	delete conn;
 }
 
@@ -65,7 +63,7 @@ void Player::work()
 		while(game->is_running() && ok)
 		{
 			receive(&message, Connection::SYNC);
-			if(message == "quit") break;
+			if(!ok || message == "quit") break;
 
 			if(message == "go")
 			{
@@ -73,8 +71,8 @@ void Player::work()
 
 				go = true;
 				std::thread(&Player::go_timer, this).detach();
-
 			}
+
 			game->cmd(this, &message);  // upraví políčka hry
 		}
 	}
@@ -83,8 +81,15 @@ void Player::work()
 
 	}
 
-	if(game != nullptr) game->remove_player(this);
-	else Server::get_instance()->remove_orphan(this);
+	if(game != nullptr)
+	{
+		game->remove_player(this);
+	}
+
+	Server::get_instance()->remove_orphan(this);
+	delete this;
+
+
 }
 
 /**
@@ -302,9 +307,6 @@ void Player::set_color(int color)
  */
 void Player::send(std::string * message, int mode)
 {
-	std::cout << "Player: " << id << std::endl;
-	std::cout << *message << std::endl;
-
 	try
 	{
 		if(mode == Connection::ASYNC)
@@ -338,6 +340,4 @@ void Player::receive(std::string * target, int mode)
 	{
 		conn->sync_receive(target);
 	}
-
-	std::cout << "Receive: " << *target << std::endl;
 }

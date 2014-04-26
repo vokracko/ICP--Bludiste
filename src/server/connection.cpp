@@ -12,7 +12,6 @@
  */
 Connection::Connection(boost::asio::io_service & ios): socket(ios)
 {
-	std::cout << "conn++" << std::endl;
 }
 
 /**
@@ -22,8 +21,6 @@ Connection::Connection(boost::asio::io_service & ios): socket(ios)
 Connection::~Connection()
 {
 	socket.close();
-	std::cout << "conn--" << std::endl;
-
 }
 
 /**

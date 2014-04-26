@@ -13,12 +13,11 @@
 */
 Game::Game(float timeout, int map_id)
 {
-	map = new Map(map_id);
 	id = Server::get_instance()->get_game_id();
 	this->timeout = timeout;
 	running = true;
+	map = new Map(map_id);
 	monster = new Monster(this, timeout);
-	std::cout << "game++" << std::endl;
 }
 
 /**
@@ -27,7 +26,6 @@ Game::Game(float timeout, int map_id)
 */
 Game::~Game()
 {
-	std::cout << "game--" << std::endl;
 	delete map;
 	delete monster;
 }
@@ -49,7 +47,6 @@ bool Game::is_running()
 */
 void Game::stop(bool quit)
 {
-	std::cout << "game::stop" << std::endl;
 	running = false;
 
 	if(quit)
@@ -61,14 +58,6 @@ void Game::stop(bool quit)
 	{
 		end_info();
 	}
-
-	std::cout << "game::stop zabití hráčů" << std::endl;
-	for(std::vector<Player *>::iterator it = players.begin(); it != players.end(); ++it)
-	{
-		delete *it;
-	}
-
-	// players.clear();
 
 }
 

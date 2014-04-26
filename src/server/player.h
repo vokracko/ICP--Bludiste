@@ -65,6 +65,5 @@ class Player
 		void take_key();
 
 		void send_quit();
-
 };
 

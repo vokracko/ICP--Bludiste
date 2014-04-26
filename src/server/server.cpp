@@ -215,9 +215,8 @@ void Server::create(boost::asio::io_service * ios)
  */
 void Server::kill(int sig)
 {
-	std::cout << "server::kill" << std::endl;
 	std::vector<Game *> games = Server::get_instance()->games;
-	std::cout << "stop games" << std::endl;
+
 	for(std::vector<Game *>::iterator it = games.begin(); it != games.end(); ++it)
 	{
 		if((*it)->is_running()) (*it)->stop(true);
@@ -232,11 +231,9 @@ void Server::kill(int sig)
  */
 void Server::stop()
 {
-	std::cout << "server::stop" << std::endl;
 	Server::ios->stop();
 	acceptor.close();
 
-	std::cout << "delte games" << std::endl;
 	for(std::vector<Game *>::iterator it = games.begin(); it != games.end(); ++it)
 	{
 		delete *it;
@@ -244,16 +241,13 @@ void Server::stop()
 
 	games.clear();
 
-	std::cout << "delte orphans" << std::endl;
 	for(std::vector<Player *>::iterator it = orphans.begin(); it != orphans.end(); ++it)
 	{
-		std::cout << " N ";
 		delete *it;
 	}
 
 	orphans.clear();
 
-	std::cout << "delet last conn" << std::endl;
 	delete last_connection;
 }
 
