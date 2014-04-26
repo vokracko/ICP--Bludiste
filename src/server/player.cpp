@@ -1,28 +1,56 @@
+/**
+ * \file player.cpp
+ * \author Lukáš Vokráčko (xvokra00)
+*/
+
 #include "player.h"
 
+/**
+ * \fn Player::Player(Connection * conn)
+ * \brief Vytvoření vlákna pro hráče
+ * \param conn Spojení patřící k tomuto hráři
+ */
 Player::Player(Connection * conn)
 {
 	this->conn = conn;
-	thread = std::thread(&Player::work, this);
 	id = Server::get_instance()->get_player_id();
+	std::cout << "player++" << std::endl;
+	thread = std::thread(&Player::work, this);
 }
 
+/**
+ * \fn Player::~Player()
+ * \brief Ukončení vlákna a spojení
+ */
 Player::~Player()
 {
+	std::cout << "player--" << std::endl;
 	delete conn;
 	thread.join();
 }
 
+/*
+ * \fn bool Player::has_key()
+ * \return own_key
+ */
 bool Player::has_key()
 {
 	return own_key;
 }
 
+/*
+ * \fn void Player::take_key()
+ * \brief Nastaví vlastnictví klíče
+ */
 void Player::take_key()
 {
 	own_key = true;
 }
 
+/*
+ * \fn void Player::work()
+ * \brief Veškeré akce hráče
+ */
 void Player::work()
 {
 	std::string message;
@@ -37,26 +65,67 @@ void Player::work()
 		while(game->is_running() && message != "quit")
 		{
 			receive(&message, Connection::SYNC);
+
+			if(message == "go")
+			{
+				message = "step";
+
+				go = true;
+				std::thread(&Player::go_timer, this).detach();
+
+			}
 			game->cmd(this, &message);  // upraví políčka hry
 		}
 	}
 	catch(std::exception & e)
 	{
+		if(game != nullptr) game->remove_player(this);
+		else Server::get_instance()->remove_orphan(this);
 	}
-
-	if(game != nullptr) game->remove_player(this);
 }
 
+/**
+ * \fn void Player::go_timer()
+ * \brief Časuje kroky při příkazu go
+ */
+void Player::go_timer()
+{
+		std::string step = "step";
+
+		while(go)
+		{
+			std::this_thread::sleep_for(std::chrono::milliseconds((int) (game->get_timeout() * 1000)));
+	    	if(go == false) break;
+
+	    	game->cmd(this, &step);
+	    }
+}
+
+//TODO předělat na asynchroní, volat destruktory
+
+/**
+ * \fn int Player::get_id()
+ * \return id
+ */
 int Player::get_id()
 {
 	return id;
 }
 
+/**
+ * \fn Position Player::get_position()
+ * \return position
+ */
 Position Player::get_position()
 {
 	return position;
 }
 
+/**
+ * \fn bool Player::init()
+ * \brief Komunikace s klientemnež se připojí do hry
+ * \return výsledek připojení
+ */
 bool Player::init()
 {
 	std::string target;
@@ -104,7 +173,7 @@ bool Player::init()
 			}
 			else
 			{
-				// start = std::chrono::system_clock::now();
+				start = std::chrono::system_clock::now();
 				return true;
 			}
 
@@ -113,40 +182,52 @@ bool Player::init()
 	} while(target == "list"); //aktualizace her ze strany klienta
 }
 
+/**
+ * \fn void Player::inc_step()
+ * \brief Inkrementuje počet kroků pro statistiky na konci hry
+ */
 void Player::inc_step()
 {
 	step_count++;
 }
 
-
-
-
+/**
+ * \fn void Player::send_invalid()
+ * \brief Odešle zprávu o neplatném příkazu
+ */
 void Player::send_invalid()
 {
 	std::string message = "invalid\r\n";
 	send(&message, Connection::SYNC);
 }
 
+/**
+ * \fn void Player::send_games()
+ * \brief Odešle zprávu o probíhajících hrách
+ */
 void Player::send_games()
 {
 	std::string message = Server::get_instance()->get_games_string();
 	send(&message, Connection::SYNC);
 }
 
+/**
+ * \fn void Player::send_map_list()
+ * \brief Odešle zprávu o dostupných mapách
+ */
 void Player::send_map_list()
 {
 	std::string message = Map::list();
 	send(&message, Connection::SYNC);
 }
 
-void Player::send_quit()
-{
-	std::string message = "quit\r\n";
-	message.append(game->quit_info());
-	send(&message, Connection::SYNC);
-}
-
-std::string Player::quit_info()
+/**
+ * \fn void Player::end_info()
+ * \brief Vytvoří string s informacemi o tomto hráči
+ * \@see Game::end_info
+ * \return řetězec s informacemi
+ */
+std::string Player::end_info()
 {
 	std::string message;
 	auto diff = std::chrono::system_clock::now() - start;
@@ -157,6 +238,11 @@ std::string Player::quit_info()
 	return message;
 }
 
+/**
+ * \fn void Player::send_map(bool first_time)
+ * \brief Zašle hráči mapu
+ * \param first_time S tímto parametrem zašle kromě mapy i rozměry, barvu a umístění hráče
+ */
 void Player::send_map(bool first_time)
 {
 	std::string message;
@@ -176,21 +262,41 @@ void Player::send_map(bool first_time)
 	send(&message, Connection::SYNC);
 }
 
+/**
+ * \fn int Player::get_color()
+ * \return color
+ */
 int Player::get_color()
 {
 	return color;
 }
 
+/**
+ * \fn int Player::set_position(Position pos)
+ * \brief Nastavý pozici hráče
+ * \param pos nová pozice
+ */
 void Player::set_position(Position pos)
 {
 	position = pos;
 }
 
+/**
+ * \fn void Player::set_color(int color)
+ * \brief Nastaví hráči barvu
+ * \param color barva
+ */
 void Player::set_color(int color)
 {
 	this->color = color;
 }
 
+/**
+ * \fn void Player::send(std::string * message, int mode)
+ * \brief Odešle hráči zprávu
+ * \param message zpráva
+ * \param mode synchronní/asynchronní
+ */
 void Player::send(std::string * message, int mode)
 {
 	std::cout << "Player: " << id << std::endl;
@@ -206,6 +312,12 @@ void Player::send(std::string * message, int mode)
 	}
 }
 
+/**
+ * \fn void Player::receive(std::string * target, int mode)
+ * \brief Přijme zprávu od hráče
+ * \param target ukazatel na místo, kam se má zpráva uložit
+ * \param mode synchronní/asynchronní
+ */
 void Player::receive(std::string * target, int mode)
 {
 	if(mode == Connection::ASYNC)
@@ -219,6 +331,3 @@ void Player::receive(std::string * target, int mode)
 
 	std::cout << "Receive: " << *target << std::endl;
 }
-
-
-//TODO ctrlc kilnutí serveru a poslání zprávy klientovy ať jde do píči

@@ -1,21 +1,36 @@
+/**
+ * \file connection.cpp
+ * \author Lukáš Vokráčko (xvokra00)
+*/
+
 #include "connection.h"
 
+ /**
+  * \fn Connection::Connection(boost::asio::io_service & ios): socket(ios)
+  * \brief Vytvoří třídu připojení a komikační soket
+  * \param[in] ios reference na boost::io_service
+ */
 Connection::Connection(boost::asio::io_service & ios): socket(ios)
 {
-
+	std::cout << "conn++" << std::endl;
 }
 
+/**
+ * \brief Zavře komunikační soket
+ * \fn Connection::~Connection()
+*/
 Connection::~Connection()
 {
 	socket.close();
+	std::cout << "conn--" << std::endl;
+
 }
 
-// boost::asio::ip::tcp::socket get_socket()
-// {
-// 	return socket;
-// TODO předělat ať nemusí být public
-// }
-
+/**
+ * \fn void Connection::sync_send(std::string * message)
+ * \brief Synchronně odešle zprávu
+ * \param[in] message zpráva, jež se má odeslat
+*/
 void Connection::sync_send(std::string * message)
 {
 	boost::asio::write(
@@ -25,6 +40,11 @@ void Connection::sync_send(std::string * message)
 	);
 }
 
+/**
+ * \fn void Connection::sync_receive(std::string * target)
+ * \brief Synchronně přijme zprávu, jako ukončovací znak bere nový řádek
+ * \param[out] target ukazatel na místo, kam se má uložit přijatá zpráva
+*/
 void Connection::sync_receive(std::string * target)
 {
 	boost::asio::read_until(
@@ -39,6 +59,11 @@ void Connection::sync_receive(std::string * target)
 	read_buffer.consume(read_buffer.size());
 }
 
+/**
+ * \fn void Connection::send(std::string * message)
+ * \brief Asynchronně odešle zprávu
+ * \param[in] message zpráva, jež se má odeslat
+*/
 void Connection::send(std::string * message)
 {
 	write_mutex.lock();
@@ -49,11 +74,11 @@ void Connection::send(std::string * message)
 	);
 }
 
-void Connection::handle_send()
-{
-	write_mutex.unlock();
-}
-
+/**
+ * \fn void Connection::receive(std::string * target)
+ * \brief Asynchronně přijme zprávu
+ * \param[out] target ukazatel na místo, kam se má uložit přijatá zpráva
+*/
 void Connection::receive(std::string * target)
 {
 	this->target = target;
@@ -66,10 +91,23 @@ void Connection::receive(std::string * target)
 	);
 }
 
+/**
+ * \fn void Connection::handle_send()
+ * \see Connection::send()
+ * Uvolní semafor po odeslání asynchronní zprávy
+*/
+void Connection::handle_send()
+{
+	write_mutex.unlock();
+}
+
+/**
+ * \fn void Connection::handle_receive()
+ * \see Connection::receive()
+ * \brief Uvolní semafor po přijetí asynchronní zprávy
+*/
 void Connection::handle_receive()
 {
 	target->assign(boost::asio::buffer_cast<const char*>(read_buffer.data()));
 	read_mutex.unlock();
-
-
 }

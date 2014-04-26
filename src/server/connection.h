@@ -1,8 +1,8 @@
 /**
- * Třída spojení
- * \file connetion.h
+ * \file connection.h
+ * Objekt pro synchronní a asynchronní komunikaci
  * \author Lukáš Vokráčko (xvokra00)
- */
+*/
 
 class Connection;
 
@@ -33,9 +33,9 @@ class Connection
 	public:
 		Connection(boost::asio::io_service & ios);
 		~Connection();
+
 		void send(std::string * message);
 		void sync_send(std::string * message);
 		void receive(std::string * target);
 		void sync_receive(std::string * target);
-		// boost::asio::ip::tcp::socket get_socket();
 };

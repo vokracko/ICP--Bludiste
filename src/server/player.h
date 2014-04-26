@@ -1,3 +1,9 @@
+/**
+ * \brief Třída hráče, stará se o zasílání zpráv a uchovává informace o jeho pozici, barvě a klíči
+ * \file player.h
+ * \author Lukáš Vokráčko (xvokra00)
+ */
+
 class Player;
 
 #pragma once
@@ -16,39 +22,48 @@ class Player
 	private:
 		int id;
 		int color;
+		int step_count = 0;
 		bool own_key = false;
+
 		Connection * conn = nullptr;
 		std::thread thread;
 		std::string read_message;
 		Game * game = nullptr;
 		Position position;
-		std::chrono::time_point<std::chrono::system_clock> start = std::chrono::system_clock::now();
-		int step_count = 0;
+		std::chrono::time_point<std::chrono::system_clock> start;
 
 	public:
+		bool go = false;
 
 	private:
 		void send_games();
 		void send_map_list();
 		void send_map(bool firt_time = false);
 		void send_invalid();
+		void go_timer();
 
 	public:
 		Player(Connection * conn);
 		~Player();
-		void inc_step();
-		std::string quit_info();
+
 		bool init();
 		void work();
+		int get_id();
+
 		void send(std::string * message, int mode = Connection::ASYNC);
 		void receive(std::string * target, int mode = Connection::ASYNC);
+
 		int get_color();
 		void set_color(int color);
 		void set_position(Position pos);
 		Position get_position();
-		void send_quit();
-		int get_id();
+		void inc_step();
+		std::string end_info();
+
 		bool has_key();
 		void take_key();
+
+		void send_quit();
+
 };
 

@@ -1,10 +1,15 @@
+/**
+ * \file server.cpp
+ * \author Lukáš Vokráčko (xvokra00)
+ */
+
 #include "server.h"
 
 boost::asio::io_service * Server::ios;
 
 /**
- * Čeká na příchozí spojení o klientů
  * \fn void Server::listen()
+ * \brief Čeká na příchozí spojení od klientů
  */
 void Server::listen()
 {
@@ -19,8 +24,8 @@ void Server::listen()
 }
 
 /**
- * Ověřuje příchozí spojení
  * \fn void Server::accept_player(Connection::pointer conn, const boost::system::error_code& e)
+ * \brief Ověřuje příchozí spojení
  * \param conn příchozí spojení
  * \param e chybový kód spojení
  */
@@ -29,16 +34,21 @@ void Server::accept_player(Connection * conn, const boost::system::error_code& e
 	if(!e)
 	{
 		Player * player = new Player(conn);
-		orphans.push_back(player);
+		add_orphan(player);
 
 		listen();
 	}
 	else
 	{
-		std::cout << "Chyba při spojení" << std::endl;
+		Server::kill(0);
 	}
 }
 
+/**
+ * \fn std::string Server::get_games_string()
+ * \brief Uloží informace o probíhajících hrách do jednoho řetězce
+ * \return message
+ */
 std::string Server::get_games_string()
 {
 	std::vector<Game *> games = Server::get_instance()->games;
@@ -48,6 +58,7 @@ std::string Server::get_games_string()
 	{
 		for(std::vector<Game*>::iterator it = games.begin(); it != games.end(); ++it)
 		{
+			if(!(*it)->is_running()) continue;
 			message.append((*it)->to_string() + "\r\n");
 		}
 	}
@@ -58,6 +69,13 @@ std::string Server::get_games_string()
 	return message;
 }
 
+/**
+ * \fn Game * Server::assign(int game_id, Player * player)
+ * \brief Připojí hráče ke hře
+ * \param game_id identifikátor hry
+ * \param player ukazatel na připojováního hráče
+ * \return ukazatel na hru, kam se připojil
+ */
 Game * Server::assign(int game_id, Player * player)
 {
 	Game * game_pointer = nullptr;
@@ -82,11 +100,25 @@ Game * Server::assign(int game_id, Player * player)
 	return nullptr;
 }
 
+/**
+ * \fn int Server::new_game(std::string & game_settings)
+ * \brief Vytvoří novou hru
+ * \param game_setting nastavení hry
+ * \return identifikátor hry
+ */
 int Server::new_game(std::string & game_settings)
 {
 	size_t pos;
 	int map_id;
 	float timeout;
+
+	for(std::vector<Game *>::iterator it = games.begin(); it != games.end(); ++it)
+	{
+		if(!(*it)->is_running())
+		{
+			delete_game(*it);
+		}
+	}
 
 	try
 	{
@@ -107,6 +139,11 @@ int Server::new_game(std::string & game_settings)
 	return games.back()->get_id();
 }
 
+/**
+ * \fn void Server::delete_game(Game * g)
+ * \brief Smaže hru
+ * \param g ukazatel na hru, jež se má smazat
+ */
 void Server::delete_game(Game * g)
 {
 	for(std::vector<Game *>::iterator it = games.begin(); it != games.end(); ++it)
@@ -120,6 +157,11 @@ void Server::delete_game(Game * g)
 	}
 }
 
+/**
+ * \fn void Server::remove_orphan(Player * p)
+ * \brief Odstraní hráče, jež není připojen k žádné hře
+ * \param p ukazatel na hráče, jež se má odstranit
+ */
 void Server::remove_orphan(Player * p)
 {
 	for(std::vector<Player *>::iterator it = orphans.begin(); it != orphans.end(); ++it)
@@ -132,11 +174,21 @@ void Server::remove_orphan(Player * p)
 	}
 }
 
+/**
+ * \fn void Server::add_orphan(Player * p)
+ * \brief Uchová hráče bez připojení ke hře
+ * \param p ukazatel na hráče
+ */
 void Server::add_orphan(Player * p)
 {
 	orphans.push_back(p);
 }
 
+/**
+ * \fn Server * Server::get_instance()
+ * \brief Vytvoří/vrátí instanci serveru
+ * \return instance
+ */
 Server * Server::get_instance()
 {
 
@@ -144,51 +196,77 @@ Server * Server::get_instance()
 	return &instance;
 }
 
+/**
+ * \fn void Server::create(boost::asio::io_service * ios)
+ * \brief Inicializuje io_service a seznam map
+ * \param ios io_service
+ * \see Map::init()
+ */
 void Server::create(boost::asio::io_service * ios)
 {
 	Server::ios = ios;
 	Map::init();
 }
 
+/**
+ * \fn void Server::kill(int sig)
+ * \brief Odchytává ctrl+c, zastaví io_service
+ * \param sig číslo signálu
+ */
 void Server::kill(int sig)
 {
 	std::vector<Game *> games = Server::get_instance()->games;
 	for(std::vector<Game *>::iterator it = games.begin(); it != games.end(); ++it)
 	{
-		(*it)->stop();
+		(*it)->stop(true);
 	}
 
 
 	Server::get_instance()->stop();
 }
 
+/**
+ * \fn void Server::stop()
+ * \brief Zastaví server, smaže všechny hry a hráče bez her
+ */
 void Server::stop()
 {
 	Server::ios->stop();
 	acceptor.close();
-
-	for(std::vector<Player *>::iterator it = orphans.begin(); it != orphans.end(); ++it)
-	{
-		delete *it;
-	}
 
 	for(std::vector<Game *>::iterator it = games.begin(); it != games.end(); ++it)
 	{
 		delete *it;
 	}
 
-	orphans.clear();
 	games.clear();
+
+	for(std::vector<Player *>::iterator it = orphans.begin(); it != orphans.end(); ++it)
+	{
+		delete *it;
+	}
+
+	orphans.clear();
 
 	delete last_connection;
 }
 
+/**
+ * \fn int Server::get_player_id()
+ * \brief Generátor identifikátorů hráčů
+ * \return identifikátor hráče
+ */
 int Server::get_player_id()
 {
 	static int id = 0;
 	return ++id;
 }
 
+/**
+ * \fn int Server::get_player_id()
+ * \brief Generátor identifikátorů her
+ * \return identifikátor hry
+ */
 int Server::get_game_id()
 {
 	static int id = 0;
