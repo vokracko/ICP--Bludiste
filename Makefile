@@ -13,5 +13,5 @@ run: client server
 
 clean:
 	rm -rf bludiste2014 bludiste2014-server bludiste2014-cli
-	rm -rf doc
+	rm -rf doc/*
 	make -C src clean

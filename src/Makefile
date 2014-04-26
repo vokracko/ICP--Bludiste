@@ -11,6 +11,7 @@ server:
 
 clean:
 	make -C server clean
+	make -C client clean
 	rm *.o
 
 errors: errors.cpp
