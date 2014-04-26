@@ -7,7 +7,6 @@
 */
 
 #include "game_field.h"
-#include <iostream>
 
 /**
 *\fn Game_field::Game_field(int height,int width,QWidget * parent) : QGridLayout(parent)
