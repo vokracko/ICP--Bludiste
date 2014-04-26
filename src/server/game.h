@@ -16,7 +16,7 @@ class Game;
 #include "player.h"
 #include "position.h"
 #include "map.h"
-#include "box.h"
+#include "../box.h"
 #include "monster.h"
 
 class Game

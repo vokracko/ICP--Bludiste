@@ -16,6 +16,9 @@
 #include "game_field.h"
 #include <QShowEvent>
 #include <cstdbool>
+#include "ui_game_window.h"
+#include "./../../errors.h"
+#include "./../../box.h"
 
 namespace Ui {
 class game_window;

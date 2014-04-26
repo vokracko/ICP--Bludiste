@@ -7,8 +7,7 @@
 
 
 #include "server_connection_window.h"
-#include "ui_server_connection_window.h"
-#include "./../../errors.h"
+
 
 server_connection_window::server_connection_window(Client * client,QWidget *parent) :
     QMainWindow(parent),

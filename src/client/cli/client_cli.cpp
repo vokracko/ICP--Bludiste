@@ -45,19 +45,19 @@ char Client_cli::identify_element(char element)
 {
     switch (element)
     {
-        case WALL :
+        case Box::WALL :
             return 'W';
-        case EMPTY :
+        case Box::EMPTY :
             return ' ';
-        case GATE_OPEN :
+        case Box::GATE + Box::OPEN :
             return 'O';
-        case GATE_CLOSE :
+        case Box::GATE + Box::CLOSED :
             return 'G';
-        case KEY :
+        case Box::KEY :
             return 'K';
 
         default:
-            if (element==MONSTER_UP || element==MONSTER_DOWN || element==MONSTER_LEFT || element==MONSTER_RIGHT )
+            if (element==Box::MONSTER + Box::UP || element==Box::MONSTER + Box::DOWN || element==Box::MONSTER+Box::LEFT || element==Box::MONSTER +Box::RIGHT )
                 return 'H';
             if (element/10==this->color)
             {
@@ -199,7 +199,7 @@ void Client_cli::game_event()
 
     std::cout<<std::endl<<this->msg;
     // zobrazeni mapy
-    
+
 }
 
 

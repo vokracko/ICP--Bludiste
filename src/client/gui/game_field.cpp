@@ -7,6 +7,7 @@
 */
 
 #include "game_field.h"
+#include <iostream>
 
 /**
 *\fn Game_field::Game_field(int height,int width,QWidget * parent) : QGridLayout(parent)
@@ -21,36 +22,37 @@ Game_field::Game_field(int height,int width,QWidget * parent) : QGridLayout(pare
 		for (int j=0;j<this->width;j++)
 			this->field[i][j]=new QLabel();
 
-	this->white_up= new QPixmap("./../../../images/white-up.png");
-	this->white_down= new QPixmap("./../../../images/white-down.png");
-	this->white_right= new QPixmap("./../../../images/white-right.png");
-	this->white_left= new QPixmap("./../../../images/white-left.png");
 
-	this->red_up= new QPixmap("./../../../images/red-up.png");
-	this->red_down= new QPixmap("./../../../images/red-down.png");
-	this->red_right= new QPixmap("./../../../images/red-right.png");
-	this->red_left= new QPixmap("./../../../images/red-left.png");
+	this->white_up= new QPixmap(IMAGPATH(white-up.png));
+	this->white_down= new QPixmap(IMAGPATH(white-down.png));
+	this->white_right= new QPixmap(IMAGPATH(white-right.png));
+	this->white_left= new QPixmap(IMAGPATH(white-left.png));
 
-	this->green_up= new QPixmap("./../../../images/green-up.png");
-	this->green_down= new QPixmap("./../../../images/green-down.png");
-	this->green_right= new QPixmap("./../../../images/green-right.png");
-	this->green_left= new QPixmap("./../../../images/green-left.png");
+	this->red_up= new QPixmap(IMAGPATH(red-up.png));
+	this->red_down= new QPixmap(IMAGPATH(red-down.png));
+	this->red_right= new QPixmap(IMAGPATH(red-right.png));
+	this->red_left= new QPixmap(IMAGPATH(red-left.png));
 
-	this->blue_up= new QPixmap("./../../../images/blue-up.png");
-	this->blue_down= new QPixmap("./../../../images/blue-down.png");
-	this->blue_right= new QPixmap("./../../../images/blue-right.png");
-	this->blue_left= new QPixmap("./../../../images/blue-left.png");
+	this->green_up= new QPixmap(IMAGPATH(green-up.png));
+	this->green_down= new QPixmap(IMAGPATH(green-down.png));
+	this->green_right= new QPixmap(IMAGPATH(green-right.png));
+	this->green_left= new QPixmap(IMAGPATH(green-left.png));
 
-	this->monster_up= new QPixmap("./../../../images/monster-up.png");
-	this->monster_down= new QPixmap("./../../../images/monster-down.png");
-	this->monster_right= new QPixmap("./../../../images/monster-right.png");
-	this->monster_left= new QPixmap("./../../../images/monster-left.png");
+	this->blue_up= new QPixmap(IMAGPATH(blue-up.png));
+	this->blue_down= new QPixmap(IMAGPATH(blue-down.png));
+	this->blue_right= new QPixmap(IMAGPATH(/blue-right.png));
+	this->blue_left= new QPixmap(IMAGPATH(blue-left.png));
 
-	this->empty=new QPixmap("./../../../images/none.png");
-	this->wall=new QPixmap("./../../../images/wall.png");
-	this->key=new QPixmap("./../../../images/key.png");
-	this->gate_open=new QPixmap("./../../../images/gate_open.png");
-	this->gate_close=new QPixmap("./../../../images/gate_close.png");
+	this->monster_up= new QPixmap(IMAGPATH(monster-up.png));
+	this->monster_down= new QPixmap(IMAGPATH(monster-down.png));
+	this->monster_right= new QPixmap(IMAGPATH(monster-right.png));
+	this->monster_left= new QPixmap(IMAGPATH(monster-left.png));
+
+	this->empty=new QPixmap(IMAGPATH(none.png));
+	this->wall=new QPixmap(IMAGPATH(wall.png));
+	this->key=new QPixmap(IMAGPATH(key.png));
+	this->gate_open=new QPixmap(IMAGPATH(gate_open.png));
+	this->gate_close=new QPixmap(IMAGPATH(gate_close.png));
 }
 
 
@@ -66,91 +68,91 @@ void Game_field::set_map(char map[50][50])
 		{
 			switch (map[i][j])
 			{
-				case WALL :
+				case Box::WALL :
                     this->field[i][j]->setPixmap(*(this->wall));
 					break;
-				case EMPTY :
+				case Box::EMPTY :
                     this->field[i][j]->setPixmap(*(this->empty));
 					break;
-				case GATE_OPEN :
+				case Box::GATE+Box::OPEN :
                     this->field[i][j]->setPixmap(*(this->gate_open));
                     break;
-				case GATE_CLOSE :
+				case Box::GATE+Box::CLOSED :
                     this->field[i][j]->setPixmap(*(this->gate_close));
 					break;
-				case KEY :
+				case Box::KEY :
                     this->field[i][j]->setPixmap(*(this->key));
 					break;
-				
-				case WHITE_UP :
+
+				case Box::WHITE+Box::UP :
 					this->field[i][j]->setPixmap(*(this->white_up));
 					break;
-				case WHITE_DOWN :
+				case Box::WHITE+Box::DOWN :
 					this->field[i][j]->setPixmap(*(this->white_down));
 					break;
-				case WHITE_LEFT :
+				case Box::WHITE+Box::LEFT :
 					this->field[i][j]->setPixmap(*(this->white_left));
 					break;
-				case WHITE_RIGHT :
+				case Box::WHITE+Box::RIGHT :
 					this->field[i][j]->setPixmap(*(this->white_right));
 					break;
 
-				case BLUE_UP :
+				case Box::BLUE+Box::UP :
 					this->field[i][j]->setPixmap(*(this->blue_up));
 					break;
-				case BLUE_DOWN :
+				case Box::BLUE+Box::DOWN :
 					this->field[i][j]->setPixmap(*(this->blue_down));
 					break;
-				case BLUE_LEFT :
+				case Box::BLUE+Box::LEFT :
 					this->field[i][j]->setPixmap(*(this->blue_left));
 					break;
-				case BLUE_RIGHT :
+				case Box::BLUE+Box::RIGHT :
 					this->field[i][j]->setPixmap(*(this->blue_right));
 					break;
 
-				case RED_UP :
+				case Box::RED+Box::UP :
 					this->field[i][j]->setPixmap(*(this->red_up));
 					break;
-				case RED_DOWN :
+				case Box::RED+Box::DOWN :
 					this->field[i][j]->setPixmap(*(this->red_down));
 					break;
-				case RED_LEFT :
+				case Box::RED+Box::LEFT :
 					this->field[i][j]->setPixmap(*(this->red_left));
 					break;
-				case RED_RIGHT :
+				case Box::RED+Box::RIGHT :
 					this->field[i][j]->setPixmap(*(this->red_right));
 					break;
 
-				case GREEN_UP :
+				case Box::GREEN+Box::UP :
 					this->field[i][j]->setPixmap(*(this->green_up));
 					break;
-				case GREEN_DOWN :
+				case Box::GREEN+Box::DOWN :
 					this->field[i][j]->setPixmap(*(this->green_down));
 					break;
-				case GREEN_LEFT :
+				case Box::GREEN+Box::LEFT :
 					this->field[i][j]->setPixmap(*(this->green_left));
 					break;
-				case GREEN_RIGHT :
+				case Box::GREEN+Box::RIGHT :
 					this->field[i][j]->setPixmap(*(this->green_right));
 					break;
 
-				case MONSTER_UP :
+				case Box::MONSTER+Box::UP :
 					this->field[i][j]->setPixmap(*(this->monster_up));
 					break;
-				case MONSTER_DOWN :
+				case Box::MONSTER+Box::DOWN :
 					this->field[i][j]->setPixmap(*(this->monster_down));
 					break;
-				case MONSTER_LEFT :
+				case Box::MONSTER+Box::LEFT :
 					this->field[i][j]->setPixmap(*(this->monster_left));
 					break;
-				case MONSTER_RIGHT :
+				case Box::MONSTER+Box::RIGHT :
 					this->field[i][j]->setPixmap(*(this->monster_right));
 					break;
 
 				default:
 					this->field[i][j]->setPixmap(*(this->empty));
 			};
-			
+
 		}
 }
 

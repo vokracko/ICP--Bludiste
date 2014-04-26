@@ -333,8 +333,8 @@ int Client::parse_map(unsigned char events[MAX_EVENTS],int * events_count,std::s
         // naplni udalosti
         events[event_index]=event_string.at(i);
         // kvuli go, uklada jestli se posledni tah povedl nebo ne
-        if (events[event_index]==MOVE_PASS) this->last_command_successfull=true;
-        if (events[event_index]==MOVE_FAIL) this->last_command_successfull=false;
+        if (events[event_index]==Box::MOVE_PASS) this->last_command_successfull=true;
+        if (events[event_index]==Box::MOVE_FAIL) this->last_command_successfull=false;
         event_index++;
     }
 
@@ -376,76 +376,76 @@ int Client::accept_state_map(unsigned char events[MAX_EVENTS],int * events_count
 std::string Client::recognize_event(int event_code)
 {
     std::cout<<"cislo udalosti: "<<event_code<<std::endl;
-    if (event_code==WHITE_KILLED && color==WHITE)
+    if (event_code==Box::WHITE + Box::KILLED && color==Box::WHITE)
         return "Byl jsi zabit";
-    if (event_code==RED_KILLED && color==RED)
+    if (event_code==Box::RED + Box::KILLED && color==Box::RED)
         return "Byl jsi zabit";
-    if (event_code==BLUE_KILLED && color==BLUE)
+    if (event_code==Box::BLUE + Box::KILLED && color==Box::BLUE)
         return "Byl jsi zabit";
-    if (event_code==GREEN_KILLED && color==GREEN)
+    if (event_code==Box::GREEN + Box::KILLED && color==Box::GREEN)
         return "Byl jsi zabit";
 
     switch (event_code)
     {
-        case WHITE_KILLED:
+        case Box::WHITE + Box::KILLED:
             return "Bílý hráč byl zabit";
-        case RED_KILLED:
+        case Box::RED + Box::KILLED:
             return "Červený hráč byl zabit";
-        case GREEN_KILLED:
+        case Box::GREEN + Box::KILLED:
             return "Zelený hráč byl zabit";
-        case BLUE_KILLED:
+        case Box::BLUE + Box::KILLED:
             return "Modrý hráč byl zabit";
 
-        case WHITE_CONNECTED:
+        case Box::WHITE + Box::CONNECTED:
             return "Bílý hráč byl připojen do hry";
-        case RED_CONNECTED:
+        case Box::RED + Box::CONNECTED:
             return "Červený hráč byl připojen do hry";
-        case GREEN_CONNECTED:
+        case Box::GREEN + Box::CONNECTED:
             return "Zelený hráč byl připojen do hry";
-        case BLUE_CONNECTED:
+        case Box::BLUE + Box::CONNECTED:
             return "Modrý hráč byl připojen do hry";
 
-        case WHITE_DISCONNECTED:
+        case Box::WHITE + Box::DISCONNECTED:
             return "Bílý hráč se odpojil ze hry";
-        case RED_DISCONNECTED:
+        case Box::RED + Box::DISCONNECTED:
             return "Červený hráč se odpojil ze hry";
-        case GREEN_DISCONNECTED:
+        case Box::GREEN + Box::DISCONNECTED:
             return "Zelený hráč se odpojil ze hry";
-        case BLUE_DISCONNECTED:
+        case Box::BLUE + Box::DISCONNECTED:
             return "Modrý hráč se odpojil ze hry";
 
-        case MOVE_PASS:
+        case Box::MOVE_PASS:
             return "Tah byl úspěšný";
-        case MOVE_FAIL:
+        case Box::MOVE_FAIL:
             return "Tah byl neúspěšný";
 
-        case RED_KEY :
+        case Box::RED + Box::KEY :
             return "Červený hráč si vzal klíč";
-        case GREEN_KEY :
+        case Box::GREEN + Box::KEY :
             return "Zelený hráč si vzal klíč";
-        case BLUE_KEY :
+        case Box::BLUE + Box::KEY :
             return "Modrý hráč si vzal klíč";
-        case WHITE_KEY :
+        case Box::WHITE + Box::KEY :
             return "Bílý hráč si vzal klíč";
 
-        case RED_OPEN :
+        case Box::RED + Box::OPEN :
             return "Červený hráč otevřel bránu";
-        case GREEN_OPEN :
+        case Box::GREEN + Box::OPEN :
             return "Zelený hráč otevřel bránu";
-        case BLUE_OPEN :
+        case Box::BLUE + Box::OPEN :
             return "Modrý hráč otevřel bránu";
-        case WHITE_OPEN :
+        case Box::WHITE + Box::OPEN :
             return "Bílý hráč otevřel bránu";
 
-        case RED_WIN :
+        case Box::RED:
             return "Červený hráč zvítězil";
-        case GREEN_WIN :
+        case Box::GREEN :
             return "Zelený hráč zvítězil";
-        case BLUE_WIN :
+        case Box::BLUE :
             return "Modrý hráč zvítězil";
-        case WHITE_WIN:
+        case Box::WHITE:
             return "Bílý hráč zvítězil";
-        case YOU_WIN:
+        case Box::YOU_WIN:
             return "Vyhrál jsi! Gratulejeme ;-)";
     };
 
@@ -463,10 +463,10 @@ std::string Client::refer_color()
 {
     switch (this->color)
     {
-        case WHITE:	return "Jste bílý hráč";
-        case RED: return "Jste červený hráč";
-        case BLUE: return "Jste modrý hráč";
-        case GREEN: return "Jste zelený hráč";
+        case Box::WHITE:	return "Jste bílý hráč";
+        case Box::RED: return "Jste červený hráč";
+        case Box::BLUE: return "Jste modrý hráč";
+        case Box::GREEN: return "Jste zelený hráč";
     }
     return "takovou barvu neznám";
 }
@@ -518,24 +518,25 @@ std::string Client::get_game_time()
 * \param y Y-ová souřadnice hráče na mapě
 * \return Textový řetězec reprezentující informaci o hráči, obsahující počet kroků a čas strávený ve hře.
 */
+
 std::string Client::get_tooltip(int x,int y)
 {
-    if (this->map[x][y]/10==WHITE)
+    if (this->map[x][y]/10==Box::WHITE)
     {
         return "Bílý hráč:\nPočet kroků: "+std::to_string(this->white_steps)+"\nČas strávený ve hře: "+convert_string_time(this->white_time);
     }
 
-    if (this->map[x][y]/10==GREEN)
+    if (this->map[x][y]/10==Box::GREEN)
     {
         return "Zelený hráč:\nPočet kroků: "+std::to_string(this->green_steps)+"\nČas strávený ve hře: "+convert_string_time(this->green_time);
     }
 
-    if (this->map[x][y]/10==BLUE)
+    if (this->map[x][y]/10==Box::BLUE)
     {
         return "Modrý hráč:\nPočet kroků: "+std::to_string(this->blue_steps)+"\nČas strávený ve hře: "+convert_string_time(this->blue_time);
     }
 
-    if (this->map[x][y]/10==RED)
+    if (this->map[x][y]/10==Box::RED)
     {
         return "Červený hráč:\nPočet kroků: "+std::to_string(this->red_steps)+"\nČas strávený ve hře: "+convert_string_time(this->red_time);
     }

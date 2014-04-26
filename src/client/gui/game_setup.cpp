@@ -3,13 +3,11 @@
 
 * Implementuje metody třídy game_setup. Vygenerované pomocí QT Creator a přidáním implementace metod. <br/>
 *Umožňuje připojení se do existující hry a vytvoření nové hry. Po vytvoření či připojení vytváří
-* instanci třídy game_window pro samotné hraní hry. 
+* instanci třídy game_window pro samotné hraní hry.
 *\author Michal Veselý (xvesel63)
 */
 
 #include "game_setup.h"
-#include "ui_game_setup.h"
-
 
 
 game_setup::game_setup(Client * client,QWidget *parent) :
@@ -76,7 +74,7 @@ void game_setup::show_available_games()
 *\fn void game_setup::insert_lines(std::string str,QListWidget * list)
 * Naparsuje textový řetězec str a zobrazí jednotlivé položky do komponenty instance třídy QListWidget.
 * \param str Textový řetězec obsahující informace oddělené novým řádkem.
-* \param list Odkaz na instanci třídy QListWidget jenž umožňuje výběr konkrétní položky.  
+* \param list Odkaz na instanci třídy QListWidget jenž umožňuje výběr konkrétní položky.
 */
 void game_setup::insert_lines(std::string str,QListWidget * list)
 {

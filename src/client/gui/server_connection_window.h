@@ -12,6 +12,8 @@
 #include <QMainWindow>
 #include "./../client.h"
 #include "game_setup.h"
+#include "ui_server_connection_window.h"
+#include "./../../errors.h"
 
 namespace Ui {
 class server_connection_window;

@@ -282,3 +282,5 @@ Server::~Server()
 {
 
 }
+
+//TODO po odpojení jednoho klienta se nedaří posílat list

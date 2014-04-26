@@ -27,8 +27,7 @@ SOURCES += main.cpp \
 
 
 HEADERS +=./../../errors.h
-HEADERS += ./../../game_components.h
-HEADERS += ./../../events_enumerator.h
+HEADERS +=./../../box.h
 HEADERS += \
     ./../client.h \
     client_cli.h

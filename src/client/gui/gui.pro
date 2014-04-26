@@ -36,8 +36,7 @@ HEADERS  += game_setup.h \
 
 
 HEADERS  +=./../../errors.h
-HEADERS  +=./../../game_components.h
-HEADERS  +=./../../events_enumerator.h
+HEADERS +=./../../box.h
 
 HEADERS  +=game_field.h
 

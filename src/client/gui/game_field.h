@@ -8,7 +8,9 @@
 
 #include <QGridLayout>
 #include <QLabel>
-#include "./../../game_components.h"
+#include "./../../box.h"
+
+#define IMAGPATH(img) "./../../images/"#img
 
 /**
 \class Game_field

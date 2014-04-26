@@ -14,6 +14,7 @@
 #include <QListWidget>
 #include "./../../errors.h"
 #include "game_window.h"
+#include "ui_game_setup.h"
 
 namespace Ui {
 class game_setup;

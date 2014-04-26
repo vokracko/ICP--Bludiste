@@ -7,8 +7,7 @@
 */
 
 #include "./../client.h"
-#include "./../../game_components.h"
-#include "./../../events_enumerator.h"
+#include "./../../box.h"
 #include <deque>
 #include <QObject>
 
@@ -34,7 +33,7 @@ public:
     void clear_screen();
     Client_cli(QObject *parent=0);
     ~Client_cli();
-    
+
 
 private:
     char identify_element(char element);
@@ -43,5 +42,5 @@ private:
 
 public slots:
     void game_event();
-    
+
 };

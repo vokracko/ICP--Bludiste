@@ -21,10 +21,12 @@
  #include <QTcpSocket>
 #include <QTimer>
 #include "./../errors.h"
-#include "./../game_components.h"
-#include "./../events_enumerator.h"
+#include "./../box.h"
+// #include "./../game_components.h"
+// #include "./../events_enumerator.h"
 
 #define BUFFER_SIZE 1024
+#define MAX_EVENTS 25
 
 /**
 \class Client

@@ -3,6 +3,9 @@
  * \brief Výčet hodnot pro identifikaci zpráv a objektů ve hře
  * \author Lukáš Vokráčko (xvokra00)
 */
+
+#pragma once
+
 enum Box
 {
 	RED = 40,

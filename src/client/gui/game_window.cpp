@@ -6,9 +6,7 @@
 */
 
 #include "game_window.h"
-#include "ui_game_window.h"
-#include "./../../errors.h"
-#include "./../../events_enumerator.h"
+
 
 game_window::game_window(Client * client,QWidget *parent) :
     QMainWindow(parent),
