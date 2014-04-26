@@ -1,4 +1,8 @@
 
+.PHONY: doxygen
+
+doxygen: Doxyfile clean
+	doxygen Doxyfile
 
 server:
 	make -C src server && mv src/server/bludiste2014-server .
@@ -9,5 +13,5 @@ run: client server
 
 clean:
 	rm -rf bludiste2014 bludiste2014-server bludiste2014-cli
-	make -C doc clean
+	rm -rf doc
 	make -C src clean
