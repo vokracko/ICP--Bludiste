@@ -37,5 +37,5 @@ enum game_events
 	BLUE_WIN = 60,
 	WHITE_WIN = 70,
 
-	WIN = 0,
+	YOU_WIN = 37,
 };

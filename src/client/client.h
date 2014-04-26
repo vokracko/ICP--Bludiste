@@ -54,7 +54,7 @@ public:
     std::string maps;
     char map[50][50];
     int white_steps,red_steps,blue_steps,green_steps;
-    double white_time,red_time,blue_time,green_time,game_duration;
+    int white_time,red_time,blue_time,green_time,game_duration;
 
 public:
     explicit Client(QObject *parent=0);
@@ -75,6 +75,7 @@ public:
 private:
     int parse_map(unsigned char events[MAX_EVENTS],int * events_count,std::string map_in_string,int event_index);
 
-public slots:
-    void when_go();
+protected:
+    std::string convert_string_time(int time_int);
+
 };
