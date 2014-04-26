@@ -11,6 +11,9 @@ run: client server
 	./bludiste2014-server
 	./bludiste2014
 
+pack: clean
+	tar -f xvokra00 -z *
+
 clean:
 	rm -rf bludiste2014 bludiste2014-server bludiste2014-cli
 	rm -rf doc/*

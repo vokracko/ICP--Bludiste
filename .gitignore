@@ -5,3 +5,6 @@ bludiste2014-server
 bludiste2014-cli
 bludiste2014
 doc/*
+*.user
+src/client/gui/Makefile
+src/client/cli/Makefile
