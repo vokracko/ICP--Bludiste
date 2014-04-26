@@ -52,6 +52,7 @@ private slots:
 private:
     Ui::game_window *ui;
     void assign_tooltips();
+    void show_happend_events(unsigned char events[MAX_EVENTS],int events_count);
 
 };
 

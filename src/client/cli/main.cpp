@@ -14,6 +14,9 @@
 #include <deque>
 #include  <unistd.h>
 #include <thread>
+#include <unistd.h>
+#include <fcntl.h>
+
 
 
 
@@ -29,16 +32,21 @@ void  INThandler(int sig)
      exit(0);
 }
 
-void read_from_cin(Client_cli * client)
+void read_from_cin(std::string * msg)
 {
-    std::cin>>client->msg;
+    std::cin>>*msg;
 }
 
-void catch_signal(Client_cli * client)
+void send_message(std::string msg)
 {
-    client->connect_readyRead();
+    client->send_move(msg);
 }
 
+
+/**
+\fn Main 
+* Řídí celou cli aplikaci, pracující s třídou Client_cli (potomek Client).
+*/
 int main (int argc, char * argv[])
 {
     QCoreApplication a(argc, argv);
@@ -117,26 +125,34 @@ int main (int argc, char * argv[])
         // hrani
         int konec;
         
-
+        // vyčistí obrazovku
         client->clear_screen();
         client->print_map();
         client->print_color();
         std::cout<<std::endl;
 
-        
+        int pid=fork();
 
-        //std::thread read_thread(read_from_cin,client); 
-        std::thread catch_signal_thread(catch_signal,client);
+        if (pid>0)
+        {
+            std::string move;
+            while (1)
+            {
+                std::cin>>move;
+                client->send_move(move);
+            }
+        }
+        else if (pid==0)
+        {
+            client->connect_readyRead();
+            
+        }
+        else
+        {
+            throw Errors(Errors::FORK);
+        }
 
-
-        //read_thread.join();
-        catch_signal_thread.join();
-
-        //std::cout<<"jsem tadz\n";
-        //read_from_cin(client);
-        //std::cout<<"a pak i  tadz\n";
-        //std::cout<<client->msg<<std::endl;
-
+ 
     }
 
     catch (Errors & e)

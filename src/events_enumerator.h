@@ -1,6 +1,6 @@
 #pragma once
 
-#define MAX_EVENTS 10
+#define MAX_EVENTS 25
 
 enum game_events
 {
@@ -36,4 +36,6 @@ enum game_events
 	GREEN_WIN = 50,
 	BLUE_WIN = 60,
 	WHITE_WIN = 70,
+
+	WIN = 0,
 };

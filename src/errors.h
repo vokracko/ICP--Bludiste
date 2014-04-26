@@ -30,10 +30,11 @@ public:
 		NOT_JOINED,
 		UNKNOWN_COMMAND,
 		OUT_OF_RANGE,
+		FORK
 	};
 
 	/**Pole chybových hlášek */
-	std::string error_messages[11]=
+	std::string error_messages[12]=
 	{
 		"Nepodařilo se připojit k serveru",
 		"Nepovolený časový interval změn (nutno zadat 0.5 - 5 sekund)",
@@ -43,6 +44,7 @@ public:
 		"Nepodařilo se vás připojit do hry",
 		"Neznámý příkaz pro tah",
 		"Pozice je mimo mapu",
+		"Nepovedlo se duplikovat proces pro čtení"
 	};
 public:
 	Errors(int code);

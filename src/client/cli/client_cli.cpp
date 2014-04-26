@@ -7,7 +7,10 @@
 
 #include "client_cli.h"
 
-
+/**
+*\fn void Client_cli::clear_screen()
+* Smaže obsah konzole a přesune kursor do pravého horního rohu
+*/
 void Client_cli::clear_screen()
 {
     std::cout << "\x1B[2J\x1B[H";
@@ -30,6 +33,14 @@ void Client_cli::print_map()
     }
 }
 
+
+/**
+*\fn char Client_cli::identify_element(char element)
+* Převede vstupní znak na výstupní znak srozumitelně reprezentující význam prvku na mapě. <br />
+* W = zeď, O=otevřená brána , G=zavřená brána, K=klíč, H=hlídač, P=protihráč a hráč hrající na tomto klientovi je reprezentován znaky "A,<,>,V" podle natočení.
+* \return Znak symbolizující element na mapě
+* \param element Znak získaný od serveru, jehož význam chceme konvertovat do srozumitelné podoby.
+*/
 char Client_cli::identify_element(char element)
 {
     switch (element)
@@ -92,18 +103,31 @@ void Client_cli::print_maps()
     std::cout<<this->maps<<std::endl<<std::endl;
 }
 
+/**
+*\fn void Client_cli::print_color()
+* Vypíše barvu a uloží si ji do seznamu událostí.
+*/
 void Client_cli::print_color()
 {
     std::cout<<std::endl<<this->refer_color()<<std::flush;
     events_list->push_back(this->refer_color());
 }
 
+/**
+*\fn void Client_cli::connect_readyRead()
+* připojí signál readyRead k socketu klienta.
+*/
 void Client_cli::connect_readyRead()
 {
     connect(this->client_socket,SIGNAL(readyRead()),this,SLOT(game_event()));
 
 }
 
+
+/**
+*\fn void Client_cli::print_times()
+* Vypíše čas, který strávili jednotlivý hráči ve hře a počet kroků, které vykonali.
+*/
 void Client_cli::print_times()
 {
 
@@ -120,6 +144,11 @@ void Client_cli::print_times()
 
 }
 
+
+/**
+*\fn void Client_cli::print_times()
+* Vypíše čas, který strávili jednotlivý hráči ve hře a počet kroků, které vykonali.
+*/
 void Client_cli::print_all_events()
 {
     std::cout<< "Všechny události co nastali během hry:\n\n";
@@ -130,12 +159,17 @@ void Client_cli::print_all_events()
     }
 }
 
+/**
+*\fn void Client_cli::game_event()
+* Slot, který je vyvolán při signálu readyRead. Vyčistí obrazovku, přijme stav mapy a události které nastali a vše vypíše.
+* Zároveň definuje chování na konci hry a v případě zabití hráče.
+*/
 void Client_cli::game_event()
 {
 
         // pole udalosti
-    char events[MAX_EVENTS]={0,};
-    int events_count;
+    unsigned char events[MAX_EVENTS]={0,};
+    int events_count=0;
     clear_screen();
 
     // vraci true pokud je konec hry:

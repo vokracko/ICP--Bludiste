@@ -61,7 +61,7 @@ public:
     ~Client();
     int send_move(std::string command);
     void send_quit();
-    int accept_state_map(char events[MAX_EVENTS],int * events_count);
+    int accept_state_map(unsigned char events[MAX_EVENTS],int * events_count);
     int connect_socket(const char * host);
     int create_game(double timeout,int map_type);
     int join_game(int game_id);
@@ -73,7 +73,7 @@ public:
     std::string get_tooltip(int x,int y);
 
 private:
-    int parse_map(char events[MAX_EVENTS],int * events_count,std::string map_in_string);
+    int parse_map(unsigned char events[MAX_EVENTS],int * events_count,std::string map_in_string,int event_index);
 
 public slots:
     void when_go();
