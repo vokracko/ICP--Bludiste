@@ -108,6 +108,7 @@ void Game::cmd(Player * p, std::string * command)
 	}
 	else if(*command == "stop")
 	{
+		p->go = false;
 		res = MOVE_PASS;
 	}
 
@@ -177,8 +178,8 @@ void Game::kill(int color)
 	{
 		if((*it)->get_color() == color)
 		{
-			send(*(map->get_map()), nullptr, 0, (*it)->get_color() + Box::KILLED);
 			remove_player(*it);
+			send(*(map->get_map()), nullptr, 0, (*it)->get_color() + Box::KILLED);
 			break;
 		}
 	}
@@ -229,6 +230,7 @@ int Game::step(Player * p)
 	}
 	catch(std::exception & e)
 	{
+		p->go = false;
 		return MOVE_FAIL;
 	}
 
@@ -247,7 +249,6 @@ int Game::step(Player * p)
 	}
 	else if(next_obj >= 40 && next_obj <= 90 && p->get_color() == Box::MONSTER)
 	{
-		//TODO zabití hráče
 		res = next_obj - next_obj%10 + Box::KILLED;
 	}
 
@@ -255,6 +256,10 @@ int Game::step(Player * p)
 	{
 		map->set(pos.x, pos.y, p->get_color() + current_pos.look);
 		set(p, pos);
+	}
+	else
+	{
+		p->go = false;
 	}
 
 	return res;

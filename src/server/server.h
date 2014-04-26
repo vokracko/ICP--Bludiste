@@ -1,5 +1,5 @@
 /**
- * Server se stará o obsluhu nově příchozích požadavků na hry
+ * Server se stará o obsluhu nově příchozích požadavků na hry a připojování klientů
  * \file server.h
  * \author Lukáš Vokráčko (xvokra00)
 */
