@@ -8,7 +8,7 @@
 /**
  * \fn Player::Player(Connection * conn)
  * \brief Vytvoření vlákna pro hráče
- * \param conn Spojení patřící k tomuto hráři
+ * \param[in] conn Spojení patřící k tomuto hráři
  */
 Player::Player(Connection * conn)
 {
@@ -25,8 +25,8 @@ Player::Player(Connection * conn)
 Player::~Player()
 {
 	std::cout << "player--" << std::endl;
-	delete conn;
 	thread.join();
+	delete conn;
 }
 
 /*
@@ -62,9 +62,10 @@ void Player::work()
 
 		send_map(true);
 
-		while(game->is_running() && message != "quit")
+		while(game->is_running() && ok)
 		{
 			receive(&message, Connection::SYNC);
+			if(message == "quit") break;
 
 			if(message == "go")
 			{
@@ -79,9 +80,11 @@ void Player::work()
 	}
 	catch(std::exception & e)
 	{
-		if(game != nullptr) game->remove_player(this);
-		else Server::get_instance()->remove_orphan(this);
+
 	}
+
+	if(game != nullptr) game->remove_player(this);
+	else Server::get_instance()->remove_orphan(this);
 }
 
 /**
@@ -90,15 +93,15 @@ void Player::work()
  */
 void Player::go_timer()
 {
-		std::string step = "step";
+	std::string step = "step";
 
-		while(go)
-		{
-			std::this_thread::sleep_for(std::chrono::milliseconds((int) (game->get_timeout() * 1000)));
-	    	if(go == false) break;
+	while(go)
+	{
+		std::this_thread::sleep_for(std::chrono::milliseconds((int) (game->get_timeout() * 1000)));
+		if(go == false) break;
 
-	    	game->cmd(this, &step);
-	    }
+		game->cmd(this, &step);
+	}
 }
 
 //TODO předělat na asynchroní, volat destruktory
@@ -241,7 +244,7 @@ std::string Player::end_info()
 /**
  * \fn void Player::send_map(bool first_time)
  * \brief Zašle hráči mapu
- * \param first_time S tímto parametrem zašle kromě mapy i rozměry, barvu a umístění hráče
+ * \param[in] first_time S tímto parametrem zašle kromě mapy i rozměry, barvu a umístění hráče
  */
 void Player::send_map(bool first_time)
 {
@@ -274,7 +277,7 @@ int Player::get_color()
 /**
  * \fn int Player::set_position(Position pos)
  * \brief Nastavý pozici hráče
- * \param pos nová pozice
+ * \param[in] pos nová pozice
  */
 void Player::set_position(Position pos)
 {
@@ -284,7 +287,7 @@ void Player::set_position(Position pos)
 /**
  * \fn void Player::set_color(int color)
  * \brief Nastaví hráči barvu
- * \param color barva
+ * \param[in] color barva
  */
 void Player::set_color(int color)
 {
@@ -294,29 +297,36 @@ void Player::set_color(int color)
 /**
  * \fn void Player::send(std::string * message, int mode)
  * \brief Odešle hráči zprávu
- * \param message zpráva
- * \param mode synchronní/asynchronní
+ * \param[in] message zpráva
+ * \param[in] mode synchronní/asynchronní
  */
 void Player::send(std::string * message, int mode)
 {
 	std::cout << "Player: " << id << std::endl;
 	std::cout << *message << std::endl;
 
-	if(mode == Connection::ASYNC)
+	try
 	{
-		conn->send(message);
-	}
-	else if(mode == Connection::SYNC)
+		if(mode == Connection::ASYNC)
+		{
+			conn->send(message);
+		}
+		else if(mode == Connection::SYNC)
+		{
+			conn->sync_send(message);
+		}
+	} catch(std::exception & e)
 	{
-		conn->sync_send(message);
+		ok = false;
+		game->remove_player(this);
 	}
 }
 
 /**
  * \fn void Player::receive(std::string * target, int mode)
  * \brief Přijme zprávu od hráče
- * \param target ukazatel na místo, kam se má zpráva uložit
- * \param mode synchronní/asynchronní
+ * \param[out] target ukazatel na místo, kam se má zpráva uložit
+ * \param[in] mode synchronní/asynchronní
  */
 void Player::receive(std::string * target, int mode)
 {
