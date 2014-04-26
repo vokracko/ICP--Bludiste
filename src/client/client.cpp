@@ -304,14 +304,15 @@ int Client::send_move(std::string command)
 int Client::parse_map(unsigned char events[MAX_EVENTS],int * events_count,std::string map_in_string, int event_index)
 {
         // pokud je konec, vraci 1 a zpracuje udaje o hre
-    std::cout<<"mapa: \n"<<map_in_string<<std::endl<<std::endl;
+    std::cout<<"mapa: \n"<<map_in_string<<std::endl<<std::flush;
+
     if (map_in_string.substr(0,5).compare("end\r\n")==0)
     {
         std::cout<<"jsem tady na konci\n"<<std::flush;
         this->last_command_successfull=false;
         map_in_string=map_in_string.substr(5,map_in_string.size());
         std::cout<<"jsem tady na konci 2\n"<<std::flush;
-        sscanf(map_in_string.c_str(),"%lf\n%lf %d\n%lf %d\n%lf %d\n%lf %d\n",&(this->game_duration),&(this->red_time),&(this->red_steps),&(this->green_time),
+        sscanf(map_in_string.c_str(),"%lf\r\n%lf %d\r\n%lf %d\r\n%lf %d\r\n%lf %d\r\n",&(this->game_duration),&(this->red_time),&(this->red_steps),&(this->green_time),
                                                     &(this->green_steps),&(this->blue_time),&(this->blue_steps),&(this->white_time),&(this->white_steps));
         std::cout<<"jsem tady na konci 3\n"<<std::flush;
         return 1;
@@ -328,9 +329,9 @@ int Client::parse_map(unsigned char events[MAX_EVENTS],int * events_count,std::s
     int end_message_index=map_in_string.find("\r\n")+2;
 
     event_string=map_in_string.substr(index,end_message_index-2-index);
-    std::cout<<"events: "<<event_string<<std::endl;    
+    std::cout<<"events: "<<event_string<<std::endl<<std::flush;    
     map_in_string=map_in_string.substr(end_message_index,map_in_string.size()-end_message_index);
-    std::cout<<"zbytek: "<<map_in_string<<std::endl;
+    std::cout<<"zbytek: "<<map_in_string<<std::endl<<std::flush;
     *events_count+=event_string.size();
     
 
@@ -349,6 +350,7 @@ int Client::parse_map(unsigned char events[MAX_EVENTS],int * events_count,std::s
     {
         return parse_map(events,events_count,map_in_string,event_index);
     }
+    std::cout<<"konec jednoho parse\n\n"<<std::flush;
     // pokud konec neni vrati 0
     return 0;
 
@@ -369,6 +371,7 @@ int Client::accept_state_map(unsigned char events[MAX_EVENTS],int * events_count
     std::string map_in_string;
 
     read_from_socket(client_socket,map_in_string);
+    std::cout<<"acc state map cela zprava: "<<std::endl;
 
     return parse_map(events,events_count,map_in_string,0);
 }
