@@ -35,7 +35,7 @@ void Server::accept_player(Connection * conn, const boost::system::error_code& e
 	}
 	else
 	{
-		std::cout << "Chyba při spojení" << std::endl;
+		Server::kill(0);
 	}
 }
 
@@ -176,11 +176,8 @@ void Server::stop()
 	Server::ios->stop();
 	acceptor.close();
 
-	std::cout << "server::stop" << std::endl;
-
 	for(std::vector<Game *>::iterator it = games.begin(); it != games.end(); ++it)
 	{
-		std::cout << "orphan" << std::endl;
 		delete *it;
 	}
 

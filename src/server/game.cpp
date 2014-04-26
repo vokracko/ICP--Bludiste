@@ -1,5 +1,16 @@
+/**
+ * \file game.cpp
+ * \author Lukáš Vokráčko (xvokra00)
+*/
+
 #include "game.h"
 
+/**
+ * \fn Game::Game(float timeout, int map_id)
+ * \brief Vytvoří mapu, hlídače, získá unikátní identifikátor a nastaví parametry hry
+ * \param[in] timeout zpoždění při příkazu go
+ * \param[in] map_id identifikátory mapy
+*/
 Game::Game(float timeout, int map_id)
 {
 	map = new Map(map_id);
@@ -10,6 +21,10 @@ Game::Game(float timeout, int map_id)
 	std::cout << "game++" << std::endl;
 }
 
+/**
+ * \fn Game::~Game()
+ * \brief Smaže mapa a hlídače
+*/
 Game::~Game()
 {
 	std::cout << "game--" << std::endl;
@@ -17,11 +32,21 @@ Game::~Game()
 	delete monster;
 }
 
+/**
+ * \fn bool Game::is_running()
+ * \brief Vrátí stav hry
+ * \return running stav hry
+*/
 bool Game::is_running()
 {
 	return running;
 }
 
+/**
+ * \fn void Game::stop(bool quit)
+ * \brief Zastaví hru, pošle poslední zprávu hráčů a poté je smaže
+ * \param[in] quit při true pošle zprávu o násilném ukončení hry, jinak pošle statistiky o hře
+*/
 void Game::stop(bool quit)
 {
 	running = false;
@@ -45,6 +70,12 @@ void Game::stop(bool quit)
 
 }
 
+/**
+ * \fn void Game::cmd(Player * p, std::string * command)
+ * \brief Zpracuje tah hráče a informuje jeho a všechny ostatní hráče o výsledku tohoto tahu
+ * \param[in] p ukazatel na hráče, který provádí tah
+ * \param[in] command ukazatel na string obsahující identifikátor tahu
+*/
 void Game::cmd(Player * p, std::string * command)
 {
 	map_mutex.lock();
@@ -90,6 +121,10 @@ void Game::cmd(Player * p, std::string * command)
 	map_mutex.unlock();
 }
 
+/**
+ * \fn void Game::end_info()
+ * \brief Zašle statistiky hry všem hráčům při ukončení hry vítězstvím
+*/
 void Game::end_info()
 {
 	auto diff = std::chrono::system_clock::now() - start;
@@ -113,6 +148,12 @@ void Game::end_info()
 	send(res);
 }
 
+/**
+ * \fn void Game::set(Player * p, Position pos)
+ * \brief Přemístí hráče z jeho aktuální pozice na pozici novou
+ * \param[in] p ukazatel na hráče, jehož pozice se má změnit
+ * \param[in] pos nová pozice
+*/
 void Game::set(Player * p, Position pos)
 {
 	Position current_pos = p->get_position();
@@ -125,6 +166,11 @@ void Game::set(Player * p, Position pos)
 	p->set_position(pos);
 }
 
+/**
+ * \fn void Game::kill(int color)
+ * \brief Zabije hráče, zašle o tom všem zprávu a odstraní ho
+ * \param[in] color barva zabitého hráče
+*/
 void Game::kill(int color)
 {
 	for(std::vector<Player *>::iterator it = players.begin(); it != players.end(); ++it)
@@ -138,12 +184,19 @@ void Game::kill(int color)
 	}
 }
 
-void Game::next(Position pos, int * x, int * y)
+/**
+ * \fn void Game::next(Position * pos, int * x, int * y)
+ * \brief Na základě pozice a natočení hráče určí souřadnice následující pozice
+ * \param[in] pos aktuální pozice hráče
+ * \param[out] x ukazatel na novou souřadnici X
+ * \param[out] y ukazatel na novou souřadnici Y
+*/
+void Game::next(Position * pos, int * x, int * y)
 {
-	*x = pos.x;
-	*y = pos.y;
+	*x = pos->x;
+	*y = pos->y;
 
-	switch(pos.look)
+	switch(pos->look)
 	{
 		case Box::UP: (*y)--;break;
 		case Box::DOWN: (*y)++;break;
@@ -152,6 +205,13 @@ void Game::next(Position pos, int * x, int * y)
 	}
 }
 
+/**
+ * \fn int Game::step(Player * p)
+ * \brief Pohne hráče o jedno políčko dopředu
+ * \param[in] p ukazatel na hráče, jehož pohyb se má vykonat
+ * \return res informace o výsledku tahu
+ * \see Game::next()
+*/
 int Game::step(Player * p)
 {
 	Position current_pos = p->get_position();
@@ -161,7 +221,7 @@ int Game::step(Player * p)
 	int res = MOVE_FAIL;
 
 	pos.look = current_pos.look;
-	next(current_pos, &pos.x, &pos.y);
+	next(&current_pos, &pos.x, &pos.y);
 
 	try
 	{
@@ -201,6 +261,12 @@ int Game::step(Player * p)
 
 }
 
+/**
+ * \fn int Game::take(Player * p)
+ * \brief Sebere klíč pokud jště žádný nemá
+ * \param[in] p ukazatel na hráče provádějícího tah
+ * \return - výsledek tahu
+*/
 int Game::take(Player * p)
 {
 	Position current_pos = p->get_position();
@@ -208,7 +274,7 @@ int Game::take(Player * p)
 
 	if(p->has_key()) return MOVE_FAIL; //nemůže vzít více klíčů
 
-	next(current_pos, &x, &y);
+	next(&current_pos, &x, &y);
 
 	if(map->get(x, y) == Box::KEY)
 	{
@@ -220,6 +286,12 @@ int Game::take(Player * p)
 	return MOVE_FAIL;
 }
 
+/**
+ * \fn int Game::open(Player * p)
+ * \brief Otevře bránu pokud hráč vlastní klíč
+ * \param[in] p ukazatel na hráče provádějícího tah
+ * \return - výsledek tahu
+*/
 int Game::open(Player * p)
 {
 	Position current_pos = p->get_position();
@@ -227,7 +299,7 @@ int Game::open(Player * p)
 
 	if(!p->has_key()) return MOVE_FAIL; //nevlastní klíč, nemůže otevřít
 
-	next(current_pos, &x, &y);
+	next(&current_pos, &x, &y);
 
 	if(map->get(x, y) == Box::GATE + Box::CLOSED)
 	{
@@ -238,6 +310,13 @@ int Game::open(Player * p)
 	return MOVE_FAIL;
 }
 
+/**
+ * \fn int Game::rotate(Player * p, int way)
+ * \brief Otočí hráče o 90 stupňů
+ * \param[in] p ukazatel na hráče provádějícího tah
+ * \param[in] way směr otáčení
+ * \return true otočení se vždy povede
+*/
 int Game::rotate(Player * p, int way)
 {
 	Position pos;
@@ -254,10 +333,12 @@ int Game::rotate(Player * p, int way)
 }
 
 /**
- * Pošle zprávu o změně stavu hry vše klientům kromě toho, který tuto zprávu vytvořil
- * \fn void Game::send(Player * exclude, std::string message)
- * \param exclude odkaz na hráče, který zprávu vytvořil
- * \param message obsah zprávy
+ * \fn void Game::send(std::string message, Player * p, int move_res, int state_code)
+ * \brief Pošle zprávu všem hráčům
+ * \param[in] message obsah zprávy
+ * \param[in] p odkaz na hráče, jehož tah zprávu vygeneroval
+ * \param[in] move_res doplňující informace pro hráče jež zprávu vygeneroval
+ * \param[in] state_code doplňující informace pro ostatní hráče
  */
 void Game::send(std::string message, Player * p, int move_res, int state_code)
 {
@@ -277,15 +358,20 @@ void Game::send(std::string message, Player * p, int move_res, int state_code)
 	}
 }
 
+/**
+ * \fn float Game::get_timeout()
+ * \brief Vrátí hodnotu časové prodlevy
+ * \return timeout
+ */
 float Game::get_timeout()
 {
 	return timeout;
 }
 
 /**
- * Připojí hráče do hry
- * \fn bool Game::add_Player(Player * c)
- * \param c odkaz na hráče
+ * \fn bool Game::add_player(Player * p)
+ * \brief Připojí hráče do hry
+ * \param p ukazatel na připojovaného hráče
  * \return výsledek operace
  */
 bool Game::add_player(Player * p)
@@ -309,11 +395,21 @@ bool Game::add_player(Player * p)
 	return false;
 }
 
+/**
+ * \fn Map * Game::get_map()
+ * \brief Vrátí ukazatel na mapu
+ * \return map ukazatel na mapu
+*/
 Map * Game::get_map()
 {
 	return map;
 }
 
+/**
+ * \fn void Game::remove_player(Player * p)
+ * \brief Odebere hráče ze hry a informuje o tom ostatní hráče
+ * \param[in] p ukazatel na odebíraného hráče
+*/
 void Game::remove_player(Player * p)
 {
 	if(running)
@@ -343,11 +439,21 @@ void Game::remove_player(Player * p)
 	}
 }
 
+/**
+ * \fn void Game::remove_color(Player * p)
+ * \brief Uvolní barvu použitou hráčem p
+ * \param[in] p ukazatel na hráče vlastnící barvu
+*/
 void Game::remove_color(Player * p)
 {
 	colors[p->get_color()/10-40] = false;
 }
 
+/**
+ * \fn void Game::set_color(Player * p)
+ * \brief Přiřadí hráči volnou barvu
+ * \param[in] p ukazatel na hráče
+*/
 void Game::set_color(Player * p)
 {
 	for(int i = 0; i < 4; ++i)
@@ -361,6 +467,11 @@ void Game::set_color(Player * p)
 	}
 }
 
+/**
+ * \fn std::string Game::to_string()
+ * \brief Zabalí informace o hře do řetězce
+ * \return message informace o hře
+*/
 std::string Game::to_string()
 {
 	auto diff = std::chrono::system_clock::now() - start;
@@ -377,6 +488,10 @@ std::string Game::to_string()
 	return message;
 }
 
+/**
+ * \fn int Game::get_id()
+ * \return id identifikátor hry
+*/
 int Game::get_id()
 {
 	return id;

@@ -1,5 +1,5 @@
 /**
- * Třída vlastní hry
+ * \brief Třída celé hry, zpracovává veškeré akce hráčů a generuje zprávy pro ostatní
  * \file game.h
  * \author Lukáš Vokráčko (xvokra00)
  */
@@ -22,16 +22,15 @@ class Game;
 class Game
 {
 	private:
-		std::vector<Player*> players;
-		Map * map;
-		Monster * monster;
-
 		int id;
 		float timeout;
 		bool running;
 		bool colors[4] = {false};
 
 		std::chrono::time_point<std::chrono::system_clock> start = std::chrono::system_clock::now();
+		std::vector<Player*> players;
+		Map * map;
+		Monster * monster;
 
 	public:
 		std::mutex map_mutex;
@@ -45,20 +44,25 @@ class Game
 	public:
 		Game(float timeout, int map_id);
 		~Game();
-		void send(std::string message, Player * p = nullptr, int move_res = 0, int state_code = 0);
-		bool add_player(Player * p);
-		int get_id();
-		std::string to_string();
-		bool is_running();
-		void remove_player(Player * p);
+
+		void kill(int color);
+		void stop(bool quit = false);
+
 		void cmd(Player * p, std::string * command);
 		void set(Player * p, Position pos);
+		void next(Position * pos, int *x, int *y);
+		void send(std::string message, Player * p = nullptr, int move_res = 0, int state_code = 0);
+		void remove_player(Player * p);
 		void remove_color(Player * p);
 		void set_color(Player * p);
-		Map * get_map();
-		void next(Position pos, int *x, int *y);
 		void end_info();
-		void stop(bool quit = false);
+
 		float get_timeout();
-		void kill(int color);
+		int get_id();
+
+		Map * get_map();
+		std::string to_string();
+
+		bool add_player(Player * p);
+		bool is_running();
 };
