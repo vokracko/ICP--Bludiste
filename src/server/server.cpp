@@ -58,11 +58,11 @@ std::string Server::get_games_string()
 	{
 		for(std::vector<Game*>::iterator it = games.begin(); it != games.end(); ++it)
 		{
-			if(!(*it)->is_running()) continue;
-			message.append((*it)->to_string() + "\r\n");
+			if((*it)->is_running()) message.append((*it)->to_string() + "\r\n");
 		}
 	}
-	else
+
+	if(!message.length())
 	{
 		message = "0\r\n";
 	}
@@ -111,14 +111,6 @@ int Server::new_game(std::string & game_settings)
 	size_t pos;
 	int map_id;
 	float timeout;
-
-	for(std::vector<Game *>::iterator it = games.begin(); it != games.end(); ++it)
-	{
-		if(!(*it)->is_running())
-		{
-			delete_game(*it);
-		}
-	}
 
 	try
 	{
@@ -282,5 +274,3 @@ Server::~Server()
 {
 
 }
-
-//TODO po odpojení jednoho klienta se nedaří posílat list

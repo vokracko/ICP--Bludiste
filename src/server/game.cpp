@@ -52,13 +52,26 @@ void Game::stop(bool quit)
 	if(quit)
 	{
 		std::string msg = "quit\r\n";
-		send(msg);
+		send_plain(&msg);
 	}
 	else
 	{
 		end_info();
 	}
 
+}
+
+/**
+ * \fn void Game::send_plain(std::string * msg)
+ * \brief Odešle zprávu všem hráčům
+ * \param msg zpráva
+ */
+void Game::send_plain(std::string * msg)
+{
+	for(std::vector<Player*>::iterator it = players.begin(); it != players.end(); ++it)
+	{
+		(*it)->send(msg);
+	}
 }
 
 /**
@@ -151,10 +164,7 @@ void Game::end_info()
 		}
 	}
 
-	for(std::vector<Player *>::iterator it = players.begin(); it!= players.end(); ++it)
-	{
-		(*it)->send(&res);
-	}
+	send_plain(&res);
 }
 
 /**
@@ -255,6 +265,10 @@ int Game::step(Player * p)
 	else if(next_obj == (Box::GATE + Box::OPEN))
 	{
 		return Box::YOU_WIN;
+	}
+	else if(next_obj == Box::GATE + Box::CLOSED && p->has_key())
+	{
+		return open(p);
 	}
 	else if(next_obj >= 40 && next_obj <= 90 && p->get_color() == Box::MONSTER)
 	{

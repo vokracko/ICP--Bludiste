@@ -52,6 +52,7 @@ class Game
 		void set(Player * p, Position pos);
 		void next(Position * pos, int *x, int *y);
 		void send(std::string message, Player * p = nullptr, int move_res = 0, int state_code = 0);
+		void send_plain(std::string * msg);
 		void remove_player(Player * p);
 		void remove_color(Player * p);
 		void set_color(Player * p);
