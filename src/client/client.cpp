@@ -21,7 +21,7 @@ Client::Client(QObject * parent): QObject(parent)
     blue_time=0;
     green_time=0;
     game_duration=0;
-    this->last_command_successfull=true;
+
     client_socket=NULL;
 }
 Client::~Client()
@@ -267,18 +267,7 @@ int Client::send_move(std::string command)
         throw Errors(Errors::UNKNOWN_COMMAND);
         return 0;
     }
-    /*if (command.compare("go")==0)
->>>>>>> 20423e5e8efaf5830e37d6b055e8385d4b4a954b
-    {
-        command="step";
-        this->last_command="go";
-        printf("cas %d\n",(int)(this->timeout*1000));
-        QTimer::singleShot(((int)(this->timeout*1000)),this,SLOT(when_go()));
-    }
-    else
-    {*/
-        this->last_command=command;
-    //}
+
     client_socket->write((command+"\r\n").c_str());
     if (!(client_socket->waitForBytesWritten(5000)))
     {
@@ -305,11 +294,9 @@ int Client::send_move(std::string command)
 int Client::parse_map(unsigned char events[MAX_EVENTS],int * events_count,std::string map_in_string, int event_index)
 {
         // pokud je konec, vraci 1 a zpracuje udaje o hre
-
     if (map_in_string.substr(0,3).compare("end")==0)
     {
-        this->last_command_successfull=false;
-        map_in_string=map_in_string.substr(3,map_in_string.size()-5);
+        map_in_string=map_in_string.substr(3,map_in_string.size()-3);
         sscanf(map_in_string.c_str(),"%d\n%d %d\n%d %d\n%d %d\n%d %d\r\n",&(this->game_duration),&(this->red_time),&(this->red_steps),&(this->green_time),
                                                     &(this->green_steps),&(this->blue_time),&(this->blue_steps),&(this->white_time),&(this->white_steps));
         return 1;
@@ -325,16 +312,15 @@ int Client::parse_map(unsigned char events[MAX_EVENTS],int * events_count,std::s
 
     int end_message_index=map_in_string.find("\r\n")+2;
     event_string=map_in_string.substr(index,end_message_index-2-index);
+
     map_in_string=map_in_string.substr(end_message_index,map_in_string.size()-end_message_index);
+
     *events_count+=event_string.size();
 
     for (unsigned i=0; i< event_string.size(); i++)
     {
         // naplni udalosti
         events[event_index]=event_string.at(i);
-        // kvuli go, uklada jestli se posledni tah povedl nebo ne
-        if (events[event_index]==Box::MOVE_PASS) this->last_command_successfull=true;
-        if (events[event_index]==Box::MOVE_FAIL) this->last_command_successfull=false;
         event_index++;
     }
 
@@ -375,7 +361,6 @@ int Client::accept_state_map(unsigned char events[MAX_EVENTS],int * events_count
 */
 std::string Client::recognize_event(int event_code)
 {
-    std::cout<<"cislo udalosti: "<<event_code<<std::endl;
     if (event_code==Box::WHITE + Box::KILLED && color==Box::WHITE)
         return "Byl jsi zabit";
     if (event_code==Box::RED + Box::KILLED && color==Box::RED)
@@ -463,7 +448,7 @@ std::string Client::refer_color()
 {
     switch (this->color)
     {
-        case Box::WHITE:	return "Jste bílý hráč";
+        case Box::WHITE:    return "Jste bílý hráč";
         case Box::RED: return "Jste červený hráč";
         case Box::BLUE: return "Jste modrý hráč";
         case Box::GREEN: return "Jste zelený hráč";
@@ -518,25 +503,24 @@ std::string Client::get_game_time()
 * \param y Y-ová souřadnice hráče na mapě
 * \return Textový řetězec reprezentující informaci o hráči, obsahující počet kroků a čas strávený ve hře.
 */
-
 std::string Client::get_tooltip(int x,int y)
 {
-    if (this->map[x][y]/10==Box::WHITE)
+    if (this->map[x][y]/10==WHITE)
     {
         return "Bílý hráč:\nPočet kroků: "+std::to_string(this->white_steps)+"\nČas strávený ve hře: "+convert_string_time(this->white_time);
     }
 
-    if (this->map[x][y]/10==Box::GREEN)
+    if (this->map[x][y]/10==GREEN)
     {
         return "Zelený hráč:\nPočet kroků: "+std::to_string(this->green_steps)+"\nČas strávený ve hře: "+convert_string_time(this->green_time);
     }
 
-    if (this->map[x][y]/10==Box::BLUE)
+    if (this->map[x][y]/10==BLUE)
     {
         return "Modrý hráč:\nPočet kroků: "+std::to_string(this->blue_steps)+"\nČas strávený ve hře: "+convert_string_time(this->blue_time);
     }
 
-    if (this->map[x][y]/10==Box::RED)
+    if (this->map[x][y]/10==RED)
     {
         return "Červený hráč:\nPočet kroků: "+std::to_string(this->red_steps)+"\nČas strávený ve hře: "+convert_string_time(this->red_time);
     }

@@ -47,8 +47,6 @@ public:
 private:
     int pos_x,pos_y;
     double timeout;
-    std::string last_command;
-    bool last_command_successfull;
 public:
     int color;
     int width,height;

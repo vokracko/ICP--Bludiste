@@ -15,7 +15,7 @@
 */
 class Errors: public std::exception
 {
-
+public:
 	int code;
 
 public:

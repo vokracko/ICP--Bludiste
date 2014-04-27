@@ -130,18 +130,16 @@ void Client_cli::connect_readyRead()
 */
 void Client_cli::print_times()
 {
-
     std::cout<<"Čas strávený hráči ve hře a počet kroků, který vykonali:\n";
 
     if (this->white_time!=0.0)
-        std::cout<<"čas bílého hráče: "<<white_time<<"  počet kroků: "<<white_steps<<std::endl;
+        std::cout<<"čas bílého hráče: "<<this->convert_string_time(this->white_time)<<"  počet kroků: "<<white_steps<<std::endl;
     if (this->red_time!=0.0)
-        std::cout<<"čas červeného hráče: "<<red_time<<"  počet kroků: "<<red_steps<<std::endl;
+        std::cout<<"čas červeného hráče: "<<this->convert_string_time(this->red_time)<<"  počet kroků: "<<red_steps<<std::endl;
     if (this->blue_time!=0.0)
-        std::cout<<"čas modrého hráče: "<<blue_time<<"  počet kroků: "<<blue_steps<<std::endl;
+        std::cout<<"čas modrého hráče: "<<this->convert_string_time(this->blue_time)<<"  počet kroků: "<<blue_steps<<std::endl;
     if (this->green_time!=0.0)
-        std::cout<<"čas zeleného hráče: "<<green_time<<"  počet kroků: "<<green_steps<<std::endl;
-
+        std::cout<<"čas zeleného hráče: "<<this->convert_string_time(this->green_time)<<"  počet kroků: "<<green_steps<<std::endl;
 }
 
 
@@ -176,6 +174,14 @@ void Client_cli::game_event()
     if (this->accept_state_map(events,&events_count))
     {
         // KONEC HRY
+        this->print_map();
+
+        for (int i=0;i<events_count;i++)
+        {
+            std::string event=this->recognize_event(events[i]);
+            events_list->push_back(event);
+        }
+
         print_all_events();
         std::cout<<this->get_game_time()<<std::endl;
         events_list->push_back(this->get_game_time());
@@ -189,16 +195,11 @@ void Client_cli::game_event()
     for (int i=0;i<events_count;i++)
     {
         std::string event=this->recognize_event(events[i]);
-        if (event.compare("Byl jsi zabit")==0)
-        {
-            // kdyz umres
-        }
         std::cout<<event<<std::endl;
         events_list->push_back(event);
     }
 
-    std::cout<<std::endl<<this->msg;
-    // zobrazeni mapy
+    std::cout<<std::endl<<this->message;
 
 }
 

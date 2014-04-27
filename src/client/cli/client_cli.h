@@ -20,7 +20,7 @@ class Client_cli : public Client
 {
     Q_OBJECT
 public:
-    std::string msg;
+    std::string message;
 
 private:
     std::deque<std::string> * events_list;

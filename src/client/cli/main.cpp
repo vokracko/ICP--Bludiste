@@ -135,17 +135,18 @@ int main (int argc, char * argv[])
 
         if (pid>0)
         {
-            std::string move;
             while (1)
             {
-                std::cin>>move;
-                client->send_move(move);
+                int c;
+                while ((c=getchar())!='\n') client->message+=c;
+                //std::cin>>move;
+                client->send_move(client->message);
             }
         }
         else if (pid==0)
         {
             client->connect_readyRead();
-            
+
         }
         else
         {
@@ -156,9 +157,10 @@ int main (int argc, char * argv[])
     }
 
     catch (Errors & e)
-    {
-        std::cerr<<e.get_message()<<std::endl;
-        exit(1);
+    {   
+        std::cerr<< e.get_message() <<std::endl;
+        if (e.code!=Errors::UNKNOWN_COMMAND)
+            exit(1);
     }
 
     return a.exec();
