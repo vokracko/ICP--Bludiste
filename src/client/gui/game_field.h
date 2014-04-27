@@ -10,7 +10,7 @@
 #include <QLabel>
 #include "./../../box.h"
 
-#define IMAGPATH(img) "./../../images/"#img
+#define IMAGPATH(img) "./images/"#img
 
 /**
 \class Game_field

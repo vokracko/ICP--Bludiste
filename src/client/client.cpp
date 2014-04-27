@@ -446,7 +446,7 @@ std::string Client::recognize_event(int event_code)
 */
 std::string Client::refer_color()
 {
-    switch (this->color)
+    switch (this->color*10)
     {
         case Box::WHITE:    return "Jste bílý hráč";
         case Box::RED: return "Jste červený hráč";

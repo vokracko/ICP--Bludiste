@@ -5,7 +5,7 @@
 
 #include "map.h"
 
-const std::string Map::path = "../../maps/";
+const std::string Map::path = "./maps/";
 std::map<int, std::string> Map::maplist;
 
 /**

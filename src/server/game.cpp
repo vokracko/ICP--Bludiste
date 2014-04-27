@@ -264,6 +264,7 @@ int Game::step(Player * p)
 	}
 	else if(next_obj == (Box::GATE + Box::OPEN))
 	{
+		p->go = false;
 		return Box::YOU_WIN;
 	}
 	else if(next_obj == Box::GATE + Box::CLOSED && p->has_key())
