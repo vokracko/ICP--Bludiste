@@ -71,7 +71,11 @@ void read_from_socket(QTcpSocket * client_socket , std::string &msg)
         msg+=buffer;
         memset(buffer,0,100);
     }
-    if (cont<0) throw Errors(Errors::SOCKET_READ);
+    if (cont<0)
+        {
+            std::cout << "cont1" << std::endl;
+            throw Errors(Errors::SOCKET_READ);
+        }
     while (cont2)
     {
         if(client_socket->waitForReadyRead(50))
@@ -83,7 +87,11 @@ void read_from_socket(QTcpSocket * client_socket , std::string &msg)
                 msg+=buffer;
                 memset(buffer,0,100);
             }
-            if (cont<0) throw Errors(Errors::SOCKET_READ);
+            if (cont<0)
+                {
+                    std::cout << "cont2" << std::endl;
+                    throw Errors(Errors::SOCKET_READ);
+                }
         }
         else
         {
@@ -294,6 +302,7 @@ int Client::send_move(std::string command)
 int Client::parse_map(unsigned char events[MAX_EVENTS],int * events_count,std::string map_in_string, int event_index)
 {
         // pokud je konec, vraci 1 a zpracuje udaje o hre
+    std::cout << map_in_string << std::endl;
     if (map_in_string.substr(0,3).compare("end")==0)
     {
         map_in_string=map_in_string.substr(3,map_in_string.size()-3);
@@ -348,7 +357,6 @@ int Client::accept_state_map(unsigned char events[MAX_EVENTS],int * events_count
     std::string map_in_string;
 
     read_from_socket(client_socket,map_in_string);
-    std::cout<<"acc state map cela zprava: "<<std::endl;
 
     return parse_map(events,events_count,map_in_string,0);
 }
@@ -505,22 +513,22 @@ std::string Client::get_game_time()
 */
 std::string Client::get_tooltip(int x,int y)
 {
-    if (this->map[x][y]/10==WHITE)
+    if (this->map[x][y]/10==Box::WHITE/10)
     {
         return "Bílý hráč:\nPočet kroků: "+std::to_string(this->white_steps)+"\nČas strávený ve hře: "+convert_string_time(this->white_time);
     }
 
-    if (this->map[x][y]/10==GREEN)
+    if (this->map[x][y]/10==Box::GREEN/10)
     {
         return "Zelený hráč:\nPočet kroků: "+std::to_string(this->green_steps)+"\nČas strávený ve hře: "+convert_string_time(this->green_time);
     }
 
-    if (this->map[x][y]/10==BLUE)
+    if (this->map[x][y]/10==Box::BLUE/10)
     {
         return "Modrý hráč:\nPočet kroků: "+std::to_string(this->blue_steps)+"\nČas strávený ve hře: "+convert_string_time(this->blue_time);
     }
 
-    if (this->map[x][y]/10==RED)
+    if (this->map[x][y]/10==Box::RED/10)
     {
         return "Červený hráč:\nPočet kroků: "+std::to_string(this->red_steps)+"\nČas strávený ve hře: "+convert_string_time(this->red_time);
     }

@@ -49,6 +49,11 @@ void Game::stop(bool quit)
 {
 	running = false;
 
+	for(std::vector<Player *>::iterator it = players.begin(); it != players.end(); ++it)
+	{
+		(*it)->go = false;
+	}
+
 	if(quit)
 	{
 		std::string msg = "quit\r\n";
