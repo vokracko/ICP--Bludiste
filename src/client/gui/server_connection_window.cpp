@@ -39,7 +39,7 @@ void server_connection_window::on_server_connect_button_clicked()
     }
     catch (Errors & e)
 	{
-        this->ui->when_error_label->setText(QString::fromStdString(e.get_message()));
+        this->ui->when_error_label->setText(QString::fromStdString(e.what()));
 	}
     if (ec)
     {

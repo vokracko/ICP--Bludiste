@@ -161,7 +161,7 @@ void game_window::on_send_command_button_clicked()
     }
     catch (Errors & e)
     {
-         this->ui->game_info_list->addItem(QString::fromStdString(e.get_message()));
+         this->ui->game_info_list->addItem(QString::fromStdString(e.what()));
     }
     this->ui->command_edit->setText("");
 }

@@ -42,7 +42,7 @@ void game_setup::get_maps()
     }
     catch (Errors & e)
     {
-        this->ui->when_error_label->setText(QString::fromStdString(e.get_message()));
+        this->ui->when_error_label->setText(QString::fromStdString(e.what()));
         return;
     }
     this->ui->maps_list->clear();
@@ -62,7 +62,7 @@ void game_setup::show_available_games()
     }
     catch (Errors & e)
     {
-        this->ui->when_error_label->setText(QString::fromStdString(e.get_message()));
+        this->ui->when_error_label->setText(QString::fromStdString(e.what()));
         return;
     }
     this->ui->games_viewer->clear();
@@ -110,7 +110,7 @@ void game_setup::on_refresh_button_clicked()
     }
     catch (Errors & e)
     {
-        this->ui->when_error_label->setText(QString::fromStdString(e.get_message()));
+        this->ui->when_error_label->setText(QString::fromStdString(e.what()));
         return;
     }
     this->ui->games_viewer->clear();
@@ -137,7 +137,7 @@ void game_setup::on_connect_game_button_clicked()
         }
         catch (Errors & e)
         {
-            this->ui->when_error_label->setText(QString::fromStdString(e.get_message()));
+            this->ui->when_error_label->setText(QString::fromStdString(e.what()));
             return;
         }
         // pripojeni do hry
@@ -171,7 +171,7 @@ void game_setup::on_create_game_button_clicked()
         }
         catch (Errors & e)
         {
-             this->ui->when_error_label->setText(QString::fromStdString(e.get_message()));
+             this->ui->when_error_label->setText(QString::fromStdString(e.what()));
              return;
         }
 

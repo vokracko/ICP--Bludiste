@@ -87,7 +87,7 @@ char Client_cli::identify_element(char element)
 void Client_cli::end_processes()
 {
     kill(this->pid_child,SIGTERM);
-    delete this; 
+    delete this;
 }
 
 /**
@@ -166,7 +166,7 @@ void Client_cli::sap_events_message(int events_count,unsigned char events[MAX_EV
         }
         this->last_message+=(event+"\n");
     }
-    
+
     std::cout<<this->last_message<<std::endl;
     if (end) exit(0);
 }
@@ -193,7 +193,7 @@ void Client_cli::game_event()
 
         std::cout<<this->get_game_time()<<std::endl;
         this->print_times();
-        
+
         end_processes();
         exit(0) ;
         return;
@@ -208,7 +208,7 @@ void Client_cli::playing()
 {
     this->game_begin=true;
     int pid=fork();
-    
+
     if (pid==0)
     {
         while (1)
@@ -220,8 +220,8 @@ void Client_cli::playing()
                 this->send_move(move);
             }
             catch (Errors & e)
-            {   
-                std::cout<< e.get_message() <<std::endl;
+            {
+                std::cout<< e.what() <<std::endl;
                 if (e.code!=Errors::UNKNOWN_COMMAND)
                 {
                     exit(1);
@@ -241,11 +241,11 @@ void Client_cli::playing()
             throw Errors(Errors::FORK);
         }
          catch (Errors & e)
-        {   
-            std::cerr<< e.get_message() <<std::endl;
+        {
+            std::cerr<< e.what() <<std::endl;
             exit(1);
         }
-    }        
+    }
 }
 
 Client_cli::Client_cli(QObject * parent): Client(parent)

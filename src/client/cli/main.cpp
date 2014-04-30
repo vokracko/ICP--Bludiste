@@ -21,7 +21,7 @@ int get_cin_integer()
     char * endptr;
     int number=(int)strtol(str.c_str(),&endptr,10);
     if (*endptr=='\0') return number;
-    else return -1; 
+    else return -1;
 }
 
 // nacte z cin float
@@ -33,7 +33,7 @@ double get_cin_double()
     char * endptr;
     double number=(double)strtod(str.c_str(),&endptr);
     if (*endptr=='\0') return number;
-    else return -1.0; 
+    else return -1.0;
 }
 
 
@@ -63,7 +63,7 @@ void send_message(std::string msg)
 
 
 /**
-\fn Main 
+\fn Main
 * Řídí celou cli aplikaci, pracující s třídou Client_cli (potomek Client).
 */
 int main (int argc, char * argv[])
@@ -139,14 +139,14 @@ int main (int argc, char * argv[])
         }
     }
     catch (Errors & e)
-    {   
-        std::cerr<< e.get_message() <<std::endl;
+    {
+        std::cerr<< e.what() <<std::endl;
         exit(1);
     }
 
         // hrani
         int konec;
-        
+
         // vyčistí obrazovku
         client->clear_screen();
         client->print_map();
@@ -154,7 +154,7 @@ int main (int argc, char * argv[])
         std::cout<<std::endl;
         client->playing();
 
- 
+
 
 
     return a.exec();

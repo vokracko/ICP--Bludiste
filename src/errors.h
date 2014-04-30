@@ -30,7 +30,8 @@ public:
 		NOT_JOINED,
 		UNKNOWN_COMMAND,
 		OUT_OF_RANGE,
-		FORK
+		FORK,
+		OPENDIR,
 	};
 
 	/**Pole chybových hlášek */
@@ -44,10 +45,11 @@ public:
 		"Nepodařilo se vás připojit do hry",
 		"Neznámý příkaz pro tah",
 		"Pozice je mimo mapu",
-		"Nepovedlo se duplikovat proces pro čtení"
+		"Nepovedlo se duplikovat proces pro čtení",
+		"Nepodařilo se otevřít složku map",
 	};
 public:
 	Errors(int code);
 
-	std::string get_message();
+	std::string what();
 };
