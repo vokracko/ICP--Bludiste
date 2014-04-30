@@ -4,7 +4,7 @@ FLAGS=-std=c++11
 .PHONY: client
 .PHONY: errors
 
-all: clean client
+all: server client-gui client-cli
 	make -C server all
 
 server:

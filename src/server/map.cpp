@@ -133,17 +133,9 @@ void Map::init()
 
 	while(file = readdir(dir))
 	{
+		if(std::strcmp(file->d_name, ".") == 0 || std::strcmp(file->d_name, "..") == 0) continue;
 		Map::maplist.insert(std::pair<int, std::string>(i++, std::string(file->d_name)));
 	}
-
-	// boost::filesystem::path p(Map::path.c_str());
-	// boost::filesystem::directory_iterator it(p), end;
-	// int i = 1;
-
-	// for(; it != end; ++it, ++i)
-	// {
-	// 	Map::maplist.insert(std::pair<int, std::string>(i, it->path().filename().string()));
-	// }
 }
 
 /**
