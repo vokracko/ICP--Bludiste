@@ -26,3 +26,6 @@ clean:
 
 doxygen: Doxyfile clean
 	doxygen Doxyfile
+
+# TODO mapy
+# TODO překlad na merlinovi - qmake, g++-4.8

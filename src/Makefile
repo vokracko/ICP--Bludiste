@@ -22,4 +22,4 @@ clean:
 	rm -f *.o
 
 errors: errors.cpp
-	g++ $(FLAGS) -c errors.cpp -o errors.o
+	g++-4.8 $(FLAGS) -c errors.cpp -o errors.o
