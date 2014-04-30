@@ -123,14 +123,27 @@ std::string Map::get_name()
 */
 void Map::init()
 {
-	boost::filesystem::path p(Map::path.c_str());
-	boost::filesystem::directory_iterator it(p), end;
+	DIR *dir;
+	dirent *file;
 	int i = 1;
 
-	for(; it != end; ++it, ++i)
+	dir = opendir(Map::path.c_str());
+
+	if(dir == NULL) throw Errors(Errors::OPENDIR);
+
+	while(file = readdir(dir))
 	{
-		Map::maplist.insert(std::pair<int, std::string>(i, it->path().filename().string()));
+		Map::maplist.insert(std::pair<int, std::string>(i++, std::string(file->d_name)));
 	}
+
+	// boost::filesystem::path p(Map::path.c_str());
+	// boost::filesystem::directory_iterator it(p), end;
+	// int i = 1;
+
+	// for(; it != end; ++it, ++i)
+	// {
+	// 	Map::maplist.insert(std::pair<int, std::string>(i, it->path().filename().string()));
+	// }
 }
 
 /**

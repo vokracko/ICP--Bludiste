@@ -6,9 +6,22 @@ int main()
 	boost::shared_ptr<boost::asio::io_service> ios(new boost::asio::io_service());
 	Server * server;
 
-	Server::create(ios.get());
-	server = Server::get_instance();
+	try
+	{
+		Server::create(ios.get());
+		server = Server::get_instance();
 
-	server->listen();
-	ios.get()->run();
+		server->listen();
+		ios.get()->run();
+	}
+	catch(Errors & e)
+	{
+		std::cerr << e.what() << std::endl;
+		return EXIT_FAILURE;
+	}
+	catch(std::exception & e)
+	{
+		std::cerr << e.what() << std::endl;
+		return EXIT_FAILURE;
+	}
 }

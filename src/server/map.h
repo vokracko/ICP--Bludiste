@@ -14,6 +14,7 @@ class Map;
 #include <vector>
 #include <map>
 #include "player.h"
+#include "dirent.h"
 #include "position.h"
 #include "../errors.h"
 
