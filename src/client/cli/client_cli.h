@@ -8,8 +8,10 @@
 
 #include "./../client.h"
 #include "./../../box.h"
-#include <deque>
 #include <QObject>
+#include <stdio.h>
+#include  <signal.h>
+#include <unistd.h>
 
 
 /**
@@ -18,8 +20,12 @@
 */
 class Client_cli : public Client
 {
-    Q_OBJECT
+    Q_OBJECT    
     std::string last_message;
+    pid_t pid_child;
+public:
+    bool game_begin;
+
 public:
     void print_map();
     void print_games();
@@ -29,12 +35,14 @@ public:
     void clear_screen();
     Client_cli(QObject *parent=0);
     ~Client_cli();
-
+    void playing();
+void end_processes();
 
 private:
     char identify_element(char element);
     void print_times();
     void sap_events_message(int events_count,unsigned char events[MAX_EVENTS]);
+
 
 public slots:
     void game_event();

@@ -6,6 +6,8 @@
 */
 
 #include "client_cli.h"
+#include <sys/types.h>
+#include <sys/wait.h>
 
 /**
 *\fn void Client_cli::clear_screen()
@@ -82,6 +84,11 @@ char Client_cli::identify_element(char element)
     return 'X';
 }
 
+void Client_cli::end_processes()
+{
+    kill(this->pid_child,SIGTERM);
+    delete this; 
+}
 
 /**
 *\fn void Client_cli::print_games()
@@ -109,7 +116,8 @@ void Client_cli::print_maps()
 */
 void Client_cli::print_color()
 {
-    std::cout<<std::endl<<this->refer_color()<<std::flush;
+    this->last_message=this->refer_color()+"\n";
+    std::cout<<this->last_message;
 }
 
 /**
@@ -143,16 +151,24 @@ void Client_cli::print_times()
 
 void Client_cli::sap_events_message(int events_count,unsigned char events[MAX_EVENTS])
 {
+    bool end=false;
     std::string event;
     if (events_count!=0)
-        this->last_message="";
+            this->last_message="";
+
     for (int i=0;i<events_count;i++)
     {
         event=this->recognize_event(events[i]);
+        if (event.compare("Byl jsi zabit")==0)
+        {
+            this->end_processes();
+            end=true;
+        }
         this->last_message+=(event+"\n");
     }
-
+    
     std::cout<<this->last_message<<std::endl;
+    if (end) exit(0);
 }
 
 /**
@@ -177,6 +193,9 @@ void Client_cli::game_event()
 
         std::cout<<this->get_game_time()<<std::endl;
         this->print_times();
+        
+        end_processes();
+        exit(0) ;
         return;
     }
     // pokud neni konec hry
@@ -185,12 +204,55 @@ void Client_cli::game_event()
     sap_events_message(events_count,events);
 }
 
+void Client_cli::playing()
+{
+    this->game_begin=true;
+    int pid=fork();
+    
+    if (pid==0)
+    {
+        while (1)
+        {
+            std::string move;
+            std::cin>>move;
+            try
+            {
+                this->send_move(move);
+            }
+            catch (Errors & e)
+            {   
+                std::cout<< e.get_message() <<std::endl;
+                if (e.code!=Errors::UNKNOWN_COMMAND)
+                {
+                    exit(1);
+                }
+            }
+        }
+    }
+    else if (pid>0)
+    {
+        this->pid_child=pid;
+        this->connect_readyRead();
+    }
+    else
+    {
+        try
+        {
+            throw Errors(Errors::FORK);
+        }
+         catch (Errors & e)
+        {   
+            std::cerr<< e.get_message() <<std::endl;
+            exit(1);
+        }
+    }        
+}
 
 Client_cli::Client_cli(QObject * parent): Client(parent)
 {
-    
+    game_begin=false;
 }
 Client_cli::~Client_cli()
 {
-    
+
 }

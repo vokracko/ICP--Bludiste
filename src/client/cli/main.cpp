@@ -8,13 +8,7 @@
 #include <QTcpSocket>
 #include <iostream>
 #include "./../../errors.h"
-#include <stdio.h>
 #include <locale.h>
-#include  <signal.h>
-#include <deque>
-#include  <unistd.h>
-#include <thread>
-#include <unistd.h>
 #include <fcntl.h>
 #include <string.h>
 
@@ -48,9 +42,11 @@ Client_cli * client= new Client_cli;
 void  INThandler(int sig)
 {
      signal(sig, SIG_IGN);
-
-     delete client;
-
+     if (client->game_begin) client->end_processes();
+     else
+     {
+        delete client;
+     }
      std::cout<<"\n\nHra byla ukončena (násilí nic nevyřeší)!\n\n";
      exit(0);
 }
@@ -156,43 +152,7 @@ int main (int argc, char * argv[])
         client->print_map();
         client->print_color();
         std::cout<<std::endl;
-
-        int pid=fork();
-
-        if (pid>0)
-        {
-            while (1)
-            {
-                std::string move;
-                std::cin>>move;
-                try
-                {
-                    client->send_move(move);
-                }
-                catch (Errors & e)
-                {   
-                    std::cerr<< e.get_message() <<std::endl;
-                    if (e.code!=Errors::UNKNOWN_COMMAND)
-                        exit(1);
-                }
-            }
-        }
-        else if (pid==0)
-        {
-            client->connect_readyRead();
-        }
-        else
-        {
-            try
-            {
-                throw Errors(Errors::FORK);
-            }
-             catch (Errors & e)
-            {   
-                std::cerr<< e.get_message() <<std::endl;
-                exit(1);
-            }
-        }
+        client->playing();
 
  
 
