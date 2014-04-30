@@ -369,13 +369,13 @@ int Client::accept_state_map(unsigned char events[MAX_EVENTS],int * events_count
 */
 std::string Client::recognize_event(int event_code)
 {
-    if (event_code==Box::WHITE + Box::KILLED && color==Box::WHITE)
+    if (event_code==Box::WHITE + Box::KILLED && color*10==Box::WHITE)
         return "Byl jsi zabit";
-    if (event_code==Box::RED + Box::KILLED && color==Box::RED)
+    if (event_code==Box::RED + Box::KILLED && color*10==Box::RED)
         return "Byl jsi zabit";
-    if (event_code==Box::BLUE + Box::KILLED && color==Box::BLUE)
+    if (event_code==Box::BLUE + Box::KILLED && color*10==Box::BLUE)
         return "Byl jsi zabit";
-    if (event_code==Box::GREEN + Box::KILLED && color==Box::GREEN)
+    if (event_code==Box::GREEN + Box::KILLED && color*10==Box::GREEN)
         return "Byl jsi zabit";
 
     switch (event_code)

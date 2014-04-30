@@ -210,8 +210,8 @@ void Game::kill(int color)
 		if((*it)->get_color() == color)
 		{
 			(*it)->go = false;
+			send(*(map->get_map()), *it, (*it)->get_color() + Box::KILLED, (*it)->get_color() + Box::KILLED);
 			remove_player(*it);
-			send(*(map->get_map()), nullptr, 0, (*it)->get_color() + Box::KILLED);
 			break;
 		}
 	}
