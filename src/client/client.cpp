@@ -44,7 +44,7 @@ int Client::connect_socket(const char * host)
     client_socket = new QTcpSocket(this);
     QHostAddress addr(QString::fromStdString(host));
     client_socket->connectToHost(host, 1234);
-    if (client_socket->waitForConnected(5000))
+    if (client_socket->waitForConnected(3000))
     {
         return 1;
     }
@@ -73,7 +73,6 @@ void read_from_socket(QTcpSocket * client_socket , std::string &msg)
     }
     if (cont<0)
         {
-            std::cout << "cont1" << std::endl;
             throw Errors(Errors::SOCKET_READ);
         }
     while (cont2)
@@ -89,7 +88,6 @@ void read_from_socket(QTcpSocket * client_socket , std::string &msg)
             }
             if (cont<0)
                 {
-                    std::cout << "cont2" << std::endl;
                     throw Errors(Errors::SOCKET_READ);
                 }
         }
@@ -186,7 +184,7 @@ int Client::join_game(int game_id)
     int index=0;
     for (int i=0; i<this->height;i++)
         for (int j=0; j<this->width; j++)
-        {   //std::cout<<index<<" ";
+        {   
             this->map[i][j]=game_info.at(index++);
         }
     return 1;
@@ -302,7 +300,6 @@ int Client::send_move(std::string command)
 int Client::parse_map(unsigned char events[MAX_EVENTS],int * events_count,std::string map_in_string, int event_index)
 {
         // pokud je konec, vraci 1 a zpracuje udaje o hre
-    std::cout << map_in_string << std::endl;
     if (map_in_string.substr(0,3).compare("end")==0)
     {
         map_in_string=map_in_string.substr(3,map_in_string.size()-3);

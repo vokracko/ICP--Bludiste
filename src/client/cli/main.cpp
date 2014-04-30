@@ -8,16 +8,33 @@
 #include <QTcpSocket>
 #include <iostream>
 #include "./../../errors.h"
-#include <stdio.h>
 #include <locale.h>
-#include  <signal.h>
-#include <deque>
-#include  <unistd.h>
-#include <thread>
-#include <unistd.h>
 #include <fcntl.h>
+#include <string.h>
 
+// nacte z cin integer
+// vraci number pokud je zadano spravne a -1 pokud nespravne
+int get_cin_integer()
+{
+    std::string str;
+    std::cin>>str;
+    char * endptr;
+    int number=(int)strtol(str.c_str(),&endptr,10);
+    if (*endptr=='\0') return number;
+    else return -1; 
+}
 
+// nacte z cin float
+// vraci number pokud je zadano spravne a -1.0 pokud nespravne
+double get_cin_double()
+{
+    std::string str;
+    std::cin>>str;
+    char * endptr;
+    double number=(double)strtod(str.c_str(),&endptr);
+    if (*endptr=='\0') return number;
+    else return -1.0; 
+}
 
 
 Client_cli * client= new Client_cli;
@@ -25,9 +42,11 @@ Client_cli * client= new Client_cli;
 void  INThandler(int sig)
 {
      signal(sig, SIG_IGN);
-
-     delete client;
-
+     if (client->game_begin) client->end_processes();
+     else
+     {
+        delete client;
+     }
      std::cout<<"\n\nHra byla ukončena (násilí nic nevyřeší)!\n\n";
      exit(0);
 }
@@ -65,7 +84,6 @@ int main (int argc, char * argv[])
         std::cin>>host;
         std::cout<<std::endl;
         client->connect_socket(const_cast<char *>(host.c_str()));
-
         // vypis her
         std::cout<<"Jsou vam k dispozici tyto mapy:" <<std::endl<<std::endl;
         client->print_maps();
@@ -86,9 +104,7 @@ int main (int argc, char * argv[])
             join=0;
             std::cout<<"Pro vytvoření hry ......... 1"<<std::endl;
             std::cout<<"Pro připojení se ke hře ... 2"<<std::endl;
-            std::cin >> game_type;
-            join = std::stoi(game_type);
-            break;
+            join=get_cin_integer();
         } while (join!=1 && join!=2);
 
         // zalozeni nove hry
@@ -99,7 +115,7 @@ int main (int argc, char * argv[])
                 std::cout<<"Zadejte timeout hry (v intervalu <0.5 ; 5>)"<<std::endl;
                 //game_type="";
                 //std::cin>>game_type;
-                ec=scanf("%f",&timeout);
+                timeout=get_cin_double();
             } while (timeout < 0.5 || timeout > 5);
 
             do // dokud neni zadan spravne index mapy
@@ -107,8 +123,8 @@ int main (int argc, char * argv[])
                 std::cout<<"Zadejte cislo mapy (musí být validní)"<<std::endl;
                 //game_type="";
                 //std::cin >> game_type;
-                ec=scanf("%d",&map_number);
-            } while (map_number < 1);
+                map_number=get_cin_integer();
+            } while (map_number < 0);
             client->create_game(timeout,map_number);
         }
         else
@@ -117,10 +133,16 @@ int main (int argc, char * argv[])
             {
                 repeat=0;
                 std::cout<<"Zadejte cislo hry (musí být validní)"<<std::endl;
-                repeat=scanf("%d",&game_number);
+                game_number=get_cin_integer();
             } while (repeat!=1);
             client->join_game(game_number);
         }
+    }
+    catch (Errors & e)
+    {   
+        std::cerr<< e.get_message() <<std::endl;
+        exit(1);
+    }
 
         // hrani
         int konec;
@@ -130,38 +152,10 @@ int main (int argc, char * argv[])
         client->print_map();
         client->print_color();
         std::cout<<std::endl;
-
-        int pid=fork();
-
-        if (pid>0)
-        {
-            while (1)
-            {
-                int c;
-                while ((c=getchar())!='\n') client->message+=c;
-                //std::cin>>move;
-                client->send_move(client->message);
-            }
-        }
-        else if (pid==0)
-        {
-            client->connect_readyRead();
-
-        }
-        else
-        {
-            throw Errors(Errors::FORK);
-        }
+        client->playing();
 
  
-    }
 
-    catch (Errors & e)
-    {   
-        std::cerr<< e.get_message() <<std::endl;
-        if (e.code!=Errors::UNKNOWN_COMMAND)
-            exit(1);
-    }
 
     return a.exec();
 }
