@@ -28,6 +28,7 @@ class Player
 
 		Connection * conn = nullptr;
 		std::thread thread;
+		std::thread go_thread;
 		std::string read_message;
 		Game * game = nullptr;
 		Position position;
@@ -65,5 +66,8 @@ class Player
 		void take_key();
 
 		void send_quit();
+
+		void go_start();
+		void go_stop();
 };
 
