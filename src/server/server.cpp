@@ -102,8 +102,8 @@ Game * Server::assign(int game_id, Player * player)
 /**
  * \fn int Server::new_game(std::string & game_settings)
  * \brief Vytvoří novou hru
- * \param[in] game_setting nastavení hry
- * \return identifikátor hry
+ * \param[in] game_settings nastavení hry
+  * \return identifikátor hry
  */
 int Server::new_game(std::string & game_settings)
 {

@@ -110,7 +110,7 @@ void Map::set(int x, int y, int obj)
 
 /**
  * \fn std::string Map::get_name()
- * \retun název mapy
+ * \return název mapy
 */
 std::string Map::get_name()
 {

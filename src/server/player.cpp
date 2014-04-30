@@ -53,6 +53,10 @@ void Player::take_key()
 	own_key = true;
 }
 
+/**
+ * \fn void Player::go_start()
+ * \brief vytvoří vlákno pro časovač go
+ */
 void Player::go_start()
 {
 	go = true;
@@ -61,6 +65,10 @@ void Player::go_start()
 
 }
 
+/**
+ * \fn void Player::go_stop()
+ * \brief Zastaví časovač go
+ */
 void Player::go_stop()
 {
 	go = false;
