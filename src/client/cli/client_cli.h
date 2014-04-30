@@ -19,11 +19,7 @@
 class Client_cli : public Client
 {
     Q_OBJECT
-public:
-    std::string message;
-
-private:
-    std::deque<std::string> * events_list;
+    std::string last_message;
 public:
     void print_map();
     void print_games();
@@ -37,8 +33,8 @@ public:
 
 private:
     char identify_element(char element);
-    void print_all_events();
     void print_times();
+    void sap_events_message(int events_count,unsigned char events[MAX_EVENTS]);
 
 public slots:
     void game_event();

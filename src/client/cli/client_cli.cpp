@@ -110,7 +110,6 @@ void Client_cli::print_maps()
 void Client_cli::print_color()
 {
     std::cout<<std::endl<<this->refer_color()<<std::flush;
-    events_list->push_back(this->refer_color());
 }
 
 /**
@@ -142,19 +141,18 @@ void Client_cli::print_times()
         std::cout<<"čas zeleného hráče: "<<this->convert_string_time(this->green_time)<<"  počet kroků: "<<green_steps<<std::endl;
 }
 
-
-/**
-*\fn void Client_cli::print_times()
-* Vypíše čas, který strávili jednotlivý hráči ve hře a počet kroků, které vykonali.
-*/
-void Client_cli::print_all_events()
+void Client_cli::sap_events_message(int events_count,unsigned char events[MAX_EVENTS])
 {
-    std::cout<< "Všechny události co nastali během hry:\n\n";
-    for (unsigned i=0; i<events_list->size() ;i++)
+    std::string event;
+    if (events_count!=0)
+        this->last_message="";
+    for (int i=0;i<events_count;i++)
     {
-        std::cout<<events_list->front()<<std::endl;
-        events_list->pop_front();
+        event=this->recognize_event(events[i]);
+        this->last_message+=(event+"\n");
     }
+
+    std::cout<<this->last_message<<std::endl;
 }
 
 /**
@@ -175,40 +173,24 @@ void Client_cli::game_event()
     {
         // KONEC HRY
         this->print_map();
+        sap_events_message(events_count,events);
 
-        for (int i=0;i<events_count;i++)
-        {
-            std::string event=this->recognize_event(events[i]);
-            events_list->push_back(event);
-        }
-
-        print_all_events();
         std::cout<<this->get_game_time()<<std::endl;
-        events_list->push_back(this->get_game_time());
         this->print_times();
         return;
     }
     // pokud neni konec hry
     // vypis specificke události do listu
     this->print_map();
-
-    for (int i=0;i<events_count;i++)
-    {
-        std::string event=this->recognize_event(events[i]);
-        std::cout<<event<<std::endl;
-        events_list->push_back(event);
-    }
-
-    std::cout<<std::endl<<this->message;
-
+    sap_events_message(events_count,events);
 }
 
 
 Client_cli::Client_cli(QObject * parent): Client(parent)
 {
-    events_list = new std::deque <std::string>;
+    
 }
 Client_cli::~Client_cli()
 {
-    delete events_list;
+    
 }
