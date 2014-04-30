@@ -12,9 +12,9 @@ client-gui:
 client-cli:
 	make -C src client-gui && mv src/client/cli/bludiste2014-cli .
 
-run: client server
+run: client-gui server
+	./bludiste2014 &
 	./bludiste2014-server
-	./bludiste2014
 
 pack: clean
 	tar --exclude .git --exclude .gitignore --exclude xvokra00.tar.gz -zcvf xvokra00.tar.gz *
