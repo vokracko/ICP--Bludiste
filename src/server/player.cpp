@@ -14,8 +14,14 @@ Player::Player(Connection * conn)
 {
 	this->conn = conn;
 	id = Server::get_instance()->get_player_id();
+
+	// pid_t pid = fork();
+
+	// if(pid == 0)
+	// {
+	// }
 	thread = std::thread(&Player::work, this);
-	thread.detach();
+	// thread.detach();
 }
 
 /**
@@ -24,6 +30,8 @@ Player::Player(Connection * conn)
  */
 Player::~Player()
 {
+	go = false;
+	thread.join();
 	delete conn;
 }
 
@@ -45,6 +53,19 @@ void Player::take_key()
 	own_key = true;
 }
 
+void Player::go_start()
+{
+	go = true;
+	go_thread = std::thread(&Player::go_timer, this);
+	go_thread.detach();
+
+}
+
+void Player::go_stop()
+{
+	go = false;
+}
+
 /*
  * \fn void Player::work()
  * \brief Veškeré akce hráče
@@ -63,15 +84,7 @@ void Player::work()
 		while(game->is_running() && ok)
 		{
 			receive(&message, Connection::SYNC);
-			if(!ok || message == "quit") break;
-
-			if(message == "go")
-			{
-				message = "step";
-
-				go = true;
-				std::thread(&Player::go_timer, this).detach();
-			}
+			if(!ok || !game->is_running() || message == "quit") break;
 
 			game->cmd(this, &message);  // upraví políčka hry
 		}
@@ -81,15 +94,17 @@ void Player::work()
 
 	}
 
+	if(go)
+	{
+		go_stop();
+	}
+
 	if(game != nullptr)
 	{
 		game->remove_player(this);
 	}
 
-	Server::get_instance()->remove_orphan(this);
-	delete this;
-
-
+	// Server::get_instance()->remove_orphan(this);
 }
 
 /**
@@ -100,16 +115,12 @@ void Player::go_timer()
 {
 	std::string step = "step";
 
-	while(go)
+	while(go && game->is_running())
 	{
-		std::this_thread::sleep_for(std::chrono::milliseconds((int) (game->get_timeout() * 1000)));
-		if(go == false) break;
-
 		game->cmd(this, &step);
+		std::this_thread::sleep_for(std::chrono::milliseconds((int) (game->get_timeout() * 1000)));
 	}
 }
-
-//TODO předělat na asynchroní, volat destruktory
 
 /**
  * \fn int Player::get_id()

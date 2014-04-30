@@ -34,8 +34,7 @@ void Server::accept_player(Connection * conn, const boost::system::error_code& e
 	if(!e)
 	{
 		Player * player = new Player(conn);
-		add_orphan(player);
-
+		orphans.push_back(player);
 		listen();
 	}
 	else

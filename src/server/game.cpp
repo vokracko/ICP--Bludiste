@@ -87,11 +87,20 @@ void Game::send_plain(std::string * msg)
 */
 void Game::cmd(Player * p, std::string * command)
 {
+	if(*command == "go")
+	{
+		p->go_start();
+		return;
+	}
+	else
+	{
+		p->go_stop();
+	}
+
 	map_mutex.lock();
 
 	int res = MOVE_FAIL;
 	int state = 0;
-	p->go = false;
 
 	if(*command == "left")
 	{
@@ -115,7 +124,6 @@ void Game::cmd(Player * p, std::string * command)
 	else if(*command == "step")
 	{
 		res = step(p);
-		p->inc_step();
 
 		if(res == Box::YOU_WIN)
 		{
@@ -260,6 +268,7 @@ int Game::step(Player * p)
 
 	if(next_obj == Box::EMPTY)
 	{
+		p->inc_step();
 		res = MOVE_PASS;
 	}
 	else if(next_obj == Box::KEY && p->has_key())
@@ -269,15 +278,16 @@ int Game::step(Player * p)
 	}
 	else if(next_obj == (Box::GATE + Box::OPEN))
 	{
-		p->go = false;
 		return Box::YOU_WIN;
 	}
 	else if(next_obj == Box::GATE + Box::CLOSED && p->has_key())
 	{
+		p->go = false;
 		return open(p);
 	}
 	else if(next_obj >= 40 && next_obj <= 90 && p->get_color() == Box::MONSTER)
 	{
+		p->go = false;
 		res = next_obj - next_obj%10 + Box::KILLED;
 	}
 
@@ -446,30 +456,27 @@ Map * Game::get_map()
 */
 void Game::remove_player(Player * p)
 {
-	if(running)
+	for(std::vector<Player*>::iterator it = players.begin(); it != players.end(); ++it)
 	{
-		for(std::vector<Player*>::iterator it = players.begin(); it != players.end(); ++it)
+		if(*it == p)
 		{
-			if(*it == p)
-			{
-				players.erase(it);
-				remove_color(p);
-				map->unemplace_player(p);
-				Server::get_instance()->add_orphan(p);
-				break;
-			}
-
+			players.erase(it);
+			remove_color(p);
+			map->unemplace_player(p);
+			Server::get_instance()->add_orphan(p);
+			break;
 		}
 
-		if(players.size())
-		{
-			std::string info = *(map->get_map()) + (char) (p->get_color()+Box::DISCONNECTED);
-			send(info);
-		}
-		else
-		{
-			running = false;
-		}
+	}
+
+	if(players.size())
+	{
+		std::string info = *(map->get_map()) + (char) (p->get_color()+Box::DISCONNECTED);
+		send(info);
+	}
+	else
+	{
+		stop();
 	}
 }
 
