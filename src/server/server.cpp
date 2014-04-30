@@ -182,7 +182,6 @@ void Server::add_orphan(Player * p)
  */
 Server * Server::get_instance()
 {
-
 	static Server instance(*(Server::ios));
 	return &instance;
 }
@@ -266,7 +265,7 @@ int Server::get_game_id()
 
 Server::Server(boost::asio::io_service & ios): acceptor(ios, boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), PORT))
 {
-
+	srand(time(NULL));
 }
 
 Server::~Server()
