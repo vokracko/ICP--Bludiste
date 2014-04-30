@@ -8,7 +8,7 @@ all: clean client
 	make -C server all
 
 server:
-	make -C server bin
+	make -C server
 
 client-gui:
 	make -C client gui
