@@ -7,6 +7,7 @@
 QT       += core gui
 QT+=network
 
+QMAKE_CXX = g++-4.8
 QMAKE_CXXFLAGS += -std=c++11
 
 

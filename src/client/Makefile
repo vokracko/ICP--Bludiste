@@ -1,4 +1,11 @@
-.PHONY: cli gui
+qmake=qmake
+host=$(shell hostname)
+
+ifeq ($(host),merlin.fit.vutbr.cz)
+	qmake=/usr/local/share/Qt-5.2.1/5.2.1/gcc_64/bin/qmake
+endif
+
+.PHONY: cli gui qmake
 
 all: cli gui
 
@@ -10,10 +17,10 @@ gui: qmake-gui
 
 
 qmake-cli: cli/cli.pro
-	cd cli; qmake
+	cd cli; $(qmake)
 
 qmake-gui: gui/gui.pro
-	cd gui; qmake
+	cd gui; $(qmake)
 
 qmake: qmake-cli qmake-gui
 

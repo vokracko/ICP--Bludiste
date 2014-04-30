@@ -7,7 +7,6 @@
 QT       += core
 
 QT+=network
-
 QT       -= gui
 
 TARGET = bludiste2014-cli
@@ -16,6 +15,7 @@ CONFIG   -= app_bundle
 
 TEMPLATE = app
 
+QMAKE_CXX = g++-4.8
 QMAKE_CXXFLAGS += -std=c++11
 QMAKE_CXXFLAGS += -pthread
 
