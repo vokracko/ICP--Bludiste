@@ -25,7 +25,7 @@ Monster::Monster(Game * game, float timeout)
 	pos.look = rand() % 4 + 1;
 	game->get_map()->set(pos.x ,pos.y, Box::MONSTER + pos.look);
 
-	// thread = std::thread(&Monster::work, this);
+	thread = std::thread(&Monster::work, this);
 }
 
 /**
