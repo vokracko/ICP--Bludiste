@@ -47,23 +47,25 @@ bool Game::is_running()
 */
 void Game::stop(bool quit)
 {
-	running = false;
-
-	for(std::vector<Player *>::iterator it = players.begin(); it != players.end(); ++it)
+	if(running)
 	{
-		(*it)->go = false;
-	}
+		running = false;
 
-	if(quit)
-	{
-		std::string msg = "quit\r\n";
-		send_plain(&msg);
-	}
-	else
-	{
-		end_info();
-	}
+		for(std::vector<Player *>::iterator it = players.begin(); it != players.end(); ++it)
+		{
+			(*it)->go = false;
+		}
 
+		if(quit)
+		{
+			std::string msg = "quit\r\n";
+			send_plain(&msg);
+		}
+		else
+		{
+			end_info();
+		}
+	}
 }
 
 /**

@@ -34,7 +34,7 @@ Monster::Monster(Game * game, float timeout)
  */
 Monster::~Monster()
 {
-	// thread.join();
+	thread.join();
 }
 
 /**

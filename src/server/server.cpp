@@ -226,6 +226,7 @@ void Server::stop()
 
 	for(std::vector<Game *>::iterator it = games.begin(); it != games.end(); ++it)
 	{
+		if((*it)->is_running()) (*it)->stop();
 		delete *it;
 	}
 

@@ -15,11 +15,6 @@ Player::Player(Connection * conn)
 	this->conn = conn;
 	id = Server::get_instance()->get_player_id();
 
-	// pid_t pid = fork();
-
-	// if(pid == 0)
-	// {
-	// }
 	thread = std::thread(&Player::work, this);
 	// thread.detach();
 }
