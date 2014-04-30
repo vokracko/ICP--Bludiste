@@ -102,8 +102,8 @@ Game * Server::assign(int game_id, Player * player)
 /**
  * \fn int Server::new_game(std::string & game_settings)
  * \brief Vytvoří novou hru
- * \param[in] game_setting nastavení hry
- * \return identifikátor hry
+ * \param[in] game_settings nastavení hry
+  * \return identifikátor hry
  */
 int Server::new_game(std::string & game_settings)
 {
@@ -182,7 +182,6 @@ void Server::add_orphan(Player * p)
  */
 Server * Server::get_instance()
 {
-
 	static Server instance(*(Server::ios));
 	return &instance;
 }
@@ -266,7 +265,7 @@ int Server::get_game_id()
 
 Server::Server(boost::asio::io_service & ios): acceptor(ios, boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), PORT))
 {
-
+	srand(time(NULL));
 }
 
 Server::~Server()
