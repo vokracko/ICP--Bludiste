@@ -1,5 +1,5 @@
 /**
-*\file bludiste2014_cli.cpp
+*\file main.cpp
 *Obsahuje funkci main, demonstruje klienta pro konzolovou verzi bludiště
 *\author Michal Veselý (xvesel63)
 */
@@ -64,21 +64,19 @@ void  INThandler(int sig)
 }
 
 /**
-\fn Main
+\fn int main (int argc, char * argv[])
 * \brief Řídí celou cli aplikaci, pracující s třídou Client_cli (potomek Client).
-* Získá od uživatele server ke kterému se chce připojit, nechá jej vybrat si zda se chce připojit do existující hry nebo vytvořit novou, 
+* Získá od uživatele server ke kterému se chce připojit, nechá jej vybrat si zda se chce připojit do existující hry nebo vytvořit novou,
 * plus případné parametry hry (timeout, mapa, číslo hry apod.). Poté už probíhá samotné hraní hry.
 */
 int main (int argc, char * argv[])
 {
     QCoreApplication a(argc, argv);
     setlocale(LC_NUMERIC,"C");
-
-
     signal(SIGINT, INThandler);
 
     std::string host,game_type = "";
-    int repeat=0;
+
     try
     {
         // ziskani serveru na pripojeni
@@ -146,17 +144,14 @@ int main (int argc, char * argv[])
         exit(1);
     }
 
-        // hrani
-        int konec;
-
         // vyčistí obrazovku
         client->clear_screen();
-        
+
         // vypsání informací o hře (první mapa a barva)
         client->print_map();
         client->print_color();
         std::cout<<std::endl;
-        
+
         //samotné hraní hry
         client->playing();
 

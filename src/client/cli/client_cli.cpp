@@ -161,7 +161,6 @@ void Client_cli::print_times()
 */
 void Client_cli::sap_events_message(int events_count,unsigned char events[MAX_EVENTS])
 {
-    bool end=false;
     std::string event;
     if (events_count!=0)
             this->last_message="";

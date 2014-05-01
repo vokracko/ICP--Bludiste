@@ -113,7 +113,7 @@ void read_from_socket(QTcpSocket * client_socket , std::string &msg)
 }
 
 /**
-*\fn void get_games()
+*\fn int Client::get_games()
 * \brief Přijme od serveru informace o všech rozehraných hrách
 * \return True, pokud nedojde k vyvolání výjimky
 */
@@ -136,7 +136,7 @@ int Client::get_games()
 
 
 /**
-*\fn void show_maps()
+*\fn int Client::show_maps()
 * \brief Přijme od serveru informace o všech mapách k dispozici
 * \return True, pokud nedojde k vyvolání výjimky
 */
@@ -197,7 +197,7 @@ int Client::join_game(int game_id)
     int index=0;
     for (int i=0; i<this->height;i++)
         for (int j=0; j<this->width; j++)
-        {   
+        {
             this->map[i][j]=game_info.at(index++);
         }
     return 1;
@@ -274,7 +274,7 @@ int Client::create_game(double timeout, int map_type)
 /**
 \fn void Client::send_move(std::string command)
 *\brief Pošle serveru informaci o aktuálním tahu hráče
-*\param std::string command Příkaz reprezentující tah (go,right,left,stop,take,open)
+*\param command Příkaz reprezentující tah (go,right,left,stop,take,open)
 * \return True, pokud nedojde k vyvolání výjimky
 */
 int Client::send_move(std::string command)
@@ -373,7 +373,7 @@ int Client::accept_state_map(unsigned char events[MAX_EVENTS],int * events_count
 /**
 *\fn std::string Client::recognize_event(int event_code)
 * \brief Rozpozná událost která nastala podle event_code a vrátí textovou reprezentaci této informace.
-* \param events_code Hodnota enumerátoru z events_enumerator.h, identifikující události
+* \param event_code Hodnota enumerátoru z events_enumerator.h, identifikující události
 * \return Textový řetězec reprezentující informaci o události jenž je vypsána.
 */
 std::string Client::recognize_event(int event_code)
