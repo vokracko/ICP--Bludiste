@@ -131,10 +131,9 @@ int main (int argc, char * argv[])
         {
             do // dokud neni zadano spravne cislo hry
             {
-                repeat=0;
                 std::cout<<"Zadejte cislo hry (musí být validní)"<<std::endl;
                 game_number=get_cin_integer();
-            } while (repeat!=1);
+            } while (game_number == -1);
             client->join_game(game_number);
         }
     }

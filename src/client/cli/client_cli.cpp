@@ -156,19 +156,21 @@ void Client_cli::sap_events_message(int events_count,unsigned char events[MAX_EV
     if (events_count!=0)
             this->last_message="";
 
+
     for (int i=0;i<events_count;i++)
     {
+
         event=this->recognize_event(events[i]);
-        if (event.compare("Byl jsi zabit")==0)
+        this->last_message+=(event+"\n");
+        std::cout<<this->last_message<<std::endl;
+
+        if (event == "Byl jsi zabit")
         {
             this->end_processes();
-            end=true;
+            exit(0);
         }
-        this->last_message+=(event+"\n");
-    }
 
-    std::cout<<this->last_message<<std::endl;
-    if (end) exit(0);
+    }
 }
 
 /**
