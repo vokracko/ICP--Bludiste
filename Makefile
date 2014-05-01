@@ -19,7 +19,7 @@ pack: clean
 	tar --exclude .git --exclude .gitignore --exclude xvokra00.tar.gz -zcvf xvokra00.tar.gz *
 
 clean:
-	rm -rf examples/bludiste2014 examples/bludiste2014-server examples/bludiste2014-cli examples./.* 2> /dev/null
+	rm -rf examples/bludiste2014 examples/bludiste2014-server examples/bludiste2014-cli 2> /dev/null
 	rm -rf doc xvokra00.tar.gz 2> /dev/null
 	make -C src clean
 
