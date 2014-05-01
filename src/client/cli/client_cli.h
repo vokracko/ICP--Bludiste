@@ -21,11 +21,11 @@
 class Client_cli : public Client
 {
     Q_OBJECT    
+private:
     std::string last_message;
     pid_t pid_child;
 public:
     bool game_begin;
-
 public:
     void print_map();
     void print_games();
@@ -33,11 +33,10 @@ public:
     void print_color();
     void connect_readyRead();
     void clear_screen();
+    void playing();
+    void end_processes();
     Client_cli(QObject *parent=0);
     ~Client_cli();
-    void playing();
-void end_processes();
-
 private:
     char identify_element(char element);
     void print_times();

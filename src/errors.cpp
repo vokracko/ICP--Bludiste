@@ -12,7 +12,7 @@ Errors::Errors(int code)
 }
 
 /**\fn std::string Errors::what()
-*
+*\brief Vrátí textový řetězec s chybovou hláškou
 *\return Chybovou hlášku vyjímky, která byla vyvolána
  */
 std::string Errors::what()
