@@ -28,7 +28,5 @@ clean: qmake
 	make -C gui clean
 	make -C cli clean
 
-	rm *.o
-	rm cli/Makefile
-	rm gui/Makefile
+	rm -rf *.o cli/Makefile gui/Makefile
 

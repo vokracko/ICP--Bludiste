@@ -39,7 +39,7 @@ void Client_cli::print_map()
 /**
 *\fn char Client_cli::identify_element(char element)
 * \brief Převede vstupní znak na výstupní znak srozumitelně reprezentující význam prvku na mapě pro cli rozhraní.
-* W = zeď, O=otevřená brána , G=zavřená brána, K=klíč, H=hlídač, P=protihráč a hráč hrající na tomto klientovi je reprezentován znaky "A,<,>,V" podle natočení.
+* \details W = zeď, O=otevřená brána , G=zavřená brána, K=klíč, H=hlídač, P=protihráč a hráč hrající na tomto klientovi je reprezentován znaky "A,<,>,V" podle natočení.
 * \return Znak symbolizující element na mapě
 * \param element Znak získaný od serveru, jehož význam chceme konvertovat do srozumitelné podoby.
 */
@@ -157,7 +157,7 @@ void Client_cli::print_times()
 /**
 \fn void Client_cli::sap_events_message(int events_count,unsigned char events[MAX_EVENTS])
 \brief postupně vypíše všechny poslední nastalé události s detekcí zabití.
-* Pokud je hráč zabit, je ukončen čtecí proces.
+*\details Pokud je hráč zabit, je ukončen čtecí proces.
 */
 void Client_cli::sap_events_message(int events_count,unsigned char events[MAX_EVENTS])
 {
@@ -185,7 +185,7 @@ void Client_cli::sap_events_message(int events_count,unsigned char events[MAX_EV
 /**
 *\fn void Client_cli::game_event()
 * \brief Slot, který je vyvolán při signálu readyRead. Vyčistí obrazovku, přijme stav mapy, události které nastali a vše vypíše.
-* Zároveň definuje chování na konci hry a v případě zabití hráče.
+* \details Zároveň definuje chování na konci hry a v případě zabití hráče.
 */
 void Client_cli::game_event()
 {
@@ -217,8 +217,8 @@ void Client_cli::game_event()
 
 /**
 \fn void Client_cli::playing()
+* \details Vytvoří proces pro čtení příkazů a rodičovský proces pouze přijímá data od serveru (pomocí slotu a signálu readyRead).
 \brief Spouští počátek hraní v CLI módu.
-* Vytvoří proces pro čtení příkazů a rodičovský proces pouze přijímá data od serveru (pomocí slotu a signálu readyRead).
 */
 void Client_cli::playing()
 {

@@ -7,7 +7,7 @@
 
  /**
   * \fn Connection::Connection(boost::asio::io_service & ios): socket(ios)
-  * \brief Vytvoří třídu připojení a komikační soket
+  * \brief Vytvoří třídu připojení a komukační soket
   * \param[in] ios reference na boost::io_service
  */
 Connection::Connection(boost::asio::io_service & ios): socket(ios)

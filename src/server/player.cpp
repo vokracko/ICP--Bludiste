@@ -156,7 +156,7 @@ Position Player::get_position()
 
 /**
  * \fn bool Player::init()
- * \brief Komunikace s klientemnež se připojí do hry
+ * \brief Komunikace s klientem než se připojí do hry
  * \return výsledek připojení
  */
 bool Player::init()
@@ -257,7 +257,6 @@ void Player::send_map_list()
 /**
  * \fn void Player::end_info()
  * \brief Vytvoří string s informacemi o tomto hráči
- * \@see Game::end_info
  * \return řetězec s informacemi
  */
 std::string Player::end_info()

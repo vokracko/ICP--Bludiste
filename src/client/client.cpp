@@ -207,7 +207,7 @@ int Client::join_game(int game_id)
 /**
 *\fn void Client::create_game(int width, int height, double timeout)
 * \brief Pošle serveru žádost o vytvoření nové hry
-* V případě nedodržení limitu velikosti dojde k vyvolání vyjímky
+* \details V případě nedodržení limitu velikosti dojde k vyvolání vyjímky
 *\param timeout Časový interval, ve kterém dochází ke změnám ve hře
 * \param map_type Typ mapy, ktery chce hrac zalozit
 *\return True (různé od 0) pokud se podařilo vytvořit hru, jinak False
@@ -298,11 +298,11 @@ int Client::send_move(std::string command)
 
 /**
 *\fn int Client::parse_map(unsigned char events[MAX_EVENTS],int * events_count,std::string map_in_string, int event_index)
-*\brief  Přečte ze socketu informace o aktuálním stavu hry a uloží je do atributu map.
-* V případě, že je konec hry získá informace o hře (celkový čas hry, doba hry každého hráče, a počet kroků kolik hráč udělal).<br />
+* \details V případě, že je konec hry získá informace o hře (celkový čas hry, doba hry každého hráče, a počet kroků kolik hráč udělal).<br />
 * V případě že není konec hry, ale nastane nějaká speciální událost, je součástí této zprávy a bude vyhodnocena (například úmrtí některého hráče apod.).<br />
 * Socket client_socket je propoj se slotem v třídě game_window a tato metoda je invokována v případě, že na socket přijdou data obsahující mapu (obdobně pro CLI mód). <br />
 * Může dojít k rekurzivnímu volání v případě, že došlo ke spojení více zpráv dohromady.
+*\brief  Přečte ze socketu informace o aktuálním stavu hry a uloží je do atributu map.
 *\return 1 pokud je konec hry, jinak 0
 * \param events Pole enum hodnot do kterého naplní funkce specifické události, které vznikly
 * \param events_count Celočíselná proměnná, do které uloží funkce počet specifických událostí, které vznikly
@@ -356,7 +356,7 @@ int Client::parse_map(unsigned char events[MAX_EVENTS],int * events_count,std::s
 /**
 *\fn void Client::accept_state_map()
 * \brief Volá funkci parse_map, která naplní pole events událostmi které vznikli a events_count počtem těchto událostí.
-* Počítá i s možností spojení více zpráv dohromady v případě, že se zprávy při odesílání nevyžádaně spojí.
+* \details Počítá i s možností spojení více zpráv dohromady v případě, že se zprávy při odesílání nevyžádaně spojí.
 *\return 1 pokud je konec hry, jinak 0
 * \param events Pole enum hodnot do kterého naplní funkce specifické události, které vznikly
 * \param events_count Celočíselná proměnná, do které uloží funkce počet specifických událostí, které vznikly
@@ -506,6 +506,7 @@ std::string Client::convert_string_time(int time_int)
 
 /**
 *\fn std::string Client::get_game_time()
+* \brief Vrátí textovou informaci a době trvání hry.
 * \return Vrátí textovou informaci a době trvání hry.
 */
 std::string Client::get_game_time()

@@ -46,8 +46,8 @@ double get_cin_double()
 Client_cli * client= new Client_cli;
 
 /**
-\fn void  INThandler(int sig)
 \brief Reakce na ukončení programu signálem ctrl+c
+\fn void  INThandler(int sig)
 * V případě že je program ukončen signálem ctrl+c je serveru zaslána informace o ukončení hry (v destruktoru klienta, který je zde invokován).<br />
 * V případě že je hra již ve stádiu hraní, tak se současně ukončí čtecí proces.
 */
@@ -65,9 +65,9 @@ void  INThandler(int sig)
 
 /**
 \fn int main (int argc, char * argv[])
-* \brief Řídí celou cli aplikaci, pracující s třídou Client_cli (potomek Client).
 * Získá od uživatele server ke kterému se chce připojit, nechá jej vybrat si zda se chce připojit do existující hry nebo vytvořit novou,
 * plus případné parametry hry (timeout, mapa, číslo hry apod.). Poté už probíhá samotné hraní hry.
+* \brief Řídí celou cli aplikaci, pracující s třídou Client_cli (potomek Client).
 */
 int main (int argc, char * argv[])
 {

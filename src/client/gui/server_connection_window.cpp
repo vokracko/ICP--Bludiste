@@ -25,9 +25,9 @@ server_connection_window::~server_connection_window()
 }
 
 /**
-*\fn void server_connection_window::on_server_connect_button_clicked()
 *\brief Funkce reagující na signál vyvolaný kliknutím na tlačítko připojit.
-*Dojde k pokusu o připojení k serveru v okně pro zadání adresy serveru. Pokud se k serveru nepodaří připojit, vygeneruje se výjimka která se projeví
+*\fn void server_connection_window::on_server_connect_button_clicked()
+* \details Dojde k pokusu o připojení k serveru v okně pro zadání adresy serveru. Pokud se k serveru nepodaří připojit, vygeneruje se výjimka která se projeví
 * vypsáním chybové hlášky. Program umožňuje nové zadání adresy serveru (vyvoláním výjimky nedojde k ukončení programu).
 */
 void server_connection_window::on_server_connect_button_clicked()

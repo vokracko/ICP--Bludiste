@@ -9,9 +9,9 @@
 #include "game_field.h"
 
 /**
-*\fn Game_field::Game_field(int height,int width,QWidget * parent) : QGridLayout(parent)
 * \brief Konstruktor třídy Game_field vytvoří QPixmapy všech herních komponent a maticí Qlabelů, do kterých jsou tyto QPixmapy vykreslovány.
-* Konstruktor třídy Game_field dědí od třídy QGridLayout. Instanciuje všechny QPixmapy, do kterých jsou uloženy jednotlivé obrázky (herní kompomenty).
+*\fn Game_field::Game_field(int height,int width,QWidget * parent) : QGridLayout(parent)
+* \details Konstruktor třídy Game_field dědí od třídy QGridLayout. Instanciuje všechny QPixmapy, do kterých jsou uloženy jednotlivé obrázky (herní kompomenty).
 * Konstruktor také vytváří dvourozměrné pole instancí třídy QLabel, do kterých jsou tyto obrázky ukládány.
 */
 Game_field::Game_field(int height,int width,QWidget * parent) : QGridLayout(parent)

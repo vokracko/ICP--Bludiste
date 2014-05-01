@@ -22,7 +22,7 @@ Game::Game(float timeout, int map_id)
 
 /**
  * \fn Game::~Game()
- * \brief Smaže mapa a hlídače
+ * \brief Smaže mapu a hlídače
 */
 Game::~Game()
 {
@@ -70,7 +70,7 @@ void Game::stop(bool quit)
 
 /**
  * \fn void Game::send_plain(std::string * msg)
- * \brief Odešle zprávu všem hráčům
+ * \brief Odešle zprávu všem hráčům bez informací o tahu
  * \param msg zpráva
  */
 void Game::send_plain(std::string * msg)

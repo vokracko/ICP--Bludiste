@@ -19,9 +19,9 @@ game_window::game_window(Client * client,QWidget *parent) :
 
 
 /**
-*\fn void game_window::create_game_field()
 * \brief Funkce pro vytvoření hracího okna. Dynamicky nastavuje velikost okna podle rozměrů hrací plochy.
-* Dynamicky umisťuje jednotlivé komponenty podle rozměrů okna.
+*\fn void game_window::create_game_field()
+* \details Dynamicky umisťuje jednotlivé komponenty podle rozměrů okna.
 * alokuje hrací plochu a propojuje ji s mřížkou umístěnou v grafickém rozhraní.
 */
 void game_window::create_game_field()
@@ -99,9 +99,9 @@ void game_window::show_happend_events(unsigned char events[MAX_EVENTS],int event
 
 
 /**
-*\fn void game_window::game_showing()
 * \brief Slot který je spušťěn signálem readyRead, když přijdou data ze serveru.
-* Obstarává vykreslování a hrací plochy po příchodu aktuálního stavu hry od serveru.
+*\fn void game_window::game_showing()
+* \details Obstarává vykreslování a hrací plochy po příchodu aktuálního stavu hry od serveru.
 * Současně se stará o detekci konce hry a jeho obsluhu a o vypisování událostí které během hry nastali.
 */
 void game_window::game_showing()
@@ -150,9 +150,9 @@ game_window::~game_window()
 
 
 /**
-*\fn void game_window::on_send_command_button_clicked()
 * \brief Reakce na stisknutí tlačítka pro potvrzení příkazu.
-* Slot reagující na signál vyvolaný stisknutím tlačítka potvrzení příkazu. V případě chyby (neexistujícího příkazu)
+*\fn void game_window::on_send_command_button_clicked()
+* \details Slot reagující na signál vyvolaný stisknutím tlačítka potvrzení příkazu. V případě chyby (neexistujícího příkazu)
 * dojde k vyvolání výjimky a vypsání chybové hlášky (bez ukončení programu).
 */
 void game_window::on_send_command_button_clicked()
