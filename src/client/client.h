@@ -46,6 +46,7 @@ public:
 private:
     int pos_x,pos_y;
     double timeout;
+    bool connected_to_host;
 protected:
     int color;
     int white_steps,red_steps,blue_steps,green_steps;

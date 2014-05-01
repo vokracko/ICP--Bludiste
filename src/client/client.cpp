@@ -25,6 +25,7 @@ Client::Client(QObject * parent): QObject(parent)
     blue_time=0;
     green_time=0;
     game_duration=0;
+    connected_to_host=false;
 
     client_socket=NULL;
 }
@@ -38,6 +39,8 @@ Client::~Client()
     if (this->client_socket!=NULL)
     {
         this->send_quit();
+        if (this->connected_to_host)
+            this->client_socket->disconnectFromHost();
         delete this->client_socket;
     }
 }
@@ -55,6 +58,7 @@ int Client::connect_socket(const char * host)
     client_socket->connectToHost(host, 1234);
     if (client_socket->waitForConnected(3000))
     {
+        this->connected_to_host=true;
         return 1;
     }
     else
