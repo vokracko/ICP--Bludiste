@@ -12,8 +12,11 @@
 #include <fcntl.h>
 #include <string.h>
 
-// nacte z cin integer
-// vraci number pokud je zadano spravne a -1 pokud nespravne
+/**
+\fn int get_cin_integer()
+ \brief Načte z cin číslo typu integer.
+ \return number pokud je zadano spravne a -1 pokud nespravne
+*/
 int get_cin_integer()
 {
     std::string str;
@@ -24,8 +27,11 @@ int get_cin_integer()
     else return -1;
 }
 
-// nacte z cin float
-// vraci number pokud je zadano spravne a -1.0 pokud nespravne
+/**
+\fn double get_cin_double()
+ \brief Načte z cin číslo typu double.
+ \return double číslo pokud je zadáno spravne a -1.0 pokud nesprávně
+*/
 double get_cin_double()
 {
     std::string str;
@@ -39,6 +45,12 @@ double get_cin_double()
 
 Client_cli * client= new Client_cli;
 
+/**
+\fn void  INThandler(int sig)
+\brief Reakce na ukončení programu signálem ctrl+c
+* V případě že je program ukončen signálem ctrl+c je serveru zaslána informace o ukončení hry (v destruktoru klienta, který je zde invokován).<br />
+* V případě že je hra již ve stádiu hraní, tak se současně ukončí čtecí proces.
+*/
 void  INThandler(int sig)
 {
      signal(sig, SIG_IGN);
@@ -51,20 +63,11 @@ void  INThandler(int sig)
      exit(0);
 }
 
-void read_from_cin(std::string * msg)
-{
-    std::cin>>*msg;
-}
-
-void send_message(std::string msg)
-{
-    client->send_move(msg);
-}
-
-
 /**
 \fn Main
-* Řídí celou cli aplikaci, pracující s třídou Client_cli (potomek Client).
+* \brief Řídí celou cli aplikaci, pracující s třídou Client_cli (potomek Client).
+* Získá od uživatele server ke kterému se chce připojit, nechá jej vybrat si zda se chce připojit do existující hry nebo vytvořit novou, 
+* plus případné parametry hry (timeout, mapa, číslo hry apod.). Poté už probíhá samotné hraní hry.
 */
 int main (int argc, char * argv[])
 {
@@ -148,13 +151,14 @@ int main (int argc, char * argv[])
 
         // vyčistí obrazovku
         client->clear_screen();
+        
+        // vypsání informací o hře (první mapa a barva)
         client->print_map();
         client->print_color();
         std::cout<<std::endl;
+        
+        //samotné hraní hry
         client->playing();
-
-
-
 
     return a.exec();
 }

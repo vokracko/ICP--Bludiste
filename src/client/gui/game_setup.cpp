@@ -30,6 +30,7 @@ game_setup::~game_setup()
 
 /**
 *\fn void game_setup::get_maps()
+* \brief Umístí do listu map všechny mapy k dispozici
 * Volání metody show_maps() třídy Client, pro získání map k dispozici od serveru a jejich zobrazení do listu umístěném v okně
 * metodou insert_lines.<br/>
 * V případě chyby je vyvolána výjimka a vypsána chyba (nedojde k ukončení programu).
@@ -51,7 +52,7 @@ void game_setup::get_maps()
 
 /**
 *\fn void game_setup::show_available_games()
-* Zavolá funkci get_games() třídy Client a zobrazí všechny rozehrané hry v okně.
+* \brief Zavolá funkci get_games() třídy Client a zobrazí všechny rozehrané hry v okně.
 * V případě chyby je vyvolána výjimka a vypsána chyba (nedojde k ukončení programu).
 */
 void game_setup::show_available_games()
@@ -72,7 +73,7 @@ void game_setup::show_available_games()
 
 /**
 *\fn void game_setup::insert_lines(std::string str,QListWidget * list)
-* Naparsuje textový řetězec str a zobrazí jednotlivé položky do komponenty instance třídy QListWidget.
+* \brief Naparsuje textový řetězec str a zobrazí jednotlivé položky do komponenty instance třídy QListWidget.
 * \param str Textový řetězec obsahující informace oddělené novým řádkem.
 * \param list Odkaz na instanci třídy QListWidget jenž umožňuje výběr konkrétní položky.
 */
@@ -100,7 +101,7 @@ void game_setup::insert_lines(std::string str,QListWidget * list)
 
 /**
 *\fn void game_setup::on_refresh_button_clicked()
-* Slot reagující na signál vyvolaný kliknutím na tlačítko aktualizovat. Vyvolá metodu get_games a dojde k zobrazení aktuálně rozehraných her.
+* \brief Slot reagující na signál vyvolaný kliknutím na tlačítko aktualizovat. Vyvolá metodu get_games a dojde k zobrazení aktuálně rozehraných her.
 */
 void game_setup::on_refresh_button_clicked()
 {
@@ -120,7 +121,7 @@ void game_setup::on_refresh_button_clicked()
 
 /**
 *\fn void game_setup::on_connect_game_button_clicked()
-* Slot reagující na signál vyvolaný kliknutím na tlačítko pro připojení ke hře. <br/>
+* \brief Slot reagující na signál vyvolaný kliknutím na tlačítko pro připojení ke hře.
 * Dojde k odeslání vybrané hry serveru s žádostí o připojení se ke hře. V případě neúspěchu je vypsáno chybové hlášení a dojde k vyvolání výjimky.
 * (Běh programu se neukončí).<br/>
 * V případě úspěchu se vytvoří hrací okno.
@@ -151,7 +152,7 @@ void game_setup::on_connect_game_button_clicked()
 
 /**
 *\fn void game_setup::on_create_game_button_clicked()
-* Slot reagující na signál vyvolaný kliknutím na tlačítko pro vytvoření hry. <br/>
+* \brief Slot reagující na signál vyvolaný kliknutím na tlačítko pro vytvoření hry.
 * Dojde k odeslání vybrané mapy serveru s žádostí o vytvoření hry. V případě neúspěchu je vypsáno chybové hlášení a dojde k vyvolání výjimky.
 * (Běh programu se neukončí). <br/>
 * V případě úspěchu se vytvoří hrací okno.
@@ -187,7 +188,7 @@ void game_setup::on_create_game_button_clicked()
 
 /**
 *\fn void game_setup::create_game_window()
-* Vyvolá vytvoření hracího okna a naplnění reference na třídu Client.
+* \brief Vyvolá vytvoření hracího okna a naplnění reference na třídu Client.
 */
 void game_setup::create_game_window()
 {
@@ -195,6 +196,4 @@ void game_setup::create_game_window()
     game_window_w->show();
     this->hide();
     game_window_w->create_game_field();
-    //game_window_w->print_map();
-
 }

@@ -22,8 +22,7 @@
 #include <QTimer>
 #include "./../errors.h"
 #include "./../box.h"
-// #include "./../game_components.h"
-// #include "./../events_enumerator.h"
+
 
 #define BUFFER_SIZE 1024
 #define MAX_EVENTS 25
@@ -47,14 +46,16 @@ public:
 private:
     int pos_x,pos_y;
     double timeout;
-public:
+    bool connected_to_host;
+protected:
     int color;
+    int white_steps,red_steps,blue_steps,green_steps;
+    int white_time,red_time,blue_time,green_time,game_duration;
+public:
     int width,height;
     std::string games;
     std::string maps;
     char map[50][50];
-    int white_steps,red_steps,blue_steps,green_steps;
-    int white_time,red_time,blue_time,green_time,game_duration;
 
 public:
     explicit Client(QObject *parent=0);

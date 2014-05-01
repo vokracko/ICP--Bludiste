@@ -9,6 +9,10 @@
 #include <QHostAddress>
 #include <string>
 
+/**
+*\fn Client::~Client()
+* \brief Konstruktor klienta, inicializuje některé hodnoty
+*/
 Client::Client(QObject * parent): QObject(parent)
 {
     setlocale(LC_NUMERIC,"C");
@@ -21,21 +25,29 @@ Client::Client(QObject * parent): QObject(parent)
     blue_time=0;
     green_time=0;
     game_duration=0;
+    connected_to_host=false;
 
     client_socket=NULL;
 }
+
+/**
+*\fn Client::~Client()
+* \brief Destruktor klienta zavře a smaže QTcpSocket
+*/
 Client::~Client()
 {
     if (this->client_socket!=NULL)
     {
         this->send_quit();
+        if (this->connected_to_host)
+            this->client_socket->disconnectFromHost();
         delete this->client_socket;
     }
 }
 
 /**
 *\fn void Client::connect_socket(char * host)
-* Provede a zkontroluje připojení ke QT socketu.
+* \brief Provede a zkontroluje připojení ke QT socketu.
 *\param host Adresa, na kterou se připojuje client
 *\return True, pokud se podaří připojit, jinak False
 */
@@ -46,6 +58,7 @@ int Client::connect_socket(const char * host)
     client_socket->connectToHost(host, 1234);
     if (client_socket->waitForConnected(3000))
     {
+        this->connected_to_host=true;
         return 1;
     }
     else
@@ -101,7 +114,7 @@ void read_from_socket(QTcpSocket * client_socket , std::string &msg)
 
 /**
 *\fn void get_games()
-* Přijme od serveru informace o všech rozehraných hrách
+* \brief Přijme od serveru informace o všech rozehraných hrách
 * \return True, pokud nedojde k vyvolání výjimky
 */
 int Client::get_games()
@@ -124,7 +137,7 @@ int Client::get_games()
 
 /**
 *\fn void show_maps()
-* Přijme od serveru informace o všech mapách k dispozici
+* \brief Přijme od serveru informace o všech mapách k dispozici
 * \return True, pokud nedojde k vyvolání výjimky
 */
 int Client::show_maps()
@@ -145,7 +158,7 @@ int Client::show_maps()
 
 /**
 *\fn void Client::join_game(int game_id)
-*Pošle serveru žádost o připojení do hry
+*\brief Pošle serveru žádost o připojení do hry
 *\param game_id Unikátní identifikátor hry generovaný serverem
 * \return True, pokud nedojde k vyvolání výjimky
 */
@@ -193,11 +206,10 @@ int Client::join_game(int game_id)
 
 /**
 *\fn void Client::create_game(int width, int height, double timeout)
-* Pošle serveru žádost o vytvoření nové hry
-*\param width Šířka v počtech hracích políček (omezeno na 20-50).
+* \brief Pošle serveru žádost o vytvoření nové hry
 * V případě nedodržení limitu velikosti dojde k vyvolání vyjímky
-*\param height Výška programu, stejný limit i reakce na jeho nedodržení jako u width
 *\param timeout Časový interval, ve kterém dochází ke změnám ve hře
+* \param map_type Typ mapy, ktery chce hrac zalozit
 *\return True (různé od 0) pokud se podařilo vytvořit hru, jinak False
 */
 int Client::create_game(double timeout, int map_type)
@@ -261,7 +273,7 @@ int Client::create_game(double timeout, int map_type)
 
 /**
 \fn void Client::send_move(std::string command)
-* Pošle serveru informaci o aktuálním tahu hráče
+*\brief Pošle serveru informaci o aktuálním tahu hráče
 *\param std::string command Příkaz reprezentující tah (go,right,left,stop,take,open)
 * \return True, pokud nedojde k vyvolání výjimky
 */
@@ -286,7 +298,7 @@ int Client::send_move(std::string command)
 
 /**
 *\fn int Client::parse_map(unsigned char events[MAX_EVENTS],int * events_count,std::string map_in_string, int event_index)
-* Přečte ze socketu informace o aktuálním stavu hry a uloží je do atributu map.<br />
+*\brief  Přečte ze socketu informace o aktuálním stavu hry a uloží je do atributu map.
 * V případě, že je konec hry získá informace o hře (celkový čas hry, doba hry každého hráče, a počet kroků kolik hráč udělal).<br />
 * V případě že není konec hry, ale nastane nějaká speciální událost, je součástí této zprávy a bude vyhodnocena (například úmrtí některého hráče apod.).<br />
 * Socket client_socket je propoj se slotem v třídě game_window a tato metoda je invokována v případě, že na socket přijdou data obsahující mapu (obdobně pro CLI mód). <br />
@@ -343,8 +355,8 @@ int Client::parse_map(unsigned char events[MAX_EVENTS],int * events_count,std::s
 
 /**
 *\fn void Client::accept_state_map()
-* Volá funkci parse_map, která naplní pole events událostmi které vznikli, events_count počtem těchto událostí a events_count počtem těchto událostí.
-* Počítá i s možností spojení více zpráv dohromady.
+* \brief Volá funkci parse_map, která naplní pole events událostmi které vznikli a events_count počtem těchto událostí.
+* Počítá i s možností spojení více zpráv dohromady v případě, že se zprávy při odesílání nevyžádaně spojí.
 *\return 1 pokud je konec hry, jinak 0
 * \param events Pole enum hodnot do kterého naplní funkce specifické události, které vznikly
 * \param events_count Celočíselná proměnná, do které uloží funkce počet specifických událostí, které vznikly
@@ -360,7 +372,7 @@ int Client::accept_state_map(unsigned char events[MAX_EVENTS],int * events_count
 
 /**
 *\fn std::string Client::recognize_event(int event_code)
-* Rozpozná událost která nastala podle event_code a vrátí textovou reprezentaci této informace.
+* \brief Rozpozná událost která nastala podle event_code a vrátí textovou reprezentaci této informace.
 * \param events_code Hodnota enumerátoru z events_enumerator.h, identifikující události
 * \return Textový řetězec reprezentující informaci o události jenž je vypsána.
 */
@@ -446,7 +458,7 @@ std::string Client::recognize_event(int event_code)
 
 /**
 *\fn std::string Client::refer_color()
-* Rozpozná na základě atributu color z třídy Client o jakou se jedná barvu a vrátí výsledek jako textovou informaci, jenž může být vypsána.
+* \brief Rozpozná na základě atributu color z třídy Client o jakou se jedná barvu a vrátí výsledek jako textovou informaci, jenž může být vypsána.
 * \return Textový řetězec reprezentující informaci o barvě.
 */
 std::string Client::refer_color()
@@ -463,7 +475,7 @@ std::string Client::refer_color()
 
 /**
 *\fn void Client::send_quit()
-* Pošle informaci o ukončení klienta serveru.
+* \brief Pošle informaci o ukončení klienta serveru.
 */
 void Client::send_quit()
 {
@@ -474,7 +486,7 @@ void Client::send_quit()
 
 /**
 * \fn std::string Client::convert_string_time(int time_int)
-* Převede čas ze sekund na string tvaru Xh Ym Zs
+* \brief Převede čas ze sekund na string tvaru Xh Ym Zs
 * \param time_int Čas v sekundach
 */
 std::string Client::convert_string_time(int time_int)
@@ -503,7 +515,7 @@ std::string Client::get_game_time()
 
 /**
 *\fn std::string Client::get_tooltip(int x,int y)
-* Získá informaci o konkrétním políčku a vrátí hint (tooltip), který má být tomuto políčku přiřazen.
+* \brief Získá informaci o konkrétním políčku a vrátí hint (tooltip), který má být tomuto políčku přiřazen.
 * \param x X-ová souřadnice hráče na mapě
 * \param y Y-ová souřadnice hráče na mapě
 * \return Textový řetězec reprezentující informaci o hráči, obsahující počet kroků a čas strávený ve hře.

@@ -11,7 +11,7 @@
 
 /**
 *\fn void Client_cli::clear_screen()
-* Smaže obsah konzole a přesune kursor do pravého horního rohu
+* \brief Smaže obsah konzole a přesune kursor do pravého horního rohu
 */
 void Client_cli::clear_screen()
 {
@@ -21,7 +21,7 @@ void Client_cli::clear_screen()
 
 /**
 *\fn void Client_cli::print_map()
-* Vypíše stav hrací plochy
+* \brief Vypíše stav hrací plochy
 */
 void Client_cli::print_map()
 {
@@ -38,7 +38,7 @@ void Client_cli::print_map()
 
 /**
 *\fn char Client_cli::identify_element(char element)
-* Převede vstupní znak na výstupní znak srozumitelně reprezentující význam prvku na mapě. <br />
+* \brief Převede vstupní znak na výstupní znak srozumitelně reprezentující význam prvku na mapě pro cli rozhraní.
 * W = zeď, O=otevřená brána , G=zavřená brána, K=klíč, H=hlídač, P=protihráč a hráč hrající na tomto klientovi je reprezentován znaky "A,<,>,V" podle natočení.
 * \return Znak symbolizující element na mapě
 * \param element Znak získaný od serveru, jehož význam chceme konvertovat do srozumitelné podoby.
@@ -84,6 +84,10 @@ char Client_cli::identify_element(char element)
     return 'X';
 }
 
+/**
+\fn void Client_cli::end_processes()
+\brief zabije proces určený pro čtení ze serveru a destruuje klienta.
+*/
 void Client_cli::end_processes()
 {
     kill(this->pid_child,SIGTERM);
@@ -92,7 +96,7 @@ void Client_cli::end_processes()
 
 /**
 *\fn void Client_cli::print_games()
-* Vypíše rozehrané hry, ke kterým se lze připojit
+* \brief Vypíše rozehrané hry, ke kterým se lze připojit
 */
 void Client_cli::print_games()
 {
@@ -102,7 +106,7 @@ void Client_cli::print_games()
 
 /**
 *\fn void Client_cli::print_maps()
-* Vypíše mapy, které jsou k dispozici pro založení nové hry
+* \brief Vypíše mapy, které jsou k dispozici pro založení nové hry
 */
 void Client_cli::print_maps()
 {
@@ -112,7 +116,7 @@ void Client_cli::print_maps()
 
 /**
 *\fn void Client_cli::print_color()
-* Vypíše barvu a uloží si ji do seznamu událostí.
+* \brief Vypíše barvu a uloží si ji do seznamu událostí.
 */
 void Client_cli::print_color()
 {
@@ -122,7 +126,7 @@ void Client_cli::print_color()
 
 /**
 *\fn void Client_cli::connect_readyRead()
-* připojí signál readyRead k socketu klienta.
+* \brief připojí signál readyRead k socketu klienta.
 */
 void Client_cli::connect_readyRead()
 {
@@ -133,7 +137,7 @@ void Client_cli::connect_readyRead()
 
 /**
 *\fn void Client_cli::print_times()
-* Vypíše čas, který strávili jednotlivý hráči ve hře a počet kroků, které vykonali.
+* \brief Vypíše čas, který strávili jednotlivý hráči ve hře a počet kroků, které vykonali.
 */
 void Client_cli::print_times()
 {
@@ -149,6 +153,12 @@ void Client_cli::print_times()
         std::cout<<"čas zeleného hráče: "<<this->convert_string_time(this->green_time)<<"  počet kroků: "<<green_steps<<std::endl;
 }
 
+
+/**
+\fn void Client_cli::sap_events_message(int events_count,unsigned char events[MAX_EVENTS])
+\brief postupně vypíše všechny poslední nastalé události s detekcí zabití.
+* Pokud je hráč zabit, je ukončen čtecí proces.
+*/
 void Client_cli::sap_events_message(int events_count,unsigned char events[MAX_EVENTS])
 {
     bool end=false;
@@ -175,7 +185,7 @@ void Client_cli::sap_events_message(int events_count,unsigned char events[MAX_EV
 
 /**
 *\fn void Client_cli::game_event()
-* Slot, který je vyvolán při signálu readyRead. Vyčistí obrazovku, přijme stav mapy a události které nastali a vše vypíše.
+* \brief Slot, který je vyvolán při signálu readyRead. Vyčistí obrazovku, přijme stav mapy, události které nastali a vše vypíše.
 * Zároveň definuje chování na konci hry a v případě zabití hráče.
 */
 void Client_cli::game_event()
@@ -206,6 +216,11 @@ void Client_cli::game_event()
     sap_events_message(events_count,events);
 }
 
+/**
+\fn void Client_cli::playing()
+\brief Spouští počátek hraní v CLI módu.
+* Vytvoří proces pro čtení příkazů a rodičovský proces pouze přijímá data od serveru (pomocí slotu a signálu readyRead).
+*/
 void Client_cli::playing()
 {
     this->game_begin=true;

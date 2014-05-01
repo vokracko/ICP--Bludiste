@@ -14,12 +14,13 @@ game_window::game_window(Client * client,QWidget *parent) :
 {
     ui->setupUi(this);
     this->client=client;
+    connect(this->ui->command_edit,SIGNAL(returnPressed()),this->ui->send_command_button,SIGNAL(clicked()));
 }
 
 
 /**
 *\fn void game_window::create_game_field()
-* Funkce pro vytvoření hracího okna. Dynamicky nastavuje velikost okna podle rozměrů hrací plochy.
+* \brief Funkce pro vytvoření hracího okna. Dynamicky nastavuje velikost okna podle rozměrů hrací plochy.
 * Dynamicky umisťuje jednotlivé komponenty podle rozměrů okna.
 * alokuje hrací plochu a propojuje ji s mřížkou umístěnou v grafickém rozhraní.
 */
@@ -62,7 +63,7 @@ void game_window::create_game_field()
 
 /**
 *\fn void game_window::assign_tooltips()
-* Vyhledá na hrací ploše hráče a každému přiřadí tooltip obsahující počet kroků a čas strávený ve hře.
+* \brief Vyhledá na hrací ploše hráče a každému přiřadí tooltip obsahující počet kroků a čas strávený ve hře.
 */
 void game_window::assign_tooltips()
 {
@@ -77,7 +78,7 @@ void game_window::assign_tooltips()
 
 /**
 *\fn void game_window::show_happend_events(unsigned char events[MAX_EVENTS],int events_count)
-* Vypíše do list widgetu umístěném v hracím okně poslední události, které nastali.
+* \brief Vypíše do list widgetu umístěném v hracím okně poslední události, které nastali.
 * \param events Pole událostí jenž nastali při posledním zaslání mapy od sereveru
 * \param events_count Počet událostí které nastali
 */
@@ -99,7 +100,7 @@ void game_window::show_happend_events(unsigned char events[MAX_EVENTS],int event
 
 /**
 *\fn void game_window::game_showing()
-* Slot který je spušťěn signálem readyRead, když přijdou data ze serveru.
+* \brief Slot který je spušťěn signálem readyRead, když přijdou data ze serveru.
 * Obstarává vykreslování a hrací plochy po příchodu aktuálního stavu hry od serveru.
 * Současně se stará o detekci konce hry a jeho obsluhu a o vypisování událostí které během hry nastali.
 */
@@ -150,6 +151,7 @@ game_window::~game_window()
 
 /**
 *\fn void game_window::on_send_command_button_clicked()
+* \brief Reakce na stisknutí tlačítka pro potvrzení příkazu.
 * Slot reagující na signál vyvolaný stisknutím tlačítka potvrzení příkazu. V případě chyby (neexistujícího příkazu)
 * dojde k vyvolání výjimky a vypsání chybové hlášky (bez ukončení programu).
 */

@@ -50,8 +50,6 @@ private slots:
     void on_send_command_button_clicked();
     void game_showing();
 
-
-
 private:
     Ui::game_window *ui;
     void assign_tooltips();
@@ -60,4 +58,3 @@ private:
 };
 
 #endif // GAME_WINDOW_H
-
