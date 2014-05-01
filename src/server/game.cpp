@@ -393,6 +393,7 @@ void Game::send(std::string message, Player * p, int move_res, int state_code)
 
 	for(std::vector<Player*>::iterator it = players.begin(); it != players.end(); ++it)
 	{
+		if(!(*it)->is_ready()) continue;
 		if(p == *it)
 		{
 			(*it)->send(&res_info);

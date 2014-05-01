@@ -25,6 +25,7 @@ class Player
 		int step_count = 0;
 		bool own_key = false;
 		bool ok = true;
+		bool ready = false;
 
 		Connection * conn = nullptr;
 		std::thread thread;
@@ -49,6 +50,7 @@ class Player
 		~Player();
 
 		bool init();
+		bool is_ready();
 		void work();
 		int get_id();
 

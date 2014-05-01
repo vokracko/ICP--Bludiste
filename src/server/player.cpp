@@ -30,6 +30,16 @@ Player::~Player()
 	delete conn;
 }
 
+/**
+ * \fn bool Player::is_ready()
+ * \brief
+ * \return ready
+ */
+bool Player::is_ready()
+{
+	return ready;
+}
+
 /*
  * \fn bool Player::has_key()
  * \return own_key
@@ -83,6 +93,7 @@ void Player::work()
 		if(!init()) return;
 
 		send_map(true);
+		ready = true;
 
 		while(game->is_running() && ok)
 		{

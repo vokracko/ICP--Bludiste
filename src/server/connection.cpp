@@ -55,7 +55,7 @@ void Connection::sync_receive(std::string * target)
 	std::getline(read_stream, *target);
 	target->erase(target->end()-1, target->end());
 	read_buffer.consume(read_buffer.size());
-	// std::cout << *target << std::endl;
+	// std::cout << "Recv:" << *target << std::endl;
 }
 
 /**
