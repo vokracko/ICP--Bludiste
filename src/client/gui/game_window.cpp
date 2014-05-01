@@ -14,6 +14,7 @@ game_window::game_window(Client * client,QWidget *parent) :
 {
     ui->setupUi(this);
     this->client=client;
+    connect(this->ui->command_edit,SIGNAL(returnPressed()),this->ui->send_command_button,SIGNAL(clicked()));
 }
 
 
