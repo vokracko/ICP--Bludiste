@@ -136,6 +136,8 @@ void Map::init()
 		if(std::strcmp(file->d_name, ".") == 0 || std::strcmp(file->d_name, "..") == 0) continue;
 		Map::maplist.insert(std::pair<int, std::string>(i++, std::string(file->d_name)));
 	}
+
+	closedir(dir);
 }
 
 /**
