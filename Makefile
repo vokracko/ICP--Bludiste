@@ -11,9 +11,10 @@ client:
 cli:
 	make -C src client-cli && mv src/client/cli/bludiste2014-cli ./examples
 
-run: client server
-	./examples/bludiste2014 &
-	cd examples; ./bludiste2014-server
+run: client cli server
+	cd examples; ./bludiste2014-server &
+	cd examples; ./bludiste2014 2>/dev/null &
+	cd examples; ./bludiste2014-cli && killall bludiste2014-server
 
 pack: clean
 	tar --exclude .git --exclude .gitignore --exclude xvokra00.tar.gz -zcvf xvokra00.tar.gz *
